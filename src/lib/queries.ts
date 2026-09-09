@@ -105,16 +105,16 @@ export function flaggedProductsQuery(flag: ProductFlag, limit: number) {
 }
 
 export type ShopFilters = {
-  category?: string;
-  search?: string;
-  sort?: string;
-  minPrice?: number;
-  maxPrice?: number;
-  sizes?: string[];
-  colors?: string[];
-  inStock?: boolean;
-  page?: number;
-  perPage?: number;
+  category?: string | undefined;
+  search?: string | undefined;
+  sort?: string | undefined;
+  minPrice?: number | undefined;
+  maxPrice?: number | undefined;
+  sizes?: string[] | undefined;
+  colors?: string[] | undefined;
+  inStock?: boolean | undefined;
+  page?: number | undefined;
+  perPage?: number | undefined;
 };
 
 export function shopProductsQuery(filters: ShopFilters) {
