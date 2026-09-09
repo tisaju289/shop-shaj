@@ -35,7 +35,7 @@ function SettingsPage() {
     mutationFn: async () => {
       const { error } = await supabase
         .from("store_settings")
-        .upsert({ id: "default", data: form as unknown as Record<string, unknown> });
+        .upsert({ id: "default", data: JSON.parse(JSON.stringify(form)) });
       if (error) throw error;
     },
     onSuccess: () => {
