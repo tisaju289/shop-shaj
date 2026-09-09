@@ -21,7 +21,14 @@ import { useAuth } from "@/lib/auth";
 import { useSettings } from "@/lib/store-context";
 import { cn } from "@/lib/utils";
 
-const NAV = [
+type NavItem = {
+  to: "/admin" | "/admin/orders" | "/admin/products" | "/admin/categories" | "/admin/appearance" | "/admin/coupons" | "/admin/reviews" | "/admin/reports" | "/admin/settings";
+  label: string;
+  icon: typeof LayoutDashboard;
+  exact?: boolean;
+};
+
+const NAV: NavItem[] = [
   { to: "/admin", label: "ড্যাশবোর্ড", icon: LayoutDashboard, exact: true },
   { to: "/admin/orders", label: "অর্ডার", icon: ShoppingCart },
   { to: "/admin/products", label: "পণ্য", icon: Package },
@@ -31,7 +38,7 @@ const NAV = [
   { to: "/admin/reviews", label: "রিভিউ", icon: MessageSquare },
   { to: "/admin/reports", label: "রিপোর্ট", icon: BarChart3 },
   { to: "/admin/settings", label: "সেটিংস", icon: Settings },
-] as const;
+];
 
 function NavLinks({ onNavigate }: { onNavigate?: () => void }) {
   const path = useRouterState({ select: (s) => s.location.pathname });
