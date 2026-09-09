@@ -764,6 +764,8 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
+      admin_dashboard_stats: { Args: never; Returns: Json }
+      claim_admin: { Args: never; Returns: boolean }
       has_role: {
         Args: {
           _role: Database["public"]["Enums"]["app_role"]
