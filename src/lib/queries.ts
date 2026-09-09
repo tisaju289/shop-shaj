@@ -257,3 +257,19 @@ export function categoryQuery(slug: string) {
     staleTime: 5 * 60_000,
   };
 }
+
+export const saleProductsQuery = {
+  queryKey: ["products", "sale"],
+  queryFn: async (): Promise<Product[]> => {
+    const { data, error } = await supabase
+      .from("products")
+      .select(PRODUCT_LIST_FIELDS)
+      .eq("is_published", true)
+      .not("sale_price", "is", null)
+      .order("created_at", { ascending: false })
+      .limit(48);
+    if (error) throw error;
+    return (data ?? []) as unknown as Product[];
+  },
+  staleTime: 30_000,
+};
