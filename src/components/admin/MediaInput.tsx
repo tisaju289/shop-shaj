@@ -39,6 +39,7 @@ export function MediaInput({
   return (
     <div className="space-y-2">
       <Label>{label}</Label>
+      {hint && <p className="text-xs text-muted-foreground">{hint}</p>}
       <div className="flex items-start gap-3">
         <div className="relative size-24 shrink-0 overflow-hidden rounded-md border border-border bg-surface">
           {value ? (
