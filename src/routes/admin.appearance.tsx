@@ -666,7 +666,7 @@ function SectionsTab() {
         is_visible: s.is_visible,
         sort_order: Number(s.sort_order),
         product_limit: Number(s.product_limit),
-        config: s.config ?? {},
+        config: (s.config ?? {}) as never,
       };
       if (s.id === "new") {
         const { error } = await supabase.from("homepage_sections").insert({
