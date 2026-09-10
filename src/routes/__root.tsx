@@ -124,6 +124,7 @@ function RootComponent() {
     <QueryClientProvider client={queryClient}>
       <AuthProvider>
         <StoreProvider>
+          <DynamicHead />
           <CartProvider>
             <WishlistProvider>
               {/* Required: nested routes render here. Removing <Outlet /> breaks all child routes. */}
