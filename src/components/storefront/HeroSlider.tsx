@@ -24,16 +24,16 @@ export function HeroSlider({ slides }: { slides: HeroSlide[] }) {
             i === index ? "opacity-100" : "pointer-events-none absolute inset-0 opacity-0",
           )}
         >
-          <div className="relative w-full overflow-hidden bg-accent">
+          <div className="relative aspect-[4/3] w-full overflow-hidden bg-accent md:aspect-video">
             {slide.image_url ? (
-              <picture>
+              <picture className="absolute inset-0 block">
                 {slide.mobile_image_url && (
                   <source media="(max-width: 767px)" srcSet={slide.mobile_image_url} />
                 )}
                 <img
                   src={slide.image_url}
                   alt={slide.heading}
-                  className="block h-auto w-full"
+                  className="size-full object-cover"
                   loading={i === 0 ? "eager" : "lazy"}
                 />
               </picture>
