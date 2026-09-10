@@ -15,8 +15,8 @@ export function HeroSlider({ slides }: { slides: HeroSlide[] }) {
   if (!slides.length) return null;
 
   return (
-    <section className="relative w-full overflow-hidden border-b border-border bg-surface">
-      <div className="container-x relative">
+    <section className="container-x section-py">
+      <div className="overflow-hidden rounded-2xl border border-border bg-surface relative">
         {slides.map((slide, i) => (
           <div
             key={slide.id}
@@ -69,8 +69,8 @@ export function HeroSlider({ slides }: { slides: HeroSlide[] }) {
 
 export function HeroFallback() {
   return (
-    <section className="w-full border-b border-border bg-surface">
-      <div className="container-x">
+    <section className="container-x section-py">
+      <div className="overflow-hidden rounded-2xl border border-border bg-surface">
         <div className="grid aspect-[16/9] w-full place-items-center bg-accent md:aspect-[16/5]">
           <p className="text-sm text-muted-foreground">অ্যাডমিন থেকে হিরো ছবি যোগ করুন</p>
         </div>

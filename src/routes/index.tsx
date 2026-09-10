@@ -70,10 +70,8 @@ function HomePage() {
         switch (section.section_key) {
           case "hero":
             return slidesLoading ? (
-              <section key={section.id} className="w-full bg-surface">
-                <div className="container-x">
-                  <div className="aspect-[16/9] w-full animate-pulse bg-accent md:aspect-[16/5]" />
-                </div>
+              <section key={section.id} className="container-x section-py">
+                <div className="aspect-[16/9] w-full animate-pulse rounded-2xl border border-border bg-accent md:aspect-[16/5]" />
               </section>
             ) : slides.length ? (
               <HeroSlider key={section.id} slides={slides} />
@@ -84,54 +82,60 @@ function HomePage() {
           case "categories":
             return (
               <section key={section.id} className="container-x section-py">
-                <SectionHeading
-                  title={section.title || "ক্যাটাগরি"}
-                  subtitle={section.subtitle}
-                />
-                {categories.length ? (
-                  <>
-                    <CategoryScroller categories={categories} />
-                    <div className="mt-5 flex justify-center">
-                      <Button asChild variant="outline">
-                        <Link to="/categories">সব ক্যাটাগরি দেখুন</Link>
-                      </Button>
-                    </div>
-                  </>
-                ) : (
-                  <EmptyState title="এখনও কোনো ক্যাটাগরি নেই" />
-                )}
+                <div className="rounded-2xl border border-border bg-surface p-4 md:p-6">
+                  <SectionHeading
+                    title={section.title || "ক্যাটাগরি"}
+                    subtitle={section.subtitle}
+                  />
+                  {categories.length ? (
+                    <>
+                      <CategoryScroller categories={categories} />
+                      <div className="mt-5 flex justify-center">
+                        <Button asChild variant="outline">
+                          <Link to="/categories">সব ক্যাটাগরি দেখুন</Link>
+                        </Button>
+                      </div>
+                    </>
+                  ) : (
+                    <EmptyState title="এখনও কোনো ক্যাটাগরি নেই" />
+                  )}
+                </div>
               </section>
             );
 
           case "promo_banners":
             return banners.length ? (
-              <section key={section.id} className="container-x pb-4 md:pb-8">
-                <PromoBannerCarousel banners={banners} />
+              <section key={section.id} className="container-x section-py">
+                <div className="rounded-2xl border border-border bg-surface p-4 md:p-6">
+                  <PromoBannerCarousel banners={banners} />
+                </div>
               </section>
             ) : null;
 
           case "newsletter":
             return (
-              <section key={section.id} className="section-py bg-surface">
-                <div className="container-x max-w-2xl text-center">
-                  <Mail className="mx-auto size-8 text-primary" />
-                  <h2 className="mt-4 text-2xl font-semibold md:text-3xl">
-                    {section.title || "আমাদের সাথে থাকুন"}
-                  </h2>
-                  <p className="mt-3 text-sm text-muted-foreground md:text-base">
-                    {section.subtitle || "নতুন কালেকশন ও অফারের খবর সবার আগে পান।"}
-                  </p>
-                  <div className="mt-6 flex flex-wrap justify-center gap-3">
-                    {settings.facebook_url && (
-                      <Button asChild>
-                        <a href={settings.facebook_url} target="_blank" rel="noreferrer">
-                          ফেসবুকে ফলো করুন
-                        </a>
+              <section key={section.id} className="container-x section-py">
+                <div className="rounded-2xl border border-border bg-surface p-4 md:p-6">
+                  <div className="max-w-2xl text-center mx-auto">
+                    <Mail className="mx-auto size-8 text-primary" />
+                    <h2 className="mt-4 text-2xl font-semibold md:text-3xl">
+                      {section.title || "আমাদের সাথে থাকুন"}
+                    </h2>
+                    <p className="mt-3 text-sm text-muted-foreground md:text-base">
+                      {section.subtitle || "নতুন কালেকশন ও অফারের খবর সবার আগে পান।"}
+                    </p>
+                    <div className="mt-6 flex flex-wrap justify-center gap-3">
+                      {settings.facebook_url && (
+                        <Button asChild>
+                          <a href={settings.facebook_url} target="_blank" rel="noreferrer">
+                            ফেসবুকে ফলো করুন
+                          </a>
+                        </Button>
+                      )}
+                      <Button asChild variant="outline">
+                        <Link to="/contact">যোগাযোগ করুন</Link>
                       </Button>
-                    )}
-                    <Button asChild variant="outline">
-                      <Link to="/contact">যোগাযোগ করুন</Link>
-                    </Button>
+                    </div>
                   </div>
                 </div>
               </section>
@@ -144,44 +148,48 @@ function HomePage() {
             const products = result?.data ?? [];
             return (
               <section key={section.id} className="container-x section-py">
-                <SectionHeading
-                  title={section.title || ""}
-                  subtitle={section.subtitle}
-                />
-                {result?.isLoading ? (
-                  <ProductGridSkeleton count={4} />
-                ) : products.length ? (
-                  <>
-                    <ProductCarousel products={products} />
-                    <div className="mt-5 flex justify-center">
-                      <Button asChild variant="outline">
-                        <Link to="/shop">সব দেখুন</Link>
-                      </Button>
-                    </div>
-                  </>
-                ) : (
-                  <EmptyState
-                    title="এই সেকশনে কোনো পণ্য নেই"
-                    description="অ্যাডমিন প্যানেল থেকে পণ্য যোগ করুন বা ট্যাগ নির্ধারণ করুন।"
+                <div className="rounded-2xl border border-border bg-surface p-4 md:p-6">
+                  <SectionHeading
+                    title={section.title || ""}
+                    subtitle={section.subtitle}
                   />
-                )}
+                  {result?.isLoading ? (
+                    <ProductGridSkeleton count={4} />
+                  ) : products.length ? (
+                    <>
+                      <ProductCarousel products={products} />
+                      <div className="mt-5 flex justify-center">
+                        <Button asChild variant="outline">
+                          <Link to="/shop">সব দেখুন</Link>
+                        </Button>
+                      </div>
+                    </>
+                  ) : (
+                    <EmptyState
+                      title="এই সেকশনে কোনো পণ্য নেই"
+                      description="অ্যাডমিন প্যানেল থেকে পণ্য যোগ করুন বা ট্যাগ নির্ধারণ করুন।"
+                    />
+                  )}
+                </div>
               </section>
             );
           }
         }
       })}
 
-      <section className="border-y border-border bg-card">
-        <div className="container-x grid gap-6 py-10 sm:grid-cols-3">
-          <Feature icon={<Truck className="size-5" />} title="দ্রুত ডেলিভারি">
-            ঢাকার ভিতরে ২৪-৪৮ ঘণ্টা, বাইরে ৩-৫ দিন
-          </Feature>
-          <Feature icon={<ShieldCheck className="size-5" />} title="নিশ্চিত মান">
-            প্রতিটি পণ্য যাচাই করে প্যাকেজিং করা হয়
-          </Feature>
-          <Feature icon={<Undo2 className="size-5" />} title="সহজ রিটার্ন">
-            ডেলিভারির ৩ দিনের মধ্যে রিটার্ন সুবিধা
-          </Feature>
+      <section className="container-x section-py">
+        <div className="rounded-2xl border border-border bg-surface p-4 md:p-6">
+          <div className="grid gap-6 sm:grid-cols-3">
+            <Feature icon={<Truck className="size-5" />} title="দ্রুত ডেলিভারি">
+              ঢাকার ভিতরে ২৪-৪৮ ঘণ্টা, বাইরে ৩-৫ দিন
+            </Feature>
+            <Feature icon={<ShieldCheck className="size-5" />} title="নিশ্চিত মান">
+              প্রতিটি পণ্য যাচাই করে প্যাকেজিং করা হয়
+            </Feature>
+            <Feature icon={<Undo2 className="size-5" />} title="সহজ রিটার্ন">
+              ডেলিভারির ৩ দিনের মধ্যে রিটার্ন সুবিধা
+            </Feature>
+          </div>
         </div>
       </section>
     </StoreLayout>
