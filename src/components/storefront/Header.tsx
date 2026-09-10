@@ -118,12 +118,7 @@ export function Header() {
               {wishlist.count > 0 && <Badge>{wishlist.count}</Badge>}
             </Link>
           </Button>
-          <Button variant="ghost" size="icon" aria-label="কার্ট" asChild>
-            <Link to="/cart" className="relative">
-              <ShoppingBag className="size-5" />
-              {cart.count > 0 && <Badge>{cart.count}</Badge>}
-            </Link>
-          </Button>
+          <CartDrawer />
         </div>
       </div>
 
