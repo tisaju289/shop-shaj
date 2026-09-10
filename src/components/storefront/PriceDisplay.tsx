@@ -18,7 +18,7 @@ export function PriceDisplay({
   const off = discountPercent(price, salePrice);
 
   return (
-    <div className={cn("flex flex-wrap items-baseline gap-2", className)}>
+    <div className={cn("flex flex-wrap items-baseline justify-center gap-2 md:justify-start", className)}>
       <span
         className={cn(
           "font-semibold text-foreground",

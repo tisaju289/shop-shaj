@@ -76,7 +76,7 @@ export function ProductCard({ product, className }: { product: Product; classNam
         <Heart className={cn("size-4", wishlist.has(product.id) && "fill-primary text-primary")} />
       </button>
 
-      <div className="flex flex-1 flex-col gap-1.5 p-2.5 md:gap-2 md:p-4">
+      <div className="flex flex-1 flex-col items-center gap-1.5 p-2.5 text-center md:items-start md:gap-2 md:p-4 md:text-left">
         <Link to="/product/$slug" params={{ slug: product.slug }} className="min-h-10">
           <h3 className="line-clamp-2 text-sm font-medium leading-snug transition-colors group-hover:text-primary md:text-[15px]">
             {product.name}

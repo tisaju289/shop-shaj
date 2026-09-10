@@ -43,17 +43,17 @@ export function PromoBannerCarousel({ banners }: { banners: Banner[] }) {
             )}
             <div
               className={cn(
-                "absolute inset-0 flex flex-col justify-center gap-3 p-6 md:p-12",
+                "absolute inset-0 flex flex-col items-center justify-center gap-3 p-6 text-center md:items-start md:p-12 md:text-left",
                 banner.image_url && "bg-foreground/35",
               )}
             >
               {banner.title && (
-                <h3 className="max-w-lg text-xl font-semibold text-background md:text-3xl">
+                <h3 className="mx-auto max-w-lg text-xl font-semibold text-background md:mx-0 md:text-3xl">
                   {banner.title}
                 </h3>
               )}
               {banner.subtitle && (
-                <p className="max-w-lg text-sm text-background/85 md:text-base">
+                <p className="mx-auto max-w-lg text-sm text-background/85 md:mx-0 md:text-base">
                   {banner.subtitle}
                 </p>
               )}
