@@ -22,33 +22,12 @@ export function HeroSlider({ slides }: { slides: HeroSlide[] }) {
         <div
           key={slide.id}
           className={cn(
-            "grid transition-opacity duration-700 ease-[cubic-bezier(0.22,1,0.36,1)] md:grid-cols-2",
+            "grid h-[calc(100vh-4rem)] min-h-[520px] grid-rows-[1fr] transition-opacity duration-700 ease-[cubic-bezier(0.22,1,0.36,1)] md:grid-rows-1 md:grid-cols-2",
             i === index ? "opacity-100" : "pointer-events-none absolute inset-0 opacity-0",
           )}
         >
-          {/* Image side */}
-          <div className="relative order-1 aspect-[4/5] w-full overflow-hidden bg-accent md:order-1 md:aspect-auto md:h-auto md:min-h-[480px]">
-            {slide.image_url ? (
-              <picture>
-                {slide.mobile_image_url && (
-                  <source media="(max-width: 767px)" srcSet={slide.mobile_image_url} />
-                )}
-                <img
-                  src={slide.image_url}
-                  alt={slide.heading}
-                  className="size-full object-cover"
-                  loading={i === 0 ? "eager" : "lazy"}
-                />
-              </picture>
-            ) : (
-              <div className="grid size-full place-items-center bg-gradient-to-br from-surface via-accent to-surface">
-                <span className="text-sm text-muted-foreground">ছবি যোগ করুন</span>
-              </div>
-            )}
-          </div>
-
           {/* Content side */}
-          <div className="relative order-2 flex min-h-[320px] items-center bg-gradient-to-br from-surface via-surface to-accent px-6 py-12 md:order-2 md:min-h-[480px] md:px-12 lg:px-16">
+          <div className="relative order-2 flex min-h-[320px] items-center bg-gradient-to-br from-surface via-surface to-accent px-6 py-10 md:order-1 md:min-h-0 md:px-12 lg:px-16">
             <div className="mx-auto w-full max-w-xl">
               {i === index && (
                 <div className="animate-fade-up">
@@ -80,6 +59,27 @@ export function HeroSlider({ slides }: { slides: HeroSlide[] }) {
                 </div>
               )}
             </div>
+          </div>
+
+          {/* Image side */}
+          <div className="relative order-1 h-full min-h-[260px] overflow-hidden bg-accent md:order-2 md:min-h-0">
+            {slide.image_url ? (
+              <picture>
+                {slide.mobile_image_url && (
+                  <source media="(max-width: 767px)" srcSet={slide.mobile_image_url} />
+                )}
+                <img
+                  src={slide.image_url}
+                  alt={slide.heading}
+                  className="size-full object-cover"
+                  loading={i === 0 ? "eager" : "lazy"}
+                />
+              </picture>
+            ) : (
+              <div className="grid size-full place-items-center bg-gradient-to-br from-surface via-accent to-surface">
+                <span className="text-sm text-muted-foreground">ছবি যোগ করুন</span>
+              </div>
+            )}
           </div>
         </div>
       ))}
