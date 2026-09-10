@@ -51,39 +51,22 @@ export function ShopBrowser({
       sort,
       minPrice: minPrice ? Number(minPrice) : undefined,
       maxPrice: maxPrice ? Number(maxPrice) : undefined,
-      sizes: sizes.length ? sizes : undefined,
-      colors: colors.length ? colors : undefined,
-      inStock: inStock || undefined,
       page,
       perPage: PER_PAGE,
     }),
-    [fixedCategory, category, initialSearch, sort, minPrice, maxPrice, sizes, colors, inStock, page],
+    [fixedCategory, category, initialSearch, sort, minPrice, maxPrice, page],
   );
 
   const { data, isLoading, isError, refetch } = useQuery(shopProductsQuery(filters));
   const total = data?.total ?? 0;
   const pages = Math.max(1, Math.ceil(total / PER_PAGE));
 
-  const hasFilters =
-    (!fixedCategory && !!category) ||
-    !!minPrice ||
-    !!maxPrice ||
-    sizes.length > 0 ||
-    colors.length > 0 ||
-    inStock;
+  const hasFilters = (!fixedCategory && !!category) || !!minPrice || !!maxPrice;
 
   function clearFilters() {
     if (!fixedCategory) setCategory("");
     setMinPrice("");
     setMaxPrice("");
-    setSizes([]);
-    setColors([]);
-    setInStock(false);
-    setPage(1);
-  }
-
-  function toggle(list: string[], value: string, setter: (v: string[]) => void) {
-    setter(list.includes(value) ? list.filter((x) => x !== value) : [...list, value]);
     setPage(1);
   }
 
