@@ -68,16 +68,16 @@ export function Header() {
               {settings.store_name}
             </SheetTitle>
             <nav className="flex flex-col p-2">
-              {NAV.map((item) => (
-                <Link
-                  key={item.to}
-                  to={item.to}
+              {nav.map((item) => (
+                <SmartLink
+                  key={item.url + item.label}
+                  to={item.url}
                   onClick={() => setMenuOpen(false)}
                   className="rounded-md px-3 py-3 text-[15px] font-medium transition-colors hover:bg-accent"
-                  activeProps={{ className: "text-primary" }}
+                  activeClassName="text-primary"
                 >
                   {item.label}
-                </Link>
+                </SmartLink>
               ))}
             </nav>
           </SheetContent>
