@@ -6,6 +6,7 @@ import { SmartLink } from "@/components/storefront/SmartLink";
 import { categoriesQuery } from "@/lib/queries";
 import { useSettings } from "@/lib/store-context";
 import { defaultSettings } from "@/lib/types";
+import { cn } from "@/lib/utils";
 
 export function Footer() {
   const settings = useSettings();

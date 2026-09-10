@@ -167,6 +167,32 @@ function SettingsPage() {
                   />
                 </div>
                 {text("header_announcement_text", "ঘোষণার লেখা")}
+                <div className="grid gap-4 md:grid-cols-2">
+                  <ColorField
+                    label="হেডারের ব্যাকগ্রাউন্ড রঙ"
+                    value={form.header_bg_color ?? ""}
+                    fallback="#ffffff"
+                    onChange={(v) => set("header_bg_color", v)}
+                  />
+                  <ColorField
+                    label="হেডারের লেখার রঙ"
+                    value={form.header_text_color ?? ""}
+                    fallback="#7a2b3f"
+                    onChange={(v) => set("header_text_color", v)}
+                  />
+                  <ColorField
+                    label="ঘোষণা বারের ব্যাকগ্রাউন্ড রঙ"
+                    value={form.header_announcement_bg_color ?? ""}
+                    fallback="#7a2b3f"
+                    onChange={(v) => set("header_announcement_bg_color", v)}
+                  />
+                  <ColorField
+                    label="ঘোষণা বারের লেখার রঙ"
+                    value={form.header_announcement_text_color ?? ""}
+                    fallback="#ffffff"
+                    onChange={(v) => set("header_announcement_text_color", v)}
+                  />
+                </div>
                 <LinkListEditor
                   title="মেনু (নেভিগেশন) লিংক"
                   items={form.header_nav ?? []}
