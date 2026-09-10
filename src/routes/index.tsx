@@ -150,27 +150,29 @@ function HomePage() {
             const products = result?.data ?? [];
             return (
               <section key={section.id} className="container-x section-py">
-                <SectionHeading
-                  title={section.title || ""}
-                  subtitle={section.subtitle}
-                />
-                {result?.isLoading ? (
-                  <ProductGridSkeleton count={4} />
-                ) : products.length ? (
-                  <>
-                    <ProductCarousel products={products} />
-                    <div className="mt-5 flex justify-center">
-                      <Button asChild variant="outline">
-                        <Link to="/shop">সব দেখুন</Link>
-                      </Button>
-                    </div>
-                  </>
-                ) : (
-                  <EmptyState
-                    title="এই সেকশনে কোনো পণ্য নেই"
-                    description="অ্যাডমিন প্যানেল থেকে পণ্য যোগ করুন বা ট্যাগ নির্ধারণ করুন।"
+                <div className="rounded-2xl border border-border bg-surface p-4 md:p-6">
+                  <SectionHeading
+                    title={section.title || ""}
+                    subtitle={section.subtitle}
                   />
-                )}
+                  {result?.isLoading ? (
+                    <ProductGridSkeleton count={4} />
+                  ) : products.length ? (
+                    <>
+                      <ProductCarousel products={products} />
+                      <div className="mt-5 flex justify-center">
+                        <Button asChild variant="outline">
+                          <Link to="/shop">সব দেখুন</Link>
+                        </Button>
+                      </div>
+                    </>
+                  ) : (
+                    <EmptyState
+                      title="এই সেকশনে কোনো পণ্য নেই"
+                      description="অ্যাডমিন প্যানেল থেকে পণ্য যোগ করুন বা ট্যাগ নির্ধারণ করুন।"
+                    />
+                  )}
+                </div>
               </section>
             );
           }
