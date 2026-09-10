@@ -135,6 +135,84 @@ function SettingsPage() {
           </Card>
         </TabsContent>
 
+        <TabsContent value="headerfooter" className="pt-5">
+          <div className="grid gap-5">
+            <Card>
+              <CardHeader>
+                <CardTitle className="text-base">হেডার</CardTitle>
+              </CardHeader>
+              <CardContent className="grid gap-4">
+                <div className="grid gap-4 md:grid-cols-2">
+                  <ToggleRow
+                    label="উপরের ঘোষণা বার দেখান"
+                    checked={form.header_announcement_enabled !== false}
+                    onChange={(v) => set("header_announcement_enabled", v)}
+                  />
+                  <ToggleRow
+                    label="হেডার স্ক্রলে আটকে থাকবে"
+                    checked={form.header_sticky !== false}
+                    onChange={(v) => set("header_sticky", v)}
+                  />
+                  <ToggleRow
+                    label="সার্চ বাটন দেখান"
+                    checked={form.header_show_search !== false}
+                    onChange={(v) => set("header_show_search", v)}
+                  />
+                  <ToggleRow
+                    label="উইশলিস্ট বাটন দেখান"
+                    checked={form.header_show_wishlist !== false}
+                    onChange={(v) => set("header_show_wishlist", v)}
+                  />
+                </div>
+                {text("header_announcement_text", "ঘোষণার লেখা")}
+                <LinkListEditor
+                  title="মেনু (নেভিগেশন) লিংক"
+                  items={form.header_nav ?? []}
+                  onChange={(items) => set("header_nav", items)}
+                />
+              </CardContent>
+            </Card>
+
+            <Card>
+              <CardHeader>
+                <CardTitle className="text-base">ফুটার</CardTitle>
+              </CardHeader>
+              <CardContent className="grid gap-4">
+                <div className="grid gap-4 md:grid-cols-2">
+                  {text("footer_text", "ফুটারের বর্ণনা")}
+                  {text("copyright_text", "কপিরাইট লেখা")}
+                  {text("footer_payment_text", "পেমেন্ট সংক্রান্ত লেখা")}
+                  {text("footer_contact_title", "যোগাযোগ কলামের শিরোনাম")}
+                  {text("footer_categories_title", "ক্যাটাগরি কলামের শিরোনাম")}
+                  <div />
+                  <ToggleRow
+                    label="ক্যাটাগরি কলাম দেখান"
+                    checked={form.footer_show_categories !== false}
+                    onChange={(v) => set("footer_show_categories", v)}
+                  />
+                  <ToggleRow
+                    label="সোশ্যাল আইকন দেখান"
+                    checked={form.footer_show_social !== false}
+                    onChange={(v) => set("footer_show_social", v)}
+                  />
+                </div>
+                {text("footer_quick_links_title", "দ্রুত লিংক কলামের শিরোনাম")}
+                <LinkListEditor
+                  title="দ্রুত লিংক"
+                  items={form.footer_quick_links ?? []}
+                  onChange={(items) => set("footer_quick_links", items)}
+                />
+                {text("footer_service_links_title", "কাস্টমার সার্ভিস কলামের শিরোনাম")}
+                <LinkListEditor
+                  title="কাস্টমার সার্ভিস লিংক"
+                  items={form.footer_service_links ?? []}
+                  onChange={(items) => set("footer_service_links", items)}
+                />
+              </CardContent>
+            </Card>
+          </div>
+        </TabsContent>
+
         <TabsContent value="contact" className="pt-5">
           <Card>
             <CardHeader>
