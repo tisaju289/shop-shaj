@@ -136,11 +136,11 @@ function CheckoutPage() {
             <h2 className="text-base font-semibold">আপনার পণ্য</h2>
             <ul className="mt-3 divide-y divide-border">
               {cart.items.map((item) => (
-                <li key={item.key} className="flex gap-3 py-3">
+                <li key={item.key} className="grid grid-cols-[4rem_minmax(0,1fr)] gap-3 py-3 sm:grid-cols-[5rem_minmax(0,1fr)_auto]">
                   <img
                     src={item.image || fallbackImage(item.name)}
                     alt={item.name}
-                    className="size-20 shrink-0 rounded-md object-cover"
+                    className="size-16 shrink-0 rounded-md object-cover sm:size-20"
                   />
                   <div className="min-w-0 flex-1">
                     <p className="line-clamp-2 text-sm font-medium">{item.name}</p>
@@ -166,7 +166,7 @@ function CheckoutPage() {
                       </Button>
                     </div>
                   </div>
-                  <div className="text-sm font-semibold">
+                  <div className="col-start-2 text-sm font-semibold sm:col-start-auto sm:text-right">
                     {formatMoney(item.unitPrice * item.quantity, settings.currency)}
                   </div>
                 </li>

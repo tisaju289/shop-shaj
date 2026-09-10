@@ -56,7 +56,7 @@ export function Header() {
       )}
 
 
-      <div className="container-x flex h-16 items-center gap-3 md:h-20">
+      <div className="container-x grid h-16 grid-cols-[auto_minmax(0,1fr)_auto] items-center gap-2 md:h-20 md:gap-3 lg:flex">
         <Sheet open={menuOpen} onOpenChange={setMenuOpen}>
           <SheetTrigger asChild>
             <Button variant="ghost" size="icon" className="lg:hidden" aria-label="মেনু">
@@ -83,11 +83,11 @@ export function Header() {
           </SheetContent>
         </Sheet>
 
-        <Link to="/" className="flex shrink-0 items-center gap-2">
+        <Link to="/" className="flex min-w-0 items-center gap-2 lg:shrink-0">
           {settings.logo_url && (
             <img src={settings.logo_url} alt={settings.store_name} className="h-9 w-auto md:h-11" />
           )}
-          <span className="text-lg font-semibold tracking-tight text-primary md:text-xl">
+          <span className="truncate text-lg font-semibold text-primary md:text-xl">
             {settings.store_name}
           </span>
         </Link>
@@ -105,7 +105,7 @@ export function Header() {
           ))}
         </nav>
 
-        <div className="ml-auto flex items-center gap-0.5 lg:ml-0">
+        <div className="ml-auto hidden items-center gap-0.5 sm:flex lg:ml-0">
           {settings.header_show_search !== false && (
             <Button
               variant="ghost"

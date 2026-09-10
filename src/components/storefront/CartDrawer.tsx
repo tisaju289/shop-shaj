@@ -1,6 +1,6 @@
 import { Link } from "@tanstack/react-router";
 import { ShoppingBag, Trash2 } from "lucide-react";
-import { useState } from "react";
+import { type ReactNode, useState } from "react";
 
 import { QuantitySelector } from "@/components/storefront/QuantitySelector";
 import { Button } from "@/components/ui/button";
@@ -10,7 +10,7 @@ import { formatMoney } from "@/lib/format";
 import { fallbackImage } from "@/lib/media";
 import { useSettings } from "@/lib/store-context";
 
-export function CartDrawer() {
+export function CartDrawer({ trigger }: { trigger?: ReactNode }) {
   const cart = useCart();
   const settings = useSettings();
   const [open, setOpen] = useState(false);
@@ -18,16 +18,18 @@ export function CartDrawer() {
   return (
     <Sheet open={open} onOpenChange={setOpen}>
       <SheetTrigger asChild>
-        <Button variant="ghost" size="icon" aria-label="কার্ট" className="relative">
-          <ShoppingBag className="size-5" />
-          {cart.count > 0 && (
-            <span className="absolute -right-0.5 -top-0.5 grid size-4.5 min-w-4.5 place-items-center rounded-full bg-primary px-1 text-[10px] font-semibold text-primary-foreground">
-              {cart.count}
-            </span>
-          )}
-        </Button>
+        {trigger ?? (
+          <Button variant="ghost" size="icon" aria-label="কার্ট" className="relative">
+            <ShoppingBag className="size-5" />
+            {cart.count > 0 && (
+              <span className="absolute -right-0.5 -top-0.5 grid size-4.5 min-w-4.5 place-items-center rounded-full bg-primary px-1 text-[10px] font-semibold text-primary-foreground">
+                {cart.count}
+              </span>
+            )}
+          </Button>
+        )}
       </SheetTrigger>
-      <SheetContent side="right" className="flex w-[92vw] max-w-md flex-col p-0">
+      <SheetContent side="right" className="flex w-[92vw] max-w-md flex-col pb-[env(safe-area-inset-bottom)] p-0">
         <SheetTitle className="border-b border-border px-5 py-4 text-left text-base">
           আপনার কার্ট {cart.count > 0 && <>({cart.count})</>}
         </SheetTitle>
