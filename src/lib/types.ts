@@ -7,6 +7,12 @@ export type StoreSettings = {
   header_show_wishlist: boolean;
   header_sticky: boolean;
   header_nav: NavLinkItem[];
+  header_bg_color: string;
+  header_text_color: string;
+  header_announcement_bg_color: string;
+  header_announcement_text_color: string;
+  footer_bg_color: string;
+  footer_text_color: string;
   footer_quick_links_title: string;
   footer_quick_links: NavLinkItem[];
   footer_service_links_title: string;
@@ -63,6 +69,12 @@ export const defaultSettings: StoreSettings = {
     { label: "আমাদের সম্পর্কে", url: "/about" },
     { label: "যোগাযোগ", url: "/contact" },
   ],
+  header_bg_color: "",
+  header_text_color: "",
+  header_announcement_bg_color: "",
+  header_announcement_text_color: "",
+  footer_bg_color: "",
+  footer_text_color: "",
   footer_quick_links_title: "দ্রুত লিংক",
   footer_quick_links: [
     { label: "শপ", url: "/shop" },
