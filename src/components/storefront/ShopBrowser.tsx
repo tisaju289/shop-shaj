@@ -5,8 +5,6 @@ import { useMemo, useState } from "react";
 import { EmptyState, ErrorState, ProductGridSkeleton } from "@/components/storefront/LoadingSkeleton";
 import { ProductGrid } from "@/components/storefront/ProductCarousel";
 import { Button } from "@/components/ui/button";
-import { Checkbox } from "@/components/ui/checkbox";
-import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
 import {
   Select,
@@ -27,8 +25,6 @@ const SORTS = [
   { value: "rating", label: "সর্বাধিক রেটিং" },
 ];
 
-const SIZES = ["S", "M", "L", "XL", "XXL", "ফ্রি সাইজ"];
-const COLORS = ["কালো", "সাদা", "মেরুন", "নেভি", "গোল্ডেন", "লাল", "সবুজ", "বেইজ"];
 const PER_PAGE = 12;
 
 export function ShopBrowser({
@@ -44,9 +40,6 @@ export function ShopBrowser({
   const [sort, setSort] = useState("new");
   const [minPrice, setMinPrice] = useState("");
   const [maxPrice, setMaxPrice] = useState("");
-  const [sizes, setSizes] = useState<string[]>([]);
-  const [colors, setColors] = useState<string[]>([]);
-  const [inStock, setInStock] = useState(false);
   const [page, setPage] = useState(1);
 
   const { data: categories = [] } = useQuery(categoriesQuery);
