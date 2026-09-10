@@ -84,22 +84,24 @@ function HomePage() {
           case "categories":
             return (
               <section key={section.id} className="container-x section-py">
-                <SectionHeading
-                  title={section.title || "ক্যাটাগরি"}
-                  subtitle={section.subtitle}
-                />
-                {categories.length ? (
-                  <>
-                    <CategoryScroller categories={categories} />
-                    <div className="mt-5 flex justify-center">
-                      <Button asChild variant="outline">
-                        <Link to="/categories">সব ক্যাটাগরি দেখুন</Link>
-                      </Button>
-                    </div>
-                  </>
-                ) : (
-                  <EmptyState title="এখনও কোনো ক্যাটাগরি নেই" />
-                )}
+                <div className="rounded-2xl border border-border bg-surface p-4 md:p-6">
+                  <SectionHeading
+                    title={section.title || "ক্যাটাগরি"}
+                    subtitle={section.subtitle}
+                  />
+                  {categories.length ? (
+                    <>
+                      <CategoryScroller categories={categories} />
+                      <div className="mt-5 flex justify-center">
+                        <Button asChild variant="outline">
+                          <Link to="/categories">সব ক্যাটাগরি দেখুন</Link>
+                        </Button>
+                      </div>
+                    </>
+                  ) : (
+                    <EmptyState title="এখনও কোনো ক্যাটাগরি নেই" />
+                  )}
+                </div>
               </section>
             );
 
