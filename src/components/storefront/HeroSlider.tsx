@@ -25,7 +25,7 @@ export function HeroSlider({ slides }: { slides: HeroSlide[] }) {
               i === index ? "opacity-100" : "pointer-events-none absolute inset-x-4 top-0 opacity-0 md:inset-x-8",
             )}
           >
-            <div className="relative aspect-[16/9] w-full overflow-hidden bg-accent md:aspect-[16/7]">
+            <div className="relative aspect-[16/9] w-full overflow-hidden bg-accent md:aspect-[16/5]">
               {slide.image_url ? (
                 <picture className="absolute inset-0 block">
                   {slide.mobile_image_url && (
@@ -39,7 +39,7 @@ export function HeroSlider({ slides }: { slides: HeroSlide[] }) {
                   />
                 </picture>
               ) : (
-                <div className="grid aspect-[16/9] w-full place-items-center bg-accent md:aspect-[16/7]">
+                <div className="grid aspect-[16/9] w-full place-items-center bg-accent md:aspect-[16/5]">
                   <span className="text-sm text-muted-foreground">ছবি যোগ করুন</span>
                 </div>
               )}
@@ -71,7 +71,7 @@ export function HeroFallback() {
   return (
     <section className="w-full border-b border-border bg-surface">
       <div className="container-x">
-        <div className="grid aspect-[16/9] w-full place-items-center bg-accent md:aspect-[16/7]">
+        <div className="grid aspect-[16/9] w-full place-items-center bg-accent md:aspect-[16/5]">
           <p className="text-sm text-muted-foreground">অ্যাডমিন থেকে হিরো ছবি যোগ করুন</p>
         </div>
       </div>
