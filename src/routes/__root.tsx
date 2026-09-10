@@ -14,6 +14,7 @@ import { reportLovableError } from "../lib/lovable-error-reporting";
 import { Toaster } from "@/components/ui/sonner";
 import { AuthProvider } from "@/lib/auth";
 import { CartProvider } from "@/lib/cart";
+import { DynamicHead } from "@/lib/dynamic-head";
 import { StoreProvider } from "@/lib/store-context";
 import { WishlistProvider } from "@/lib/wishlist";
 
@@ -124,6 +125,7 @@ function RootComponent() {
     <QueryClientProvider client={queryClient}>
       <AuthProvider>
         <StoreProvider>
+          <DynamicHead />
           <CartProvider>
             <WishlistProvider>
               {/* Required: nested routes render here. Removing <Outlet /> breaks all child routes. */}
