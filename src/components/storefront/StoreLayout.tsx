@@ -42,19 +42,15 @@ export function PageHeader({
 export function SectionHeading({
   title,
   subtitle,
-  action,
 }: {
   title: string;
   subtitle?: string | null;
   action?: ReactNode;
 }) {
   return (
-    <div className="mb-6 grid grid-cols-[minmax(0,1fr)_auto] items-end gap-3 md:mb-7">
-      <div className="min-w-0">
-        <h2 className="text-xl font-semibold md:text-3xl">{title}</h2>
-        {subtitle && <p className="mt-1.5 text-sm text-muted-foreground">{subtitle}</p>}
-      </div>
-      {action}
+    <div className="mx-auto mb-6 max-w-2xl text-center md:mb-7">
+      <h2 className="text-xl font-semibold md:text-3xl">{title}</h2>
+      {subtitle && <p className="mt-1.5 text-sm text-muted-foreground">{subtitle}</p>}
     </div>
   );
 }

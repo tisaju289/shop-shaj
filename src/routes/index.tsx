@@ -85,14 +85,16 @@ function HomePage() {
                 <SectionHeading
                   title={section.title || "ক্যাটাগরি"}
                   subtitle={section.subtitle}
-                  action={
-                    <Button asChild variant="ghost" size="sm">
-                      <Link to="/categories">সব ক্যাটাগরি</Link>
-                    </Button>
-                  }
                 />
                 {categories.length ? (
-                  <CategoryScroller categories={categories} />
+                  <>
+                    <CategoryScroller categories={categories} />
+                    <div className="mt-7 flex justify-center">
+                      <Button asChild variant="outline">
+                        <Link to="/categories">সব ক্যাটাগরি দেখুন</Link>
+                      </Button>
+                    </div>
+                  </>
                 ) : (
                   <EmptyState title="এখনও কোনো ক্যাটাগরি নেই" />
                 )}
@@ -143,16 +145,18 @@ function HomePage() {
                 <SectionHeading
                   title={section.title || ""}
                   subtitle={section.subtitle}
-                  action={
-                    <Button asChild variant="ghost" size="sm">
-                      <Link to="/shop">সব দেখুন</Link>
-                    </Button>
-                  }
                 />
                 {result?.isLoading ? (
                   <ProductGridSkeleton count={4} />
                 ) : products.length ? (
-                  <ProductCarousel products={products} />
+                  <>
+                    <ProductCarousel products={products} />
+                    <div className="mt-7 flex justify-center">
+                      <Button asChild variant="outline">
+                        <Link to="/shop">সব দেখুন</Link>
+                      </Button>
+                    </div>
+                  </>
                 ) : (
                   <EmptyState
                     title="এই সেকশনে কোনো পণ্য নেই"
