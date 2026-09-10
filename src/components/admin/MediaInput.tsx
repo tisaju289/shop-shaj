@@ -12,11 +12,13 @@ export function MediaInput({
   value,
   folder,
   onChange,
+  hint,
 }: {
   label: string;
   value: string | null;
   folder: MediaFolder;
   onChange: (url: string | null) => void;
+  hint?: string;
 }) {
   const [busy, setBusy] = useState(false);
   const inputRef = useRef<HTMLInputElement>(null);
