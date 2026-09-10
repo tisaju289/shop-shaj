@@ -1,17 +1,14 @@
 import { Link, useRouterState } from "@tanstack/react-router";
 import {
-  BarChart3,
   Image as ImageIcon,
   LayoutDashboard,
   LogOut,
   Menu,
-  MessageSquare,
   Package,
   Settings,
   ShoppingCart,
   Store,
   Tags,
-  TicketPercent,
 } from "lucide-react";
 import { useState, type ReactNode } from "react";
 
@@ -22,7 +19,7 @@ import { useSettings } from "@/lib/store-context";
 import { cn } from "@/lib/utils";
 
 type NavItem = {
-  to: "/admin" | "/admin/orders" | "/admin/products" | "/admin/categories" | "/admin/appearance" | "/admin/coupons" | "/admin/reviews" | "/admin/reports" | "/admin/settings";
+  to: "/admin" | "/admin/orders" | "/admin/products" | "/admin/categories" | "/admin/appearance" | "/admin/settings";
   label: string;
   icon: typeof LayoutDashboard;
   exact?: boolean;
@@ -34,9 +31,6 @@ const NAV: NavItem[] = [
   { to: "/admin/products", label: "পণ্য", icon: Package },
   { to: "/admin/categories", label: "ক্যাটাগরি", icon: Tags },
   { to: "/admin/appearance", label: "হোমপেজ ও ব্যানার", icon: ImageIcon },
-  { to: "/admin/coupons", label: "কুপন", icon: TicketPercent },
-  { to: "/admin/reviews", label: "রিভিউ", icon: MessageSquare },
-  { to: "/admin/reports", label: "রিপোর্ট", icon: BarChart3 },
   { to: "/admin/settings", label: "সেটিংস", icon: Settings },
 ];
 
