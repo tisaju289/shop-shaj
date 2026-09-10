@@ -98,6 +98,7 @@ function SettingsPage() {
       <Tabs defaultValue="general">
         <TabsList className="flex-wrap">
           <TabsTrigger value="general">সাধারণ</TabsTrigger>
+          <TabsTrigger value="headerfooter">হেডার ও ফুটার</TabsTrigger>
           <TabsTrigger value="contact">যোগাযোগ</TabsTrigger>
           <TabsTrigger value="delivery">ডেলিভারি</TabsTrigger>
           <TabsTrigger value="design">ডিজাইন</TabsTrigger>
