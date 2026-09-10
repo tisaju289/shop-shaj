@@ -39,7 +39,7 @@ export function HeroSlider({ slides }: { slides: HeroSlide[] }) {
                   />
                 </picture>
               ) : (
-                <div className="grid aspect-[16/9] w-full place-items-center bg-accent">
+                <div className="grid aspect-[16/9] w-full place-items-center bg-accent md:aspect-[16/7]">
                   <span className="text-sm text-muted-foreground">ছবি যোগ করুন</span>
                 </div>
               )}
