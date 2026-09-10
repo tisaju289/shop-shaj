@@ -45,11 +45,13 @@ export function Header() {
     >
       {settings.header_announcement_enabled !== false && (
         <div className="hidden bg-primary py-2 text-center text-xs text-primary-foreground md:block">
-          {settings.header_announcement_text || defaultSettings.header_announcement_text}
-          {settings.free_delivery_threshold > 0 && (
-            <> · {settings.free_delivery_threshold} টাকার উপরে ফ্রি ডেলিভারি</>
-          )}
-          {settings.phone && <> · হটলাইন: {settings.phone}</>}
+          <div className="container-x">
+            {settings.header_announcement_text || defaultSettings.header_announcement_text}
+            {settings.free_delivery_threshold > 0 && (
+              <> · {settings.free_delivery_threshold} টাকার উপরে ফ্রি ডেলিভারি</>
+            )}
+            {settings.phone && <> · হটলাইন: {settings.phone}</>}
+          </div>
         </div>
       )}
 
