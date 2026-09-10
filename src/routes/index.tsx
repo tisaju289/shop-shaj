@@ -38,11 +38,14 @@ export const Route = createFileRoute("/")({
   component: HomePage,
 });
 
-const FLAG_BY_SECTION: Record<string, ProductFlag> = {
-  best_selling: "best_selling",
-  trending: "trending",
-  hot: "hot",
-};
+const VALID_FLAGS: ProductFlag[] = ["best_selling", "trending", "hot", "featured", "new"];
+
+function sectionFlag(section: { section_key: string; config?: Record<string, unknown> | null }) {
+  const fromConfig = section.config?.["flag"];
+  if (typeof fromConfig === "string" && VALID_FLAGS.includes(fromConfig as ProductFlag))
+    return fromConfig as ProductFlag;
+  return VALID_FLAGS.find((f) => section.section_key === f || section.section_key.startsWith(`${f}_`));
+}
 
 function HomePage() {
   const settings = useSettings();
@@ -51,13 +54,11 @@ function HomePage() {
   const { data: categories = [] } = useQuery(categoriesQuery);
   const { data: banners = [] } = useQuery(promoBannersQuery);
 
-  const productSections = sections.filter(
-    (s) => s.is_visible && FLAG_BY_SECTION[s.section_key],
-  );
+  const productSections = sections.filter((s) => s.is_visible && sectionFlag(s));
 
   const productResults = useQueries({
     queries: productSections.map((s) =>
-      flaggedProductsQuery(FLAG_BY_SECTION[s.section_key]!, s.product_limit || 8),
+      flaggedProductsQuery(sectionFlag(s)!, s.product_limit || 8),
     ),
   });
 
