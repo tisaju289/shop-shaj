@@ -81,13 +81,12 @@ export function Header() {
         </Sheet>
 
         <Link to="/" className="flex shrink-0 items-center gap-2">
-          {settings.logo_url ? (
+          {settings.logo_url && (
             <img src={settings.logo_url} alt={settings.store_name} className="h-9 w-auto md:h-11" />
-          ) : (
-            <span className="text-lg font-semibold tracking-tight text-primary md:text-xl">
-              {settings.store_name}
-            </span>
           )}
+          <span className="text-lg font-semibold tracking-tight text-primary md:text-xl">
+            {settings.store_name}
+          </span>
         </Link>
 
         <nav className="mx-auto hidden items-center gap-1 lg:flex">
