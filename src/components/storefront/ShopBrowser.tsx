@@ -5,8 +5,6 @@ import { useMemo, useState } from "react";
 import { EmptyState, ErrorState, ProductGridSkeleton } from "@/components/storefront/LoadingSkeleton";
 import { ProductGrid } from "@/components/storefront/ProductCarousel";
 import { Button } from "@/components/ui/button";
-import { Checkbox } from "@/components/ui/checkbox";
-import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
 import {
   Select,
@@ -27,8 +25,6 @@ const SORTS = [
   { value: "rating", label: "সর্বাধিক রেটিং" },
 ];
 
-const SIZES = ["S", "M", "L", "XL", "XXL", "ফ্রি সাইজ"];
-const COLORS = ["কালো", "সাদা", "মেরুন", "নেভি", "গোল্ডেন", "লাল", "সবুজ", "বেইজ"];
 const PER_PAGE = 12;
 
 export function ShopBrowser({
@@ -44,9 +40,6 @@ export function ShopBrowser({
   const [sort, setSort] = useState("new");
   const [minPrice, setMinPrice] = useState("");
   const [maxPrice, setMaxPrice] = useState("");
-  const [sizes, setSizes] = useState<string[]>([]);
-  const [colors, setColors] = useState<string[]>([]);
-  const [inStock, setInStock] = useState(false);
   const [page, setPage] = useState(1);
 
   const { data: categories = [] } = useQuery(categoriesQuery);
@@ -58,44 +51,51 @@ export function ShopBrowser({
       sort,
       minPrice: minPrice ? Number(minPrice) : undefined,
       maxPrice: maxPrice ? Number(maxPrice) : undefined,
-      sizes: sizes.length ? sizes : undefined,
-      colors: colors.length ? colors : undefined,
-      inStock: inStock || undefined,
       page,
       perPage: PER_PAGE,
     }),
-    [fixedCategory, category, initialSearch, sort, minPrice, maxPrice, sizes, colors, inStock, page],
+    [fixedCategory, category, initialSearch, sort, minPrice, maxPrice, page],
   );
 
   const { data, isLoading, isError, refetch } = useQuery(shopProductsQuery(filters));
   const total = data?.total ?? 0;
   const pages = Math.max(1, Math.ceil(total / PER_PAGE));
 
-  const hasFilters =
-    (!fixedCategory && !!category) ||
-    !!minPrice ||
-    !!maxPrice ||
-    sizes.length > 0 ||
-    colors.length > 0 ||
-    inStock;
+  const hasFilters = (!fixedCategory && !!category) || !!minPrice || !!maxPrice;
 
   function clearFilters() {
     if (!fixedCategory) setCategory("");
     setMinPrice("");
     setMaxPrice("");
-    setSizes([]);
-    setColors([]);
-    setInStock(false);
-    setPage(1);
-  }
-
-  function toggle(list: string[], value: string, setter: (v: string[]) => void) {
-    setter(list.includes(value) ? list.filter((x) => x !== value) : [...list, value]);
     setPage(1);
   }
 
   const filterPanel = (
     <div className="space-y-7">
+      <FilterGroup title="দামের রেঞ্জ">
+        <div className="flex items-center gap-2">
+          <Input
+            inputMode="numeric"
+            placeholder="সর্বনিম্ন"
+            value={minPrice}
+            onChange={(e) => {
+              setMinPrice(e.target.value.replace(/\D/g, ""));
+              setPage(1);
+            }}
+          />
+          <span className="shrink-0 text-muted-foreground">—</span>
+          <Input
+            inputMode="numeric"
+            placeholder="সর্বোচ্চ"
+            value={maxPrice}
+            onChange={(e) => {
+              setMaxPrice(e.target.value.replace(/\D/g, ""));
+              setPage(1);
+            }}
+          />
+        </div>
+      </FilterGroup>
+
       {!hideCategoryFilter && (
         <FilterGroup title="ক্যাটাগরি">
           <div className="space-y-2">
@@ -123,82 +123,6 @@ export function ShopBrowser({
           </div>
         </FilterGroup>
       )}
-
-      <FilterGroup title="দামের রেঞ্জ">
-        <div className="flex items-center gap-2">
-          <Input
-            inputMode="numeric"
-            placeholder="সর্বনিম্ন"
-            value={minPrice}
-            onChange={(e) => {
-              setMinPrice(e.target.value.replace(/\D/g, ""));
-              setPage(1);
-            }}
-          />
-          <span className="text-muted-foreground">—</span>
-          <Input
-            inputMode="numeric"
-            placeholder="সর্বোচ্চ"
-            value={maxPrice}
-            onChange={(e) => {
-              setMaxPrice(e.target.value.replace(/\D/g, ""));
-              setPage(1);
-            }}
-          />
-        </div>
-      </FilterGroup>
-
-      <FilterGroup title="সাইজ">
-        <div className="flex flex-wrap gap-2">
-          {SIZES.map((s) => (
-            <button
-              key={s}
-              onClick={() => toggle(sizes, s, setSizes)}
-              className={`rounded-md border px-3 py-1.5 text-xs transition-colors ${
-                sizes.includes(s)
-                  ? "border-primary bg-primary text-primary-foreground"
-                  : "border-border text-muted-foreground hover:border-primary"
-              }`}
-            >
-              {s}
-            </button>
-          ))}
-        </div>
-      </FilterGroup>
-
-      <FilterGroup title="রঙ">
-        <div className="flex flex-wrap gap-2">
-          {COLORS.map((c) => (
-            <button
-              key={c}
-              onClick={() => toggle(colors, c, setColors)}
-              className={`rounded-md border px-3 py-1.5 text-xs transition-colors ${
-                colors.includes(c)
-                  ? "border-primary bg-primary text-primary-foreground"
-                  : "border-border text-muted-foreground hover:border-primary"
-              }`}
-            >
-              {c}
-            </button>
-          ))}
-        </div>
-      </FilterGroup>
-
-      <FilterGroup title="স্টক">
-        <div className="flex items-center gap-2">
-          <Checkbox
-            id="in-stock"
-            checked={inStock}
-            onCheckedChange={(v) => {
-              setInStock(Boolean(v));
-              setPage(1);
-            }}
-          />
-          <Label htmlFor="in-stock" className="text-sm font-normal">
-            শুধু স্টকে থাকা পণ্য
-          </Label>
-        </div>
-      </FilterGroup>
 
       {hasFilters && (
         <Button variant="ghost" size="sm" onClick={clearFilters} className="w-full">
