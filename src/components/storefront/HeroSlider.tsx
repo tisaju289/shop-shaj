@@ -15,8 +15,8 @@ export function HeroSlider({ slides }: { slides: HeroSlide[] }) {
   if (!slides.length) return null;
 
   return (
-    <section className="relative w-full overflow-hidden border-b border-border bg-surface">
-      <div className="container-x relative">
+    <section className="container-x section-py">
+      <div className="overflow-hidden rounded-2xl border border-border bg-surface relative">
         {slides.map((slide, i) => (
           <div
             key={slide.id}
