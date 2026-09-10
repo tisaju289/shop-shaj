@@ -22,7 +22,7 @@ const NAV = [
 
 export function Header() {
   const settings = useSettings();
-  const cart = useCart();
+  
   const wishlist = useWishlist();
   const navigate = useNavigate();
   const [searchOpen, setSearchOpen] = useState(false);
