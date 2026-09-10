@@ -93,15 +93,15 @@ export function Header() {
         </Link>
 
         <nav className="mx-auto hidden items-center gap-1 lg:flex">
-          {NAV.map((item) => (
-            <Link
-              key={item.to}
-              to={item.to}
+          {nav.map((item) => (
+            <SmartLink
+              key={item.url + item.label}
+              to={item.url}
               className="rounded-md px-3 py-2 text-[15px] font-medium text-foreground/80 transition-colors hover:text-primary"
-              activeProps={{ className: "text-primary" }}
+              activeClassName="text-primary"
             >
               {item.label}
-            </Link>
+            </SmartLink>
           ))}
         </nav>
 
