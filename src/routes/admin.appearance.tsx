@@ -1,17 +1,40 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { createFileRoute } from "@tanstack/react-router";
-import { Plus, Save, Trash2 } from "lucide-react";
-import { useEffect, useState } from "react";
+import { Pencil, Plus, Save, Trash2 } from "lucide-react";
+import { useState } from "react";
 import { toast } from "sonner";
 
 import { AdminHeading } from "@/components/admin/AdminShell";
 import { MediaInput } from "@/components/admin/MediaInput";
+import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Switch } from "@/components/ui/switch";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Textarea } from "@/components/ui/textarea";
 import { supabase } from "@/integrations/supabase/client";
@@ -48,11 +71,77 @@ function AppearancePage() {
   );
 }
 
+/* ---------------- shared ---------------- */
+
+function Field({
+  label,
+  value,
+  onChange,
+  type = "text",
+}: {
+  label: string;
+  value: string;
+  onChange: (value: string) => void;
+  type?: string;
+}) {
+  return (
+    <div className="space-y-1.5">
+      <Label>{label}</Label>
+      <Input type={type} value={value} onChange={(e) => onChange(e.target.value)} />
+    </div>
+  );
+}
+
+function StatusBadge({ active }: { active: boolean }) {
+  return (
+    <Badge variant={active ? "default" : "secondary"}>{active ? "সক্রিয়" : "নিষ্ক্রিয়"}</Badge>
+  );
+}
+
+function Thumb({ url }: { url: string | null }) {
+  if (!url) return <div className="size-12 rounded-md bg-accent" />;
+  return (
+    <img
+      src={url}
+      alt=""
+      loading="lazy"
+      className="size-12 rounded-md object-cover"
+    />
+  );
+}
+
+function TableToolbar({ label, onAdd }: { label: string; onAdd: () => void }) {
+  return (
+    <div className="mb-4 flex justify-end">
+      <Button onClick={onAdd}>
+        <Plus className="size-4" /> {label}
+      </Button>
+    </div>
+  );
+}
+
 /* ---------------- Hero slides ---------------- */
+
+const emptySlide = (order: number): HeroSlide => ({
+  id: "new",
+  subtitle: "",
+  heading: "নতুন স্লাইড",
+  description: "",
+  cta_text: "",
+  cta_url: "",
+  secondary_cta_text: "",
+  secondary_cta_url: "",
+  image_url: null,
+  mobile_image_url: null,
+  overlay_opacity: 0,
+  is_active: true,
+  sort_order: order,
+});
 
 function HeroTab() {
   const qc = useQueryClient();
-  const { data, isLoading } = useQuery({
+  const [editing, setEditing] = useState<HeroSlide | null>(null);
+  const { data = [], isLoading } = useQuery({
     queryKey: ["admin", "hero-slides"],
     queryFn: async (): Promise<HeroSlide[]> => {
       const { data, error } = await supabase.from("hero_slides").select("*").order("sort_order");
@@ -60,10 +149,11 @@ function HeroTab() {
       return (data ?? []) as HeroSlide[];
     },
   });
-  const [slides, setSlides] = useState<HeroSlide[]>([]);
-  useEffect(() => {
-    if (data) setSlides(data);
-  }, [data]);
+
+  const invalidate = () => {
+    void qc.invalidateQueries({ queryKey: ["admin", "hero-slides"] });
+    void qc.invalidateQueries({ queryKey: ["hero-slides"] });
+  };
 
   const save = useMutation({
     mutationFn: async (slide: HeroSlide) => {
@@ -81,153 +171,206 @@ function HeroTab() {
         is_active: slide.is_active,
         sort_order: Number(slide.sort_order),
       };
-      const { error } = slide.id.startsWith("new-")
-        ? await supabase.from("hero_slides").insert(payload)
-        : await supabase.from("hero_slides").update(payload).eq("id", slide.id);
+      const { error } =
+        slide.id === "new"
+          ? await supabase.from("hero_slides").insert(payload)
+          : await supabase.from("hero_slides").update(payload).eq("id", slide.id);
       if (error) throw error;
     },
     onSuccess: () => {
       toast.success("স্লাইড সংরক্ষণ হয়েছে");
-      void qc.invalidateQueries({ queryKey: ["admin", "hero-slides"] });
-      void qc.invalidateQueries({ queryKey: ["hero-slides"] });
+      setEditing(null);
+      invalidate();
     },
     onError: () => toast.error("সংরক্ষণ করা যায়নি"),
   });
 
   const remove = useMutation({
     mutationFn: async (id: string) => {
-      if (id.startsWith("new-")) return;
       const { error } = await supabase.from("hero_slides").delete().eq("id", id);
       if (error) throw error;
     },
     onSuccess: () => {
       toast.success("স্লাইড মুছে ফেলা হয়েছে");
-      void qc.invalidateQueries({ queryKey: ["admin", "hero-slides"] });
-      void qc.invalidateQueries({ queryKey: ["hero-slides"] });
+      invalidate();
     },
+    onError: () => toast.error("মুছে ফেলা যায়নি"),
+  });
+
+  const toggle = useMutation({
+    mutationFn: async ({ id, value }: { id: string; value: boolean }) => {
+      const { error } = await supabase.from("hero_slides").update({ is_active: value }).eq("id", id);
+      if (error) throw error;
+    },
+    onSuccess: invalidate,
   });
 
   if (isLoading) return <Skeleton className="h-64 w-full rounded-lg" />;
 
-  const update = (id: string, patch: Partial<HeroSlide>) =>
-    setSlides((list) => list.map((s) => (s.id === id ? { ...s, ...patch } : s)));
+  const patch = (p: Partial<HeroSlide>) => setEditing((s) => (s ? { ...s, ...p } : s));
 
   return (
-    <div className="space-y-5">
-      <Button
-        variant="outline"
-        onClick={() =>
-          setSlides((list) => [
-            ...list,
-            {
-              id: `new-${Date.now()}`,
-              subtitle: "",
-              heading: "নতুন স্লাইড",
-              description: "",
-              cta_text: "শপিং করুন",
-              cta_url: "/shop",
-              secondary_cta_text: "",
-              secondary_cta_url: "",
-              image_url: null,
-              mobile_image_url: null,
-              overlay_opacity: 0.35,
-              is_active: true,
-              sort_order: list.length,
-            },
-          ])
-        }
-      >
-        <Plus className="size-4" /> নতুন স্লাইড
-      </Button>
+    <div>
+      <TableToolbar label="নতুন স্লাইড" onAdd={() => setEditing(emptySlide(data.length))} />
+      <div className="overflow-x-auto rounded-lg border border-border bg-card">
+        <Table>
+          <TableHeader>
+            <TableRow>
+              <TableHead>ছবি</TableHead>
+              <TableHead>শিরোনাম</TableHead>
+              <TableHead>ক্রম</TableHead>
+              <TableHead>অবস্থা</TableHead>
+              <TableHead className="text-right">কাজ</TableHead>
+            </TableRow>
+          </TableHeader>
+          <TableBody>
+            {data.length === 0 && (
+              <TableRow>
+                <TableCell colSpan={5} className="py-10 text-center text-muted-foreground">
+                  এখনও কোনো স্লাইড নেই
+                </TableCell>
+              </TableRow>
+            )}
+            {data.map((s) => (
+              <TableRow key={s.id}>
+                <TableCell>
+                  <Thumb url={s.image_url} />
+                </TableCell>
+                <TableCell className="font-medium">{s.heading || "স্লাইড"}</TableCell>
+                <TableCell>{s.sort_order}</TableCell>
+                <TableCell>
+                  <div className="flex items-center gap-2">
+                    <Switch
+                      checked={s.is_active}
+                      onCheckedChange={(v) => toggle.mutate({ id: s.id, value: v })}
+                    />
+                    <StatusBadge active={s.is_active} />
+                  </div>
+                </TableCell>
+                <TableCell>
+                  <div className="flex justify-end gap-2">
+                    <Button size="icon" variant="outline" aria-label="সম্পাদনা" onClick={() => setEditing(s)}>
+                      <Pencil className="size-4" />
+                    </Button>
+                    <Button
+                      size="icon"
+                      variant="outline"
+                      aria-label="মুছে ফেলুন"
+                      onClick={() => remove.mutate(s.id)}
+                    >
+                      <Trash2 className="size-4 text-destructive" />
+                    </Button>
+                  </div>
+                </TableCell>
+              </TableRow>
+            ))}
+          </TableBody>
+        </Table>
+      </div>
 
-      {slides.map((s) => (
-        <Card key={s.id}>
-          <CardHeader className="flex flex-row items-center justify-between">
-            <CardTitle className="text-base">{s.heading || "স্লাইড"}</CardTitle>
-            <div className="flex items-center gap-2">
-              <Switch
-                checked={s.is_active}
-                onCheckedChange={(v) => update(s.id, { is_active: v })}
-              />
-              <Button size="sm" onClick={() => save.mutate(s)}>
-                <Save className="size-4" /> সংরক্ষণ
-              </Button>
-              <Button
-                size="icon"
-                variant="outline"
-                aria-label="মুছে ফেলুন"
-                onClick={() => {
-                  setSlides((list) => list.filter((x) => x.id !== s.id));
-                  remove.mutate(s.id);
-                }}
-              >
-                <Trash2 className="size-4 text-destructive" />
-              </Button>
-            </div>
-          </CardHeader>
-          <CardContent className="grid gap-4 md:grid-cols-2">
-            <div className="space-y-4">
-              <Field label="উপরের ছোট লেখা" value={s.subtitle ?? ""} onChange={(v) => update(s.id, { subtitle: v })} />
-              <Field label="প্রধান শিরোনাম" value={s.heading} onChange={(v) => update(s.id, { heading: v })} />
-              <div className="space-y-1.5">
-                <Label>বিবরণ</Label>
-                <Textarea
-                  rows={3}
-                  value={s.description ?? ""}
-                  onChange={(e) => update(s.id, { description: e.target.value })}
+      <Dialog open={!!editing} onOpenChange={(o) => !o && setEditing(null)}>
+        <DialogContent className="max-h-[85vh] overflow-y-auto sm:max-w-3xl">
+          <DialogHeader>
+            <DialogTitle>{editing?.id === "new" ? "নতুন স্লাইড" : "স্লাইড সম্পাদনা"}</DialogTitle>
+            <DialogDescription>হিরো স্লাইডের ছবি ও তথ্য নির্ধারণ করুন</DialogDescription>
+          </DialogHeader>
+          {editing && (
+            <div className="grid gap-4 md:grid-cols-2">
+              <div className="space-y-4">
+                <Field
+                  label="উপরের ছোট লেখা"
+                  value={editing.subtitle ?? ""}
+                  onChange={(v) => patch({ subtitle: v })}
+                />
+                <Field
+                  label="প্রধান শিরোনাম"
+                  value={editing.heading}
+                  onChange={(v) => patch({ heading: v })}
+                />
+                <div className="space-y-1.5">
+                  <Label>বিবরণ</Label>
+                  <Textarea
+                    rows={3}
+                    value={editing.description ?? ""}
+                    onChange={(e) => patch({ description: e.target.value })}
+                  />
+                </div>
+                <div className="grid gap-3 sm:grid-cols-2">
+                  <Field
+                    label="বাটনের লেখা"
+                    value={editing.cta_text ?? ""}
+                    onChange={(v) => patch({ cta_text: v })}
+                  />
+                  <Field
+                    label="বাটনের লিংক"
+                    value={editing.cta_url ?? ""}
+                    onChange={(v) => patch({ cta_url: v })}
+                  />
+                  <Field
+                    label="ক্রম"
+                    type="number"
+                    value={String(editing.sort_order)}
+                    onChange={(v) => patch({ sort_order: Number(v || 0) })}
+                  />
+                  <div className="flex items-center gap-2 pb-1 pt-6">
+                    <Switch
+                      checked={editing.is_active}
+                      onCheckedChange={(v) => patch({ is_active: v })}
+                    />
+                    <Label className="font-normal">সক্রিয়</Label>
+                  </div>
+                </div>
+              </div>
+              <div className="space-y-4">
+                <MediaInput
+                  label="ডেস্কটপ ছবি (১৬:৫)"
+                  folder="hero"
+                  value={editing.image_url}
+                  onChange={(url) => patch({ image_url: url })}
+                />
+                <MediaInput
+                  label="মোবাইল ছবি (১৬:৯)"
+                  folder="hero"
+                  value={editing.mobile_image_url}
+                  onChange={(url) => patch({ mobile_image_url: url })}
                 />
               </div>
-              <div className="grid gap-3 sm:grid-cols-2">
-                <Field label="বাটনের লেখা" value={s.cta_text ?? ""} onChange={(v) => update(s.id, { cta_text: v })} />
-                <Field label="বাটনের লিংক" value={s.cta_url ?? ""} onChange={(v) => update(s.id, { cta_url: v })} />
-                <Field
-                  label="দ্বিতীয় বাটনের লেখা"
-                  value={s.secondary_cta_text ?? ""}
-                  onChange={(v) => update(s.id, { secondary_cta_text: v })}
-                />
-                <Field
-                  label="দ্বিতীয় বাটনের লিংক"
-                  value={s.secondary_cta_url ?? ""}
-                  onChange={(v) => update(s.id, { secondary_cta_url: v })}
-                />
-                <Field
-                  label="ক্রম"
-                  value={String(s.sort_order)}
-                  onChange={(v) => update(s.id, { sort_order: Number(v || 0) })}
-                />
-                <Field
-                  label="ছবির উপর ছায়া (০-১)"
-                  value={String(s.overlay_opacity)}
-                  onChange={(v) => update(s.id, { overlay_opacity: Number(v || 0) })}
-                />
-              </div>
             </div>
-            <div className="space-y-4">
-              <MediaInput
-                label="ডেস্কটপ ছবি"
-                folder="hero"
-                value={s.image_url}
-                onChange={(url) => update(s.id, { image_url: url })}
-              />
-              <MediaInput
-                label="মোবাইল ছবি"
-                folder="hero"
-                value={s.mobile_image_url}
-                onChange={(url) => update(s.id, { mobile_image_url: url })}
-              />
-            </div>
-          </CardContent>
-        </Card>
-      ))}
+          )}
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setEditing(null)}>
+              বাতিল
+            </Button>
+            <Button disabled={save.isPending} onClick={() => editing && save.mutate(editing)}>
+              <Save className="size-4" /> সংরক্ষণ
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }
 
 /* ---------------- Promo banners ---------------- */
 
+const emptyBanner = (order: number): PromoBanner => ({
+  id: "new",
+  title: "নতুন ব্যানার",
+  subtitle: "",
+  image_url: null,
+  mobile_image_url: null,
+  cta_text: "দেখুন",
+  cta_url: "/offers",
+  starts_at: null,
+  ends_at: null,
+  is_active: true,
+  sort_order: order,
+});
+
 function BannerTab() {
   const qc = useQueryClient();
-  const { data, isLoading } = useQuery({
+  const [editing, setEditing] = useState<PromoBanner | null>(null);
+  const { data = [], isLoading } = useQuery({
     queryKey: ["admin", "banners"],
     queryFn: async (): Promise<PromoBanner[]> => {
       const { data, error } = await supabase
@@ -238,10 +381,11 @@ function BannerTab() {
       return (data ?? []) as PromoBanner[];
     },
   });
-  const [banners, setBanners] = useState<PromoBanner[]>([]);
-  useEffect(() => {
-    if (data) setBanners(data);
-  }, [data]);
+
+  const invalidate = () => {
+    void qc.invalidateQueries({ queryKey: ["admin", "banners"] });
+    void qc.invalidateQueries({ queryKey: ["promo-banners"] });
+  };
 
   const save = useMutation({
     mutationFn: async (b: PromoBanner) => {
@@ -257,148 +401,246 @@ function BannerTab() {
         is_active: b.is_active,
         sort_order: Number(b.sort_order),
       };
-      const { error } = b.id.startsWith("new-")
-        ? await supabase.from("promotional_banners").insert(payload)
-        : await supabase.from("promotional_banners").update(payload).eq("id", b.id);
+      const { error } =
+        b.id === "new"
+          ? await supabase.from("promotional_banners").insert(payload)
+          : await supabase.from("promotional_banners").update(payload).eq("id", b.id);
       if (error) throw error;
     },
     onSuccess: () => {
       toast.success("ব্যানার সংরক্ষণ হয়েছে");
-      void qc.invalidateQueries({ queryKey: ["admin", "banners"] });
-      void qc.invalidateQueries({ queryKey: ["promo-banners"] });
+      setEditing(null);
+      invalidate();
     },
     onError: () => toast.error("সংরক্ষণ করা যায়নি"),
   });
 
   const remove = useMutation({
     mutationFn: async (id: string) => {
-      if (id.startsWith("new-")) return;
       const { error } = await supabase.from("promotional_banners").delete().eq("id", id);
       if (error) throw error;
     },
     onSuccess: () => {
-      void qc.invalidateQueries({ queryKey: ["admin", "banners"] });
-      void qc.invalidateQueries({ queryKey: ["promo-banners"] });
+      toast.success("ব্যানার মুছে ফেলা হয়েছে");
+      invalidate();
     },
+    onError: () => toast.error("মুছে ফেলা যায়নি"),
+  });
+
+  const toggle = useMutation({
+    mutationFn: async ({ id, value }: { id: string; value: boolean }) => {
+      const { error } = await supabase
+        .from("promotional_banners")
+        .update({ is_active: value })
+        .eq("id", id);
+      if (error) throw error;
+    },
+    onSuccess: invalidate,
   });
 
   if (isLoading) return <Skeleton className="h-64 w-full rounded-lg" />;
 
-  const update = (id: string, patch: Partial<PromoBanner>) =>
-    setBanners((list) => list.map((b) => (b.id === id ? { ...b, ...patch } : b)));
+  const patch = (p: Partial<PromoBanner>) => setEditing((b) => (b ? { ...b, ...p } : b));
 
   return (
-    <div className="space-y-5">
-      <Button
-        variant="outline"
-        onClick={() =>
-          setBanners((list) => [
-            ...list,
-            {
-              id: `new-${Date.now()}`,
-              title: "নতুন ব্যানার",
-              subtitle: "",
-              image_url: null,
-              mobile_image_url: null,
-              cta_text: "দেখুন",
-              cta_url: "/offers",
-              starts_at: null,
-              ends_at: null,
-              is_active: true,
-              sort_order: list.length,
-            },
-          ])
-        }
-      >
-        <Plus className="size-4" /> নতুন ব্যানার
-      </Button>
+    <div>
+      <TableToolbar label="নতুন ব্যানার" onAdd={() => setEditing(emptyBanner(data.length))} />
+      <div className="overflow-x-auto rounded-lg border border-border bg-card">
+        <Table>
+          <TableHeader>
+            <TableRow>
+              <TableHead>ছবি</TableHead>
+              <TableHead>শিরোনাম</TableHead>
+              <TableHead>লিংক</TableHead>
+              <TableHead>ক্রম</TableHead>
+              <TableHead>অবস্থা</TableHead>
+              <TableHead className="text-right">কাজ</TableHead>
+            </TableRow>
+          </TableHeader>
+          <TableBody>
+            {data.length === 0 && (
+              <TableRow>
+                <TableCell colSpan={6} className="py-10 text-center text-muted-foreground">
+                  এখনও কোনো ব্যানার নেই
+                </TableCell>
+              </TableRow>
+            )}
+            {data.map((b) => (
+              <TableRow key={b.id}>
+                <TableCell>
+                  <Thumb url={b.image_url} />
+                </TableCell>
+                <TableCell className="font-medium">{b.title || "ব্যানার"}</TableCell>
+                <TableCell className="text-muted-foreground">{b.cta_url || "—"}</TableCell>
+                <TableCell>{b.sort_order}</TableCell>
+                <TableCell>
+                  <div className="flex items-center gap-2">
+                    <Switch
+                      checked={b.is_active}
+                      onCheckedChange={(v) => toggle.mutate({ id: b.id, value: v })}
+                    />
+                    <StatusBadge active={b.is_active} />
+                  </div>
+                </TableCell>
+                <TableCell>
+                  <div className="flex justify-end gap-2">
+                    <Button size="icon" variant="outline" aria-label="সম্পাদনা" onClick={() => setEditing(b)}>
+                      <Pencil className="size-4" />
+                    </Button>
+                    <Button
+                      size="icon"
+                      variant="outline"
+                      aria-label="মুছে ফেলুন"
+                      onClick={() => remove.mutate(b.id)}
+                    >
+                      <Trash2 className="size-4 text-destructive" />
+                    </Button>
+                  </div>
+                </TableCell>
+              </TableRow>
+            ))}
+          </TableBody>
+        </Table>
+      </div>
 
-      {banners.map((b) => (
-        <Card key={b.id}>
-          <CardHeader className="flex flex-row items-center justify-between">
-            <CardTitle className="text-base">{b.title || "ব্যানার"}</CardTitle>
-            <div className="flex items-center gap-2">
-              <Switch checked={b.is_active} onCheckedChange={(v) => update(b.id, { is_active: v })} />
-              <Button size="sm" onClick={() => save.mutate(b)}>
-                <Save className="size-4" /> সংরক্ষণ
-              </Button>
-              <Button
-                size="icon"
-                variant="outline"
-                aria-label="মুছে ফেলুন"
-                onClick={() => {
-                  setBanners((list) => list.filter((x) => x.id !== b.id));
-                  remove.mutate(b.id);
-                }}
-              >
-                <Trash2 className="size-4 text-destructive" />
-              </Button>
-            </div>
-          </CardHeader>
-          <CardContent className="grid gap-4 md:grid-cols-2">
-            <div className="space-y-4">
-              <Field label="শিরোনাম" value={b.title ?? ""} onChange={(v) => update(b.id, { title: v })} />
-              <Field label="সাব-শিরোনাম" value={b.subtitle ?? ""} onChange={(v) => update(b.id, { subtitle: v })} />
-              <div className="grid gap-3 sm:grid-cols-2">
-                <Field label="বাটনের লেখা" value={b.cta_text ?? ""} onChange={(v) => update(b.id, { cta_text: v })} />
-                <Field label="বাটনের লিংক" value={b.cta_url ?? ""} onChange={(v) => update(b.id, { cta_url: v })} />
-                <div className="space-y-1.5">
-                  <Label>শুরুর তারিখ</Label>
-                  <Input
-                    type="date"
-                    value={b.starts_at ? b.starts_at.slice(0, 10) : ""}
-                    onChange={(e) =>
-                      update(b.id, {
-                        starts_at: e.target.value ? new Date(e.target.value).toISOString() : null,
-                      })
-                    }
-                  />
-                </div>
-                <div className="space-y-1.5">
-                  <Label>শেষ তারিখ</Label>
-                  <Input
-                    type="date"
-                    value={b.ends_at ? b.ends_at.slice(0, 10) : ""}
-                    onChange={(e) =>
-                      update(b.id, {
-                        ends_at: e.target.value ? new Date(e.target.value).toISOString() : null,
-                      })
-                    }
-                  />
-                </div>
+      <Dialog open={!!editing} onOpenChange={(o) => !o && setEditing(null)}>
+        <DialogContent className="max-h-[85vh] overflow-y-auto sm:max-w-3xl">
+          <DialogHeader>
+            <DialogTitle>{editing?.id === "new" ? "নতুন ব্যানার" : "ব্যানার সম্পাদনা"}</DialogTitle>
+            <DialogDescription>প্রোমো ব্যানারের ছবি ও তথ্য নির্ধারণ করুন</DialogDescription>
+          </DialogHeader>
+          {editing && (
+            <div className="grid gap-4 md:grid-cols-2">
+              <div className="space-y-4">
                 <Field
-                  label="ক্রম"
-                  value={String(b.sort_order)}
-                  onChange={(v) => update(b.id, { sort_order: Number(v || 0) })}
+                  label="শিরোনাম"
+                  value={editing.title ?? ""}
+                  onChange={(v) => patch({ title: v })}
+                />
+                <Field
+                  label="সাব-শিরোনাম"
+                  value={editing.subtitle ?? ""}
+                  onChange={(v) => patch({ subtitle: v })}
+                />
+                <div className="grid gap-3 sm:grid-cols-2">
+                  <Field
+                    label="বাটনের লেখা"
+                    value={editing.cta_text ?? ""}
+                    onChange={(v) => patch({ cta_text: v })}
+                  />
+                  <Field
+                    label="বাটনের লিংক"
+                    value={editing.cta_url ?? ""}
+                    onChange={(v) => patch({ cta_url: v })}
+                  />
+                  <div className="space-y-1.5">
+                    <Label>শুরুর তারিখ</Label>
+                    <Input
+                      type="date"
+                      value={editing.starts_at ? editing.starts_at.slice(0, 10) : ""}
+                      onChange={(e) =>
+                        patch({
+                          starts_at: e.target.value ? new Date(e.target.value).toISOString() : null,
+                        })
+                      }
+                    />
+                  </div>
+                  <div className="space-y-1.5">
+                    <Label>শেষ তারিখ</Label>
+                    <Input
+                      type="date"
+                      value={editing.ends_at ? editing.ends_at.slice(0, 10) : ""}
+                      onChange={(e) =>
+                        patch({
+                          ends_at: e.target.value ? new Date(e.target.value).toISOString() : null,
+                        })
+                      }
+                    />
+                  </div>
+                  <Field
+                    label="ক্রম"
+                    type="number"
+                    value={String(editing.sort_order)}
+                    onChange={(v) => patch({ sort_order: Number(v || 0) })}
+                  />
+                  <div className="flex items-center gap-2 pb-1 pt-6">
+                    <Switch
+                      checked={editing.is_active}
+                      onCheckedChange={(v) => patch({ is_active: v })}
+                    />
+                    <Label className="font-normal">সক্রিয়</Label>
+                  </div>
+                </div>
+              </div>
+              <div className="space-y-4">
+                <MediaInput
+                  label="ডেস্কটপ ছবি"
+                  folder="banners"
+                  value={editing.image_url}
+                  onChange={(url) => patch({ image_url: url })}
+                />
+                <MediaInput
+                  label="মোবাইল ছবি"
+                  folder="banners"
+                  value={editing.mobile_image_url}
+                  onChange={(url) => patch({ mobile_image_url: url })}
                 />
               </div>
             </div>
-            <div className="space-y-4">
-              <MediaInput
-                label="ডেস্কটপ ছবি"
-                folder="banners"
-                value={b.image_url}
-                onChange={(url) => update(b.id, { image_url: url })}
-              />
-              <MediaInput
-                label="মোবাইল ছবি"
-                folder="banners"
-                value={b.mobile_image_url}
-                onChange={(url) => update(b.id, { mobile_image_url: url })}
-              />
-            </div>
-          </CardContent>
-        </Card>
-      ))}
+          )}
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setEditing(null)}>
+              বাতিল
+            </Button>
+            <Button disabled={save.isPending} onClick={() => editing && save.mutate(editing)}>
+              <Save className="size-4" /> সংরক্ষণ
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }
 
 /* ---------------- Homepage sections ---------------- */
 
+const PRODUCT_FLAGS: { value: string; label: string }[] = [
+  { value: "best_selling", label: "বেস্ট সেলিং পণ্য" },
+  { value: "trending", label: "ট্রেন্ডিং পণ্য" },
+  { value: "hot", label: "হট পণ্য" },
+  { value: "featured", label: "ফিচার্ড পণ্য" },
+  { value: "new", label: "নতুন পণ্য" },
+];
+
+const FIXED_KEYS = ["hero", "categories", "promo_banners", "newsletter"];
+
+const sectionTypeLabel = (s: HomepageSection) => {
+  const fixed: Record<string, string> = {
+    hero: "হিরো স্লাইডার",
+    categories: "ক্যাটাগরি",
+    promo_banners: "প্রোমো ব্যানার",
+    newsletter: "নিউজলেটার",
+  };
+  if (fixed[s.section_key]) return fixed[s.section_key]!;
+  const flag = (s.config?.["flag"] as string | undefined) ?? s.section_key;
+  return PRODUCT_FLAGS.find((f) => f.value === flag)?.label ?? "পণ্য সেকশন";
+};
+
+const emptySection = (order: number): HomepageSection => ({
+  id: "new",
+  section_key: "",
+  title: "নতুন সেকশন",
+  subtitle: "",
+  is_visible: true,
+  sort_order: order,
+  product_limit: 8,
+  config: { flag: "best_selling" },
+});
+
 function SectionsTab() {
   const qc = useQueryClient();
-  const { data, isLoading } = useQuery({
+  const [editing, setEditing] = useState<HomepageSection | null>(null);
+  const { data = [], isLoading } = useQuery({
     queryKey: ["admin", "sections"],
     queryFn: async (): Promise<HomepageSection[]> => {
       const { data, error } = await supabase
@@ -409,103 +651,200 @@ function SectionsTab() {
       return (data ?? []) as HomepageSection[];
     },
   });
-  const [sections, setSections] = useState<HomepageSection[]>([]);
-  useEffect(() => {
-    if (data) setSections(data);
-  }, [data]);
+
+  const invalidate = () => {
+    void qc.invalidateQueries({ queryKey: ["admin", "sections"] });
+    void qc.invalidateQueries({ queryKey: ["homepage-sections"] });
+  };
 
   const save = useMutation({
-    mutationFn: async () => {
-      for (const s of sections) {
+    mutationFn: async (s: HomepageSection) => {
+      const flag = (s.config?.["flag"] as string | undefined) ?? "best_selling";
+      const payload = {
+        title: s.title,
+        subtitle: s.subtitle,
+        is_visible: s.is_visible,
+        sort_order: Number(s.sort_order),
+        product_limit: Number(s.product_limit),
+        config: s.config ?? {},
+      };
+      if (s.id === "new") {
+        const { error } = await supabase.from("homepage_sections").insert({
+          ...payload,
+          section_key: `${flag}_${Date.now().toString(36)}`,
+          config: { flag },
+        });
+        if (error) throw error;
+      } else {
         const { error } = await supabase
           .from("homepage_sections")
-          .update({
-            title: s.title,
-            subtitle: s.subtitle,
-            is_visible: s.is_visible,
-            sort_order: Number(s.sort_order),
-            product_limit: Number(s.product_limit),
-          })
+          .update(payload)
           .eq("id", s.id);
         if (error) throw error;
       }
     },
     onSuccess: () => {
-      toast.success("হোমপেজ সেকশন সংরক্ষণ হয়েছে");
-      void qc.invalidateQueries({ queryKey: ["admin", "sections"] });
-      void qc.invalidateQueries({ queryKey: ["homepage-sections"] });
+      toast.success("সেকশন সংরক্ষণ হয়েছে");
+      setEditing(null);
+      invalidate();
     },
     onError: () => toast.error("সংরক্ষণ করা যায়নি"),
   });
 
+  const remove = useMutation({
+    mutationFn: async (id: string) => {
+      const { error } = await supabase.from("homepage_sections").delete().eq("id", id);
+      if (error) throw error;
+    },
+    onSuccess: () => {
+      toast.success("সেকশন মুছে ফেলা হয়েছে");
+      invalidate();
+    },
+    onError: () => toast.error("মুছে ফেলা যায়নি"),
+  });
+
+  const toggle = useMutation({
+    mutationFn: async ({ id, value }: { id: string; value: boolean }) => {
+      const { error } = await supabase
+        .from("homepage_sections")
+        .update({ is_visible: value })
+        .eq("id", id);
+      if (error) throw error;
+    },
+    onSuccess: invalidate,
+  });
+
   if (isLoading) return <Skeleton className="h-64 w-full rounded-lg" />;
 
-  const update = (id: string, patch: Partial<HomepageSection>) =>
-    setSections((list) => list.map((s) => (s.id === id ? { ...s, ...patch } : s)));
+  const patch = (p: Partial<HomepageSection>) => setEditing((s) => (s ? { ...s, ...p } : s));
+  const isProductSection = editing && !FIXED_KEYS.includes(editing.section_key);
 
   return (
-    <div className="space-y-4">
-      {sections.map((s) => (
-        <Card key={s.id}>
-          <CardContent className="grid gap-4 p-5 md:grid-cols-4">
-            <div className="space-y-1.5">
-              <Label>সেকশন</Label>
-              <Input value={s.section_key} readOnly className="bg-surface" />
-            </div>
-            <Field label="শিরোনাম" value={s.title ?? ""} onChange={(v) => update(s.id, { title: v })} />
-            <Field
-              label="সাব-শিরোনাম"
-              value={s.subtitle ?? ""}
-              onChange={(v) => update(s.id, { subtitle: v })}
-            />
-            <div className="grid grid-cols-3 items-end gap-3">
-              <div className="space-y-1.5">
-                <Label>ক্রম</Label>
-                <Input
+    <div>
+      <TableToolbar label="নতুন সেকশন" onAdd={() => setEditing(emptySection(data.length))} />
+      <div className="overflow-x-auto rounded-lg border border-border bg-card">
+        <Table>
+          <TableHeader>
+            <TableRow>
+              <TableHead>শিরোনাম</TableHead>
+              <TableHead>ধরন</TableHead>
+              <TableHead>ক্রম</TableHead>
+              <TableHead>পণ্য সংখ্যা</TableHead>
+              <TableHead>অবস্থা</TableHead>
+              <TableHead className="text-right">কাজ</TableHead>
+            </TableRow>
+          </TableHeader>
+          <TableBody>
+            {data.map((s) => (
+              <TableRow key={s.id}>
+                <TableCell className="font-medium">{s.title || s.section_key}</TableCell>
+                <TableCell className="text-muted-foreground">{sectionTypeLabel(s)}</TableCell>
+                <TableCell>{s.sort_order}</TableCell>
+                <TableCell>{FIXED_KEYS.includes(s.section_key) ? "—" : s.product_limit}</TableCell>
+                <TableCell>
+                  <div className="flex items-center gap-2">
+                    <Switch
+                      checked={s.is_visible}
+                      onCheckedChange={(v) => toggle.mutate({ id: s.id, value: v })}
+                    />
+                    <StatusBadge active={s.is_visible} />
+                  </div>
+                </TableCell>
+                <TableCell>
+                  <div className="flex justify-end gap-2">
+                    <Button size="icon" variant="outline" aria-label="সম্পাদনা" onClick={() => setEditing(s)}>
+                      <Pencil className="size-4" />
+                    </Button>
+                    <Button
+                      size="icon"
+                      variant="outline"
+                      aria-label="মুছে ফেলুন"
+                      disabled={FIXED_KEYS.includes(s.section_key)}
+                      onClick={() => remove.mutate(s.id)}
+                    >
+                      <Trash2 className="size-4 text-destructive" />
+                    </Button>
+                  </div>
+                </TableCell>
+              </TableRow>
+            ))}
+          </TableBody>
+        </Table>
+      </div>
+
+      <Dialog open={!!editing} onOpenChange={(o) => !o && setEditing(null)}>
+        <DialogContent className="max-h-[85vh] overflow-y-auto sm:max-w-xl">
+          <DialogHeader>
+            <DialogTitle>{editing?.id === "new" ? "নতুন সেকশন" : "সেকশন সম্পাদনা"}</DialogTitle>
+            <DialogDescription>হোমপেজে এই সেকশন কীভাবে দেখাবে তা নির্ধারণ করুন</DialogDescription>
+          </DialogHeader>
+          {editing && (
+            <div className="space-y-4">
+              {editing.id === "new" && (
+                <div className="space-y-1.5">
+                  <Label>সেকশনের ধরন</Label>
+                  <Select
+                    value={(editing.config?.["flag"] as string) ?? "best_selling"}
+                    onValueChange={(v) => patch({ config: { ...editing.config, flag: v } })}
+                  >
+                    <SelectTrigger>
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {PRODUCT_FLAGS.map((f) => (
+                        <SelectItem key={f.value} value={f.value}>
+                          {f.label}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </div>
+              )}
+              <Field
+                label="শিরোনাম"
+                value={editing.title ?? ""}
+                onChange={(v) => patch({ title: v })}
+              />
+              <Field
+                label="সাব-শিরোনাম"
+                value={editing.subtitle ?? ""}
+                onChange={(v) => patch({ subtitle: v })}
+              />
+              <div className="grid gap-3 sm:grid-cols-2">
+                <Field
+                  label="ক্রম"
                   type="number"
-                  value={s.sort_order}
-                  onChange={(e) => update(s.id, { sort_order: Number(e.target.value || 0) })}
+                  value={String(editing.sort_order)}
+                  onChange={(v) => patch({ sort_order: Number(v || 0) })}
                 />
+                {(isProductSection || editing.id === "new") && (
+                  <Field
+                    label="পণ্য সংখ্যা"
+                    type="number"
+                    value={String(editing.product_limit)}
+                    onChange={(v) => patch({ product_limit: Number(v || 0) })}
+                  />
+                )}
               </div>
-              <div className="space-y-1.5">
-                <Label>পণ্য সংখ্যা</Label>
-                <Input
-                  type="number"
-                  value={s.product_limit}
-                  onChange={(e) => update(s.id, { product_limit: Number(e.target.value || 0) })}
-                />
-              </div>
-              <div className="flex items-center gap-2 pb-2">
+              <div className="flex items-center gap-2">
                 <Switch
-                  checked={s.is_visible}
-                  onCheckedChange={(v) => update(s.id, { is_visible: v })}
+                  checked={editing.is_visible}
+                  onCheckedChange={(v) => patch({ is_visible: v })}
                 />
-                <Label className="font-normal">দেখাও</Label>
+                <Label className="font-normal">হোমপেজে দেখাও</Label>
               </div>
             </div>
-          </CardContent>
-        </Card>
-      ))}
-      <Button disabled={save.isPending} onClick={() => save.mutate()}>
-        <Save className="size-4" /> সব সংরক্ষণ করুন
-      </Button>
-    </div>
-  );
-}
-
-function Field({
-  label,
-  value,
-  onChange,
-}: {
-  label: string;
-  value: string;
-  onChange: (value: string) => void;
-}) {
-  return (
-    <div className="space-y-1.5">
-      <Label>{label}</Label>
-      <Input value={value} onChange={(e) => onChange(e.target.value)} />
+          )}
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setEditing(null)}>
+              বাতিল
+            </Button>
+            <Button disabled={save.isPending} onClick={() => editing && save.mutate(editing)}>
+              <Save className="size-4" /> সংরক্ষণ
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }
