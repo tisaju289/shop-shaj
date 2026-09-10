@@ -116,26 +116,28 @@ function HomePage() {
 
           case "newsletter":
             return (
-              <section key={section.id} className="section-py bg-surface">
-                <div className="container-x max-w-2xl text-center">
-                  <Mail className="mx-auto size-8 text-primary" />
-                  <h2 className="mt-4 text-2xl font-semibold md:text-3xl">
-                    {section.title || "আমাদের সাথে থাকুন"}
-                  </h2>
-                  <p className="mt-3 text-sm text-muted-foreground md:text-base">
-                    {section.subtitle || "নতুন কালেকশন ও অফারের খবর সবার আগে পান।"}
-                  </p>
-                  <div className="mt-6 flex flex-wrap justify-center gap-3">
-                    {settings.facebook_url && (
-                      <Button asChild>
-                        <a href={settings.facebook_url} target="_blank" rel="noreferrer">
-                          ফেসবুকে ফলো করুন
-                        </a>
+              <section key={section.id} className="container-x section-py">
+                <div className="rounded-2xl border border-border bg-surface p-4 md:p-6">
+                  <div className="max-w-2xl text-center mx-auto">
+                    <Mail className="mx-auto size-8 text-primary" />
+                    <h2 className="mt-4 text-2xl font-semibold md:text-3xl">
+                      {section.title || "আমাদের সাথে থাকুন"}
+                    </h2>
+                    <p className="mt-3 text-sm text-muted-foreground md:text-base">
+                      {section.subtitle || "নতুন কালেকশন ও অফারের খবর সবার আগে পান।"}
+                    </p>
+                    <div className="mt-6 flex flex-wrap justify-center gap-3">
+                      {settings.facebook_url && (
+                        <Button asChild>
+                          <a href={settings.facebook_url} target="_blank" rel="noreferrer">
+                            ফেসবুকে ফলো করুন
+                          </a>
+                        </Button>
+                      )}
+                      <Button asChild variant="outline">
+                        <Link to="/contact">যোগাযোগ করুন</Link>
                       </Button>
-                    )}
-                    <Button asChild variant="outline">
-                      <Link to="/contact">যোগাযোগ করুন</Link>
-                    </Button>
+                    </div>
                   </div>
                 </div>
               </section>
