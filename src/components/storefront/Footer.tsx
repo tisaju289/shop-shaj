@@ -120,7 +120,11 @@ export function Footer() {
               </li>
             )}
           </ul>
-          <p className="mt-5 text-xs text-muted-foreground">পেমেন্ট: ক্যাশ অন ডেলিভারি</p>
+          {settings.footer_payment_text !== "" && (
+            <p className="mt-5 text-xs text-muted-foreground">
+              {settings.footer_payment_text || defaultSettings.footer_payment_text}
+            </p>
+          )}
         </div>
       </div>
 
