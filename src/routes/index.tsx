@@ -71,7 +71,7 @@ function HomePage() {
             return slidesLoading ? (
               <section key={section.id} className="w-full bg-surface">
                 <div className="container-x">
-                  <div className="aspect-[4/3] w-full animate-pulse bg-accent md:aspect-video" />
+                  <div className="aspect-[16/9] w-full animate-pulse bg-accent" />
                 </div>
               </section>
             ) : slides.length ? (
