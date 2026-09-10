@@ -45,47 +45,57 @@ export function Footer() {
         </div>
 
         <div>
-          <h4 className="text-sm font-semibold uppercase tracking-wider">দ্রুত লিংক</h4>
+          <h4 className="text-sm font-semibold uppercase tracking-wider">
+            {settings.footer_quick_links_title || defaultSettings.footer_quick_links_title}
+          </h4>
           <ul className="mt-4 space-y-2.5 text-sm text-muted-foreground">
-            {QUICK_LINKS.map((l) => (
-              <li key={l.to}>
-                <Link to={l.to} className="transition-colors hover:text-primary">
+            {quickLinks.map((l) => (
+              <li key={l.url + l.label}>
+                <SmartLink to={l.url} className="transition-colors hover:text-primary">
                   {l.label}
-                </Link>
+                </SmartLink>
               </li>
             ))}
           </ul>
-          <h4 className="mt-6 text-sm font-semibold uppercase tracking-wider">কাস্টমার সার্ভিস</h4>
+          <h4 className="mt-6 text-sm font-semibold uppercase tracking-wider">
+            {settings.footer_service_links_title || defaultSettings.footer_service_links_title}
+          </h4>
           <ul className="mt-4 space-y-2.5 text-sm text-muted-foreground">
-            {SERVICE_LINKS.map((l) => (
-              <li key={l.to}>
-                <Link to={l.to} className="transition-colors hover:text-primary">
+            {serviceLinks.map((l) => (
+              <li key={l.url + l.label}>
+                <SmartLink to={l.url} className="transition-colors hover:text-primary">
                   {l.label}
-                </Link>
+                </SmartLink>
               </li>
             ))}
           </ul>
         </div>
 
-        <div>
-          <h4 className="text-sm font-semibold uppercase tracking-wider">ক্যাটাগরি</h4>
-          <ul className="mt-4 space-y-2.5 text-sm text-muted-foreground">
-            {categories.slice(0, 8).map((c) => (
-              <li key={c.id}>
-                <Link
-                  to="/category/$slug"
-                  params={{ slug: c.slug }}
-                  className="transition-colors hover:text-primary"
-                >
-                  {c.name}
-                </Link>
-              </li>
-            ))}
-          </ul>
-        </div>
+        {settings.footer_show_categories !== false && (
+          <div>
+            <h4 className="text-sm font-semibold uppercase tracking-wider">
+              {settings.footer_categories_title || defaultSettings.footer_categories_title}
+            </h4>
+            <ul className="mt-4 space-y-2.5 text-sm text-muted-foreground">
+              {categories.slice(0, 8).map((c) => (
+                <li key={c.id}>
+                  <Link
+                    to="/category/$slug"
+                    params={{ slug: c.slug }}
+                    className="transition-colors hover:text-primary"
+                  >
+                    {c.name}
+                  </Link>
+                </li>
+              ))}
+            </ul>
+          </div>
+        )}
 
         <div>
-          <h4 className="text-sm font-semibold uppercase tracking-wider">যোগাযোগ</h4>
+          <h4 className="text-sm font-semibold uppercase tracking-wider">
+            {settings.footer_contact_title || defaultSettings.footer_contact_title}
+          </h4>
           <ul className="mt-4 space-y-3 text-sm text-muted-foreground">
             {settings.phone && (
               <li className="flex items-start gap-2">
