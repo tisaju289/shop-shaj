@@ -39,12 +39,31 @@ export function Header() {
   return (
     <header
       className={cn(
-        "z-50 border-b border-border/70 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/80",
+        "z-50 border-b border-border/70 backdrop-blur",
+        !settings.header_bg_color &&
+          "bg-background/95 supports-[backdrop-filter]:bg-background/80",
         settings.header_sticky !== false && "sticky top-0",
       )}
+      style={{
+        ...(settings.header_bg_color ? { backgroundColor: settings.header_bg_color } : {}),
+        ...(settings.header_text_color ? { color: settings.header_text_color } : {}),
+      }}
     >
       {settings.header_announcement_enabled !== false && (
-        <div className="hidden bg-primary py-2 text-center text-xs text-primary-foreground md:block">
+        <div
+          className={cn(
+            "hidden py-2 text-center text-xs md:block",
+            !settings.header_announcement_bg_color && "bg-primary text-primary-foreground",
+          )}
+          style={{
+            ...(settings.header_announcement_bg_color
+              ? { backgroundColor: settings.header_announcement_bg_color }
+              : {}),
+            ...(settings.header_announcement_text_color
+              ? { color: settings.header_announcement_text_color }
+              : {}),
+          }}
+        >
           <div className="container-x">
             {settings.header_announcement_text || defaultSettings.header_announcement_text}
             {settings.free_delivery_threshold > 0 && (
@@ -61,7 +80,13 @@ export function Header() {
           {settings.logo_url && (
             <img src={settings.logo_url} alt={settings.store_name} className="h-9 w-auto md:h-11" />
           )}
-          <span className="truncate text-lg font-semibold text-primary md:text-xl">
+          <span
+            className={cn(
+              "truncate text-lg font-semibold md:text-xl",
+              !settings.header_text_color && "text-primary",
+            )}
+            style={settings.header_text_color ? { color: settings.header_text_color } : undefined}
+          >
             {settings.store_name}
           </span>
         </Link>

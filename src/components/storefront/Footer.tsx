@@ -6,6 +6,7 @@ import { SmartLink } from "@/components/storefront/SmartLink";
 import { categoriesQuery } from "@/lib/queries";
 import { useSettings } from "@/lib/store-context";
 import { defaultSettings } from "@/lib/types";
+import { cn } from "@/lib/utils";
 
 export function Footer() {
   const settings = useSettings();
@@ -18,10 +19,27 @@ export function Footer() {
     : defaultSettings.footer_service_links;
 
   return (
-    <footer className="mt-12 border-t border-border bg-surface md:mt-16">
+    <footer
+      className={cn(
+        "mt-12 border-t border-border md:mt-16",
+        !settings.footer_bg_color && "bg-surface",
+      )}
+      style={{
+        ...(settings.footer_bg_color ? { backgroundColor: settings.footer_bg_color } : {}),
+        ...(settings.footer_text_color ? { color: settings.footer_text_color } : {}),
+      }}
+    >
       <div className="container-x grid gap-x-5 gap-y-9 py-10 text-center md:grid-cols-2 md:gap-10 md:py-14 lg:grid-cols-4">
         <div className="md:col-span-2 lg:col-span-1">
-          <h3 className="text-lg font-semibold text-primary">{settings.store_name}</h3>
+          <h3
+            className={cn(
+              "text-lg font-semibold",
+              !settings.footer_text_color && "text-primary",
+            )}
+            style={settings.footer_text_color ? { color: settings.footer_text_color } : undefined}
+          >
+            {settings.store_name}
+          </h3>
           <p className="mt-3 text-sm leading-relaxed text-muted-foreground">
             {settings.footer_text || settings.tagline}
           </p>
