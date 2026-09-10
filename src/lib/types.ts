@@ -1,4 +1,21 @@
+export type NavLinkItem = { label: string; url: string };
+
 export type StoreSettings = {
+  header_announcement_enabled: boolean;
+  header_announcement_text: string;
+  header_show_search: boolean;
+  header_show_wishlist: boolean;
+  header_sticky: boolean;
+  header_nav: NavLinkItem[];
+  footer_quick_links_title: string;
+  footer_quick_links: NavLinkItem[];
+  footer_service_links_title: string;
+  footer_service_links: NavLinkItem[];
+  footer_categories_title: string;
+  footer_show_categories: boolean;
+  footer_contact_title: string;
+  footer_payment_text: string;
+  footer_show_social: boolean;
   store_name: string;
   tagline: string;
   logo_url: string;
@@ -33,6 +50,38 @@ export type StoreSettings = {
 };
 
 export const defaultSettings: StoreSettings = {
+  header_announcement_enabled: true,
+  header_announcement_text: "সারা বাংলাদেশে ক্যাশ অন ডেলিভারি",
+  header_show_search: true,
+  header_show_wishlist: true,
+  header_sticky: true,
+  header_nav: [
+    { label: "হোম", url: "/" },
+    { label: "শপ", url: "/shop" },
+    { label: "ক্যাটাগরি", url: "/categories" },
+    { label: "অফার", url: "/offers" },
+    { label: "আমাদের সম্পর্কে", url: "/about" },
+    { label: "যোগাযোগ", url: "/contact" },
+  ],
+  footer_quick_links_title: "দ্রুত লিংক",
+  footer_quick_links: [
+    { label: "শপ", url: "/shop" },
+    { label: "অফার", url: "/offers" },
+    { label: "আমাদের সম্পর্কে", url: "/about" },
+    { label: "যোগাযোগ", url: "/contact" },
+  ],
+  footer_service_links_title: "কাস্টমার সার্ভিস",
+  footer_service_links: [
+    { label: "প্রাইভেসি পলিসি", url: "/privacy" },
+    { label: "শর্তাবলী", url: "/terms" },
+    { label: "রিটার্ন ও রিফান্ড", url: "/returns" },
+    { label: "কার্ট", url: "/cart" },
+  ],
+  footer_categories_title: "ক্যাটাগরি",
+  footer_show_categories: true,
+  footer_contact_title: "যোগাযোগ",
+  footer_payment_text: "পেমেন্ট: ক্যাশ অন ডেলিভারি",
+  footer_show_social: true,
   store_name: "আমার স্টোর",
   tagline: "প্রিমিয়াম বাংলাদেশি ফ্যাশন",
   logo_url: "",

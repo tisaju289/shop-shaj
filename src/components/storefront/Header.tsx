@@ -3,25 +3,20 @@ import { Heart, Menu, Search, X } from "lucide-react";
 import { useEffect, useState } from "react";
 
 import { CartDrawer } from "@/components/storefront/CartDrawer";
+import { SmartLink } from "@/components/storefront/SmartLink";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Sheet, SheetContent, SheetTitle, SheetTrigger } from "@/components/ui/sheet";
 import { pushRecentSearch, readRecentSearches } from "@/lib/recently-viewed";
 import { useSettings } from "@/lib/store-context";
+import { defaultSettings } from "@/lib/types";
 import { cn } from "@/lib/utils";
 import { useWishlist } from "@/lib/wishlist";
 
-const NAV = [
-  { label: "হোম", to: "/" },
-  { label: "শপ", to: "/shop" },
-  { label: "ক্যাটাগরি", to: "/categories" },
-  { label: "অফার", to: "/offers" },
-  { label: "আমাদের সম্পর্কে", to: "/about" },
-  { label: "যোগাযোগ", to: "/contact" },
-] as const;
-
 export function Header() {
   const settings = useSettings();
+  const nav = settings.header_nav?.length ? settings.header_nav : defaultSettings.header_nav;
+
   
   const wishlist = useWishlist();
   const navigate = useNavigate();
@@ -44,14 +39,22 @@ export function Header() {
   }
 
   return (
-    <header className="sticky top-0 z-50 border-b border-border/70 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/80">
-      <div className="hidden bg-primary py-2 text-center text-xs text-primary-foreground md:block">
-        সারা বাংলাদেশে ক্যাশ অন ডেলিভারি
-        {settings.free_delivery_threshold > 0 && (
-          <> · {settings.free_delivery_threshold} টাকার উপরে ফ্রি ডেলিভারি</>
-        )}
-        {settings.phone && <> · হটলাইন: {settings.phone}</>}
-      </div>
+    <header
+      className={cn(
+        "z-50 border-b border-border/70 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/80",
+        settings.header_sticky !== false && "sticky top-0",
+      )}
+    >
+      {settings.header_announcement_enabled !== false && (
+        <div className="hidden bg-primary py-2 text-center text-xs text-primary-foreground md:block">
+          {settings.header_announcement_text || defaultSettings.header_announcement_text}
+          {settings.free_delivery_threshold > 0 && (
+            <> · {settings.free_delivery_threshold} টাকার উপরে ফ্রি ডেলিভারি</>
+          )}
+          {settings.phone && <> · হটলাইন: {settings.phone}</>}
+        </div>
+      )}
+
 
       <div className="container-x flex h-16 items-center gap-3 md:h-20">
         <Sheet open={menuOpen} onOpenChange={setMenuOpen}>
@@ -65,16 +68,16 @@ export function Header() {
               {settings.store_name}
             </SheetTitle>
             <nav className="flex flex-col p-2">
-              {NAV.map((item) => (
-                <Link
-                  key={item.to}
-                  to={item.to}
+              {nav.map((item) => (
+                <SmartLink
+                  key={item.url + item.label}
+                  to={item.url}
                   onClick={() => setMenuOpen(false)}
                   className="rounded-md px-3 py-3 text-[15px] font-medium transition-colors hover:bg-accent"
-                  activeProps={{ className: "text-primary" }}
+                  activeClassName="text-primary"
                 >
                   {item.label}
-                </Link>
+                </SmartLink>
               ))}
             </nav>
           </SheetContent>
@@ -90,33 +93,37 @@ export function Header() {
         </Link>
 
         <nav className="mx-auto hidden items-center gap-1 lg:flex">
-          {NAV.map((item) => (
-            <Link
-              key={item.to}
-              to={item.to}
+          {nav.map((item) => (
+            <SmartLink
+              key={item.url + item.label}
+              to={item.url}
               className="rounded-md px-3 py-2 text-[15px] font-medium text-foreground/80 transition-colors hover:text-primary"
-              activeProps={{ className: "text-primary" }}
+              activeClassName="text-primary"
             >
               {item.label}
-            </Link>
+            </SmartLink>
           ))}
         </nav>
 
         <div className="ml-auto flex items-center gap-0.5 lg:ml-0">
-          <Button
-            variant="ghost"
-            size="icon"
-            aria-label="খুঁজুন"
-            onClick={() => setSearchOpen((v) => !v)}
-          >
-            {searchOpen ? <X className="size-5" /> : <Search className="size-5" />}
-          </Button>
-          <Button variant="ghost" size="icon" aria-label="উইশলিস্ট" asChild>
-            <Link to="/wishlist" className="relative">
-              <Heart className="size-5" />
-              {wishlist.count > 0 && <Badge>{wishlist.count}</Badge>}
-            </Link>
-          </Button>
+          {settings.header_show_search !== false && (
+            <Button
+              variant="ghost"
+              size="icon"
+              aria-label="খুঁজুন"
+              onClick={() => setSearchOpen((v) => !v)}
+            >
+              {searchOpen ? <X className="size-5" /> : <Search className="size-5" />}
+            </Button>
+          )}
+          {settings.header_show_wishlist !== false && (
+            <Button variant="ghost" size="icon" aria-label="উইশলিস্ট" asChild>
+              <Link to="/wishlist" className="relative">
+                <Heart className="size-5" />
+                {wishlist.count > 0 && <Badge>{wishlist.count}</Badge>}
+              </Link>
+            </Button>
+          )}
           <CartDrawer />
         </div>
       </div>

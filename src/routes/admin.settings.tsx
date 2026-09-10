@@ -1,6 +1,6 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { createFileRoute } from "@tanstack/react-router";
-import { Save } from "lucide-react";
+import { ArrowUp, Plus, Save, Trash2 } from "lucide-react";
 import { useEffect, useState } from "react";
 import { toast } from "sonner";
 
@@ -16,7 +16,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Textarea } from "@/components/ui/textarea";
 import { supabase } from "@/integrations/supabase/client";
 import { settingsQuery } from "@/lib/store-context";
-import { defaultSettings, type StoreSettings } from "@/lib/types";
+import { defaultSettings, type NavLinkItem, type StoreSettings } from "@/lib/types";
 
 export const Route = createFileRoute("/admin/settings")({
   component: SettingsPage,
@@ -98,6 +98,7 @@ function SettingsPage() {
       <Tabs defaultValue="general">
         <TabsList className="flex-wrap">
           <TabsTrigger value="general">সাধারণ</TabsTrigger>
+          <TabsTrigger value="headerfooter">হেডার ও ফুটার</TabsTrigger>
           <TabsTrigger value="contact">যোগাযোগ</TabsTrigger>
           <TabsTrigger value="delivery">ডেলিভারি</TabsTrigger>
           <TabsTrigger value="design">ডিজাইন</TabsTrigger>
@@ -132,6 +133,84 @@ function SettingsPage() {
               </div>
             </CardContent>
           </Card>
+        </TabsContent>
+
+        <TabsContent value="headerfooter" className="pt-5">
+          <div className="grid gap-5">
+            <Card>
+              <CardHeader>
+                <CardTitle className="text-base">হেডার</CardTitle>
+              </CardHeader>
+              <CardContent className="grid gap-4">
+                <div className="grid gap-4 md:grid-cols-2">
+                  <ToggleRow
+                    label="উপরের ঘোষণা বার দেখান"
+                    checked={form.header_announcement_enabled !== false}
+                    onChange={(v) => set("header_announcement_enabled", v)}
+                  />
+                  <ToggleRow
+                    label="হেডার স্ক্রলে আটকে থাকবে"
+                    checked={form.header_sticky !== false}
+                    onChange={(v) => set("header_sticky", v)}
+                  />
+                  <ToggleRow
+                    label="সার্চ বাটন দেখান"
+                    checked={form.header_show_search !== false}
+                    onChange={(v) => set("header_show_search", v)}
+                  />
+                  <ToggleRow
+                    label="উইশলিস্ট বাটন দেখান"
+                    checked={form.header_show_wishlist !== false}
+                    onChange={(v) => set("header_show_wishlist", v)}
+                  />
+                </div>
+                {text("header_announcement_text", "ঘোষণার লেখা")}
+                <LinkListEditor
+                  title="মেনু (নেভিগেশন) লিংক"
+                  items={form.header_nav ?? []}
+                  onChange={(items) => set("header_nav", items)}
+                />
+              </CardContent>
+            </Card>
+
+            <Card>
+              <CardHeader>
+                <CardTitle className="text-base">ফুটার</CardTitle>
+              </CardHeader>
+              <CardContent className="grid gap-4">
+                <div className="grid gap-4 md:grid-cols-2">
+                  {text("footer_text", "ফুটারের বর্ণনা")}
+                  {text("copyright_text", "কপিরাইট লেখা")}
+                  {text("footer_payment_text", "পেমেন্ট সংক্রান্ত লেখা")}
+                  {text("footer_contact_title", "যোগাযোগ কলামের শিরোনাম")}
+                  {text("footer_categories_title", "ক্যাটাগরি কলামের শিরোনাম")}
+                  <div />
+                  <ToggleRow
+                    label="ক্যাটাগরি কলাম দেখান"
+                    checked={form.footer_show_categories !== false}
+                    onChange={(v) => set("footer_show_categories", v)}
+                  />
+                  <ToggleRow
+                    label="সোশ্যাল আইকন দেখান"
+                    checked={form.footer_show_social !== false}
+                    onChange={(v) => set("footer_show_social", v)}
+                  />
+                </div>
+                {text("footer_quick_links_title", "দ্রুত লিংক কলামের শিরোনাম")}
+                <LinkListEditor
+                  title="দ্রুত লিংক"
+                  items={form.footer_quick_links ?? []}
+                  onChange={(items) => set("footer_quick_links", items)}
+                />
+                {text("footer_service_links_title", "কাস্টমার সার্ভিস কলামের শিরোনাম")}
+                <LinkListEditor
+                  title="কাস্টমার সার্ভিস লিংক"
+                  items={form.footer_service_links ?? []}
+                  onChange={(items) => set("footer_service_links", items)}
+                />
+              </CardContent>
+            </Card>
+          </div>
         </TabsContent>
 
         <TabsContent value="contact" className="pt-5">
@@ -254,6 +333,98 @@ function SettingsPage() {
         <Button disabled={save.isPending} onClick={() => save.mutate()}>
           <Save className="size-4" /> সংরক্ষণ করুন
         </Button>
+      </div>
+    </div>
+  );
+}
+
+function ToggleRow({
+  label,
+  checked,
+  onChange,
+}: {
+  label: string;
+  checked: boolean;
+  onChange: (v: boolean) => void;
+}) {
+  return (
+    <div className="flex items-center justify-between gap-3 rounded-md border border-border p-3">
+      <Label className="font-normal">{label}</Label>
+      <Switch checked={checked} onCheckedChange={onChange} />
+    </div>
+  );
+}
+
+function LinkListEditor({
+  title,
+  items,
+  onChange,
+}: {
+  title: string;
+  items: NavLinkItem[];
+  onChange: (items: NavLinkItem[]) => void;
+}) {
+  const update = (index: number, patch: Partial<NavLinkItem>) =>
+    onChange(items.map((it, i) => (i === index ? { ...it, ...patch } : it)));
+
+  return (
+    <div className="rounded-md border border-border p-3">
+      <div className="mb-3 flex items-center justify-between gap-3">
+        <Label>{title}</Label>
+        <Button
+          type="button"
+          size="sm"
+          variant="outline"
+          onClick={() => onChange([...items, { label: "", url: "/" }])}
+        >
+          <Plus className="size-4" /> নতুন লিংক
+        </Button>
+      </div>
+      {items.length === 0 && (
+        <p className="text-sm text-muted-foreground">কোনো লিংক নেই।</p>
+      )}
+      <div className="space-y-2">
+        {items.map((item, i) => (
+          <div key={i} className="flex flex-col gap-2 sm:flex-row">
+            <Input
+              value={item.label}
+              placeholder="লেখা (যেমন শপ)"
+              onChange={(e) => update(i, { label: e.target.value })}
+            />
+            <Input
+              value={item.url}
+              placeholder="লিংক (যেমন /shop)"
+              onChange={(e) => update(i, { url: e.target.value })}
+            />
+            <div className="flex gap-1">
+              <Button
+                type="button"
+                variant="ghost"
+                size="icon"
+                aria-label="উপরে"
+                disabled={i === 0}
+                onClick={() => {
+                  const next = [...items];
+                  const prev = next[i - 1]!;
+                  next[i - 1] = next[i]!;
+                  next[i] = prev;
+                  onChange(next);
+                }}
+              >
+                <ArrowUp className="size-4" />
+              </Button>
+              <Button
+                type="button"
+                variant="ghost"
+                size="icon"
+                aria-label="মুছুন"
+                onClick={() => onChange(items.filter((_, idx) => idx !== i))}
+              >
+                <Trash2 className="size-4 text-destructive" />
+              </Button>
+            </div>
+          </div>
+        ))}
       </div>
     </div>
   );
