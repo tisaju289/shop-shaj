@@ -107,8 +107,10 @@ function HomePage() {
 
           case "promo_banners":
             return banners.length ? (
-              <section key={section.id} className="container-x pb-4 md:pb-8">
-                <PromoBannerCarousel banners={banners} />
+              <section key={section.id} className="container-x section-py">
+                <div className="rounded-2xl border border-border bg-surface p-4 md:p-6">
+                  <PromoBannerCarousel banners={banners} />
+                </div>
               </section>
             ) : null;
 
