@@ -105,9 +105,8 @@ export function HeroSlider({ slides }: { slides: HeroSlide[] }) {
 
 export function HeroFallback() {
   return (
-    <section className="grid border-b border-border bg-surface md:grid-cols-2">
-      <div className="aspect-[4/5] bg-gradient-to-br from-accent to-surface md:aspect-auto md:min-h-[480px]" />
-      <div className="flex min-h-[320px] items-center px-6 py-12 md:px-12 lg:px-16">
+    <section className="grid h-[calc(100vh-4rem)] min-h-[520px] grid-rows-[1fr] border-b border-border bg-surface md:grid-rows-1 md:grid-cols-2">
+      <div className="order-2 flex min-h-[320px] items-center px-6 py-10 md:order-1 md:px-12 lg:px-16">
         <div className="mx-auto w-full max-w-xl">
           <p className="eyebrow">নতুন কালেকশন</p>
           <h1 className="mt-3 max-w-2xl text-3xl font-semibold leading-tight text-foreground md:text-5xl">
@@ -123,6 +122,7 @@ export function HeroFallback() {
           </div>
         </div>
       </div>
+      <div className="order-1 h-full min-h-[260px] bg-gradient-to-br from-accent to-surface md:order-2 md:min-h-0" />
     </section>
   );
 }
