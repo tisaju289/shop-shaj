@@ -32,10 +32,11 @@ export function CategoryCard({ category, className }: { category: Category; clas
 }
 
 export function CategoryScroller({ categories }: { categories: Category[] }) {
+  const visible = categories.slice(0, 8);
   return (
     <div className="grid grid-cols-2 gap-3 md:grid-cols-4 md:gap-4">
-      {categories.slice(0, 8).map((c) => (
-        <CategoryCard key={c.id} category={c} />
+      {visible.map((c, i) => (
+        <CategoryCard key={c.id} category={c} className={i >= 4 ? "hidden md:block" : undefined} />
       ))}
     </div>
   );
