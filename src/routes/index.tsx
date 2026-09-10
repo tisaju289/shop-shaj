@@ -194,24 +194,3 @@ function HomePage() {
   );
 }
 
-function Feature({
-  icon,
-  title,
-  children,
-}: {
-  icon: React.ReactNode;
-  title: string;
-  children: React.ReactNode;
-}) {
-  return (
-    <div className="flex flex-col items-center gap-3 text-center sm:flex-row sm:items-start sm:text-left">
-      <span className="grid size-10 shrink-0 place-items-center rounded-full bg-accent text-primary">
-        {icon}
-      </span>
-      <div>
-        <h3 className="text-sm font-semibold">{title}</h3>
-        <p className="mt-1 text-xs text-muted-foreground">{children}</p>
-      </div>
-    </div>
-  );
-}
