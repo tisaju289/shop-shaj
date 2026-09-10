@@ -91,7 +91,7 @@ function HomePage() {
                 {categories.length ? (
                   <>
                     <CategoryScroller categories={categories} />
-                    <div className="mt-7 flex justify-center">
+                    <div className="mt-5 flex justify-center">
                       <Button asChild variant="outline">
                         <Link to="/categories">সব ক্যাটাগরি দেখুন</Link>
                       </Button>
@@ -153,7 +153,7 @@ function HomePage() {
                 ) : products.length ? (
                   <>
                     <ProductCarousel products={products} />
-                    <div className="mt-7 flex justify-center">
+                    <div className="mt-5 flex justify-center">
                       <Button asChild variant="outline">
                         <Link to="/shop">সব দেখুন</Link>
                       </Button>
