@@ -25,7 +25,10 @@ export function Footer() {
           <p className="mt-3 text-sm leading-relaxed text-muted-foreground">
             {settings.footer_text || settings.tagline}
           </p>
-          <div className="mt-5 flex gap-2">
+          <div
+            className="mt-5 flex gap-2"
+            hidden={settings.footer_show_social === false}
+          >
             {settings.facebook_url && (
               <SocialLink href={settings.facebook_url} label="Facebook">
                 <Facebook className="size-4" />
