@@ -5,7 +5,7 @@ import { Mail, ShieldCheck, Truck, Undo2 } from "lucide-react";
 import { CategoryScroller } from "@/components/storefront/CategoryCard";
 import { HeroFallback, HeroSlider } from "@/components/storefront/HeroSlider";
 import { EmptyState, ProductGridSkeleton } from "@/components/storefront/LoadingSkeleton";
-import { ProductCarousel } from "@/components/storefront/ProductCarousel";
+import { ProductCarousel, ProductMarquee } from "@/components/storefront/ProductCarousel";
 import { PromoBannerCarousel } from "@/components/storefront/PromoBanner";
 import { SectionHeading, StoreLayout } from "@/components/storefront/StoreLayout";
 import { Button } from "@/components/ui/button";
