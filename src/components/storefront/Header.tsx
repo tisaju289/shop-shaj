@@ -3,25 +3,20 @@ import { Heart, Menu, Search, X } from "lucide-react";
 import { useEffect, useState } from "react";
 
 import { CartDrawer } from "@/components/storefront/CartDrawer";
+import { SmartLink } from "@/components/storefront/SmartLink";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Sheet, SheetContent, SheetTitle, SheetTrigger } from "@/components/ui/sheet";
 import { pushRecentSearch, readRecentSearches } from "@/lib/recently-viewed";
 import { useSettings } from "@/lib/store-context";
+import { defaultSettings } from "@/lib/types";
 import { cn } from "@/lib/utils";
 import { useWishlist } from "@/lib/wishlist";
 
-const NAV = [
-  { label: "হোম", to: "/" },
-  { label: "শপ", to: "/shop" },
-  { label: "ক্যাটাগরি", to: "/categories" },
-  { label: "অফার", to: "/offers" },
-  { label: "আমাদের সম্পর্কে", to: "/about" },
-  { label: "যোগাযোগ", to: "/contact" },
-] as const;
-
 export function Header() {
   const settings = useSettings();
+  const nav = settings.header_nav?.length ? settings.header_nav : defaultSettings.header_nav;
+
   
   const wishlist = useWishlist();
   const navigate = useNavigate();
