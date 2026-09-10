@@ -22,7 +22,7 @@ import { useSettings } from "@/lib/store-context";
 import { cn } from "@/lib/utils";
 
 type NavItem = {
-  to: "/admin" | "/admin/orders" | "/admin/products" | "/admin/categories" | "/admin/appearance" | "/admin/coupons" | "/admin/reviews" | "/admin/reports" | "/admin/settings";
+  to: "/admin" | "/admin/orders" | "/admin/products" | "/admin/categories" | "/admin/appearance" | "/admin/settings";
   label: string;
   icon: typeof LayoutDashboard;
   exact?: boolean;
