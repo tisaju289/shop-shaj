@@ -18,9 +18,9 @@ export function Footer() {
     : defaultSettings.footer_service_links;
 
   return (
-    <footer className="mt-16 border-t border-border bg-surface">
-      <div className="container-x grid gap-10 py-14 md:grid-cols-2 lg:grid-cols-4">
-        <div>
+    <footer className="mt-12 border-t border-border bg-surface md:mt-16">
+      <div className="container-x grid grid-cols-2 gap-x-5 gap-y-9 py-10 md:gap-10 md:py-14 lg:grid-cols-4">
+        <div className="col-span-2 lg:col-span-1">
           <h3 className="text-lg font-semibold text-primary">{settings.store_name}</h3>
           <p className="mt-3 text-sm leading-relaxed text-muted-foreground">
             {settings.footer_text || settings.tagline}
@@ -47,7 +47,7 @@ export function Footer() {
           </div>
         </div>
 
-        <div>
+        <div className="min-w-0">
           <h4 className="text-sm font-semibold uppercase tracking-wider">
             {settings.footer_quick_links_title || defaultSettings.footer_quick_links_title}
           </h4>
@@ -75,7 +75,7 @@ export function Footer() {
         </div>
 
         {settings.footer_show_categories !== false && (
-          <div>
+          <div className="min-w-0">
             <h4 className="text-sm font-semibold uppercase tracking-wider">
               {settings.footer_categories_title || defaultSettings.footer_categories_title}
             </h4>
@@ -95,7 +95,7 @@ export function Footer() {
           </div>
         )}
 
-        <div>
+        <div className="col-span-2 min-w-0 sm:col-span-1">
           <h4 className="text-sm font-semibold uppercase tracking-wider">
             {settings.footer_contact_title || defaultSettings.footer_contact_title}
           </h4>

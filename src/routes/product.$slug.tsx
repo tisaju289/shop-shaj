@@ -53,7 +53,6 @@ function ProductPage() {
   const [size, setSize] = useState<string | null>(null);
   const [color, setColor] = useState<string | null>(null);
   const [quantity, setQuantity] = useState(1);
-  const [zoom, setZoom] = useState(false);
   const [recentIds, setRecentIds] = useState<string[]>([]);
 
   useEffect(() => {
@@ -186,20 +185,11 @@ function ProductPage() {
 
         <div className="grid gap-8 md:grid-cols-2 md:gap-12">
           <div>
-            <div
-              className={cn(
-                "overflow-hidden rounded-lg bg-surface",
-                zoom ? "cursor-zoom-out" : "cursor-zoom-in",
-              )}
-              onClick={() => setZoom((z) => !z)}
-            >
+            <div className="overflow-hidden rounded-lg bg-surface">
               <img
                 src={images[activeImage] ?? images[0]}
                 alt={product.name}
-                className={cn(
-                  "aspect-[3/4] w-full object-cover transition-transform duration-500",
-                  zoom && "scale-150",
-                )}
+                className="aspect-[3/4] w-full object-cover"
               />
             </div>
             {images.length > 1 && (
@@ -294,9 +284,9 @@ function ProductPage() {
               </div>
             )}
 
-            <div className="mt-6 flex flex-wrap items-center gap-3">
+            <div className="mt-6 grid grid-cols-[auto_minmax(0,1fr)_auto] items-center gap-2 sm:flex sm:flex-wrap sm:gap-3">
               <QuantitySelector value={quantity} max={stock} onChange={setQuantity} />
-              <Button onClick={addToCart} disabled={outOfStock} size="lg" className="flex-1 md:flex-none">
+              <Button onClick={addToCart} disabled={outOfStock} size="lg" className="min-w-0 px-3 sm:flex-1 md:flex-none md:px-6">
                 কার্টে যোগ করুন
               </Button>
               <Button
@@ -304,7 +294,7 @@ function ProductPage() {
                 variant="secondary"
                 size="lg"
                 disabled={outOfStock}
-                className="flex-1 md:flex-none"
+                className="col-span-3 w-full sm:col-span-1 sm:flex-1 md:w-auto md:flex-none"
               >
                 <Link to="/checkout" onClick={addToCart}>
                   এখনই কিনুন

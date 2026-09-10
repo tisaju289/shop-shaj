@@ -71,7 +71,7 @@ function HomePage() {
             return slidesLoading ? (
               <div
                 key={section.id}
-                className="h-[calc(100vh-4rem)] min-h-[520px] animate-pulse bg-surface"
+                className="min-h-[calc(100svh-8rem)] animate-pulse bg-surface md:h-[calc(100vh-5rem)] md:min-h-[520px]"
               />
             ) : slides.length ? (
               <HeroSlider key={section.id} slides={slides} />
