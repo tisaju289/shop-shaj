@@ -196,7 +196,7 @@ function Feature({
   children: React.ReactNode;
 }) {
   return (
-    <div className="flex gap-3">
+    <div className="flex flex-col items-center gap-3 text-center sm:flex-row sm:items-start sm:text-left">
       <span className="grid size-10 shrink-0 place-items-center rounded-full bg-accent text-primary">
         {icon}
       </span>

@@ -30,7 +30,7 @@ export function CartDrawer({ trigger }: { trigger?: ReactNode }) {
         )}
       </SheetTrigger>
       <SheetContent side="right" className="flex w-[92vw] max-w-md flex-col pb-[env(safe-area-inset-bottom)] p-0">
-        <SheetTitle className="border-b border-border px-5 py-4 text-left text-base">
+        <SheetTitle className="border-b border-border px-5 py-4 text-center text-base md:text-left">
           আপনার কার্ট {cart.count > 0 && <>({cart.count})</>}
         </SheetTitle>
 
@@ -52,7 +52,7 @@ export function CartDrawer({ trigger }: { trigger?: ReactNode }) {
                     alt={item.name}
                     className="size-20 shrink-0 rounded-md object-cover"
                   />
-                  <div className="min-w-0 flex-1">
+                   <div className="min-w-0 flex-1 text-center md:text-left">
                     <Link
                       to="/product/$slug"
                       params={{ slug: item.slug }}
@@ -69,7 +69,7 @@ export function CartDrawer({ trigger }: { trigger?: ReactNode }) {
                     <p className="mt-1 text-sm font-semibold">
                       {formatMoney(item.unitPrice * item.quantity, settings.currency)}
                     </p>
-                    <div className="mt-2 flex items-center gap-2">
+                     <div className="mt-2 flex items-center justify-center gap-2 md:justify-start">
                       <QuantitySelector
                         value={item.quantity}
                         max={item.maxStock}
@@ -96,7 +96,7 @@ export function CartDrawer({ trigger }: { trigger?: ReactNode }) {
                   {formatMoney(cart.subtotal, settings.currency)}
                 </span>
               </div>
-              <p className="text-xs text-muted-foreground">
+               <p className="text-center text-xs text-muted-foreground md:text-left">
                 ডেলিভারি চার্জ চেকআউটে যোগ হবে।
               </p>
               <Button asChild size="lg" className="w-full" onClick={() => setOpen(false)}>

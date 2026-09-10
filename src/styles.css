@@ -145,6 +145,17 @@
   }
 }
 
+@media (max-width: 767px) {
+  .mobile-centered-content :where(h1, h2, h3, h4, h5, h6, p, li, label, dt, dd, figcaption, blockquote, input, textarea, select) {
+    text-align: center !important;
+  }
+
+  .mobile-centered-content :where(.prose-bn, [class*="whitespace-pre-line"]) {
+    margin-inline: auto;
+    text-align: center !important;
+  }
+}
+
 @utility hide-scrollbar {
   scrollbar-width: none;
   -ms-overflow-style: none;

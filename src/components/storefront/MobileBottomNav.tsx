@@ -67,12 +67,13 @@ export function MobileBottomNav() {
             </Button>
           </SheetTrigger>
           <SheetContent side="bottom" className="pb-[calc(1.5rem+env(safe-area-inset-bottom))]">
-            <SheetTitle className="text-left">পণ্য খুঁজুন</SheetTitle>
+            <SheetTitle className="text-center">পণ্য খুঁজুন</SheetTitle>
             <form onSubmit={submitSearch} className="mt-5 grid grid-cols-[minmax(0,1fr)_auto] gap-2">
               <Input
                 value={term}
                 onChange={(event) => setTerm(event.target.value)}
                 placeholder="পণ্যের নাম বা কোড"
+                className="text-center"
                 autoFocus={searchOpen}
               />
               <Button type="submit" aria-label="খুঁজুন">
