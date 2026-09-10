@@ -324,12 +324,14 @@ function HeroTab() {
               <div className="space-y-4">
                 <MediaInput
                   label="ডেস্কটপ ছবি (১৬:৫)"
+                  hint="প্রস্তাবিত অনুপাত ১৬:৫ — ১৬০০×৫০০ পিক্সেল"
                   folder="hero"
                   value={editing.image_url}
                   onChange={(url) => patch({ image_url: url })}
                 />
                 <MediaInput
                   label="মোবাইল ছবি (১৬:৯)"
+                  hint="প্রস্তাবিত অনুপাত ১৬:৯ — ৯০০×৫০৬ পিক্সেল"
                   folder="hero"
                   value={editing.mobile_image_url}
                   onChange={(url) => patch({ mobile_image_url: url })}
@@ -575,12 +577,14 @@ function BannerTab() {
               <div className="space-y-4">
                 <MediaInput
                   label="ডেস্কটপ ছবি"
+                  hint="প্রস্তাবিত অনুপাত ১৬:৫ — ১৬০০×৫০০ পিক্সেল"
                   folder="banners"
                   value={editing.image_url}
                   onChange={(url) => patch({ image_url: url })}
                 />
                 <MediaInput
                   label="মোবাইল ছবি"
+                  hint="প্রস্তাবিত অনুপাত ১৬:৯ — ৯০০×৫০৬ পিক্সেল"
                   folder="banners"
                   value={editing.mobile_image_url}
                   onChange={(url) => patch({ mobile_image_url: url })}
