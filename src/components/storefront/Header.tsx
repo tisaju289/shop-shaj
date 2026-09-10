@@ -39,14 +39,22 @@ export function Header() {
   }
 
   return (
-    <header className="sticky top-0 z-50 border-b border-border/70 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/80">
-      <div className="hidden bg-primary py-2 text-center text-xs text-primary-foreground md:block">
-        সারা বাংলাদেশে ক্যাশ অন ডেলিভারি
-        {settings.free_delivery_threshold > 0 && (
-          <> · {settings.free_delivery_threshold} টাকার উপরে ফ্রি ডেলিভারি</>
-        )}
-        {settings.phone && <> · হটলাইন: {settings.phone}</>}
-      </div>
+    <header
+      className={cn(
+        "z-50 border-b border-border/70 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/80",
+        settings.header_sticky !== false && "sticky top-0",
+      )}
+    >
+      {settings.header_announcement_enabled !== false && (
+        <div className="hidden bg-primary py-2 text-center text-xs text-primary-foreground md:block">
+          {settings.header_announcement_text || defaultSettings.header_announcement_text}
+          {settings.free_delivery_threshold > 0 && (
+            <> · {settings.free_delivery_threshold} টাকার উপরে ফ্রি ডেলিভারি</>
+          )}
+          {settings.phone && <> · হটলাইন: {settings.phone}</>}
+        </div>
+      )}
+
 
       <div className="container-x flex h-16 items-center gap-3 md:h-20">
         <Sheet open={menuOpen} onOpenChange={setMenuOpen}>
