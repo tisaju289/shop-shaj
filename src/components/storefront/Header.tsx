@@ -1,11 +1,11 @@
 import { Link, useNavigate } from "@tanstack/react-router";
-import { Heart, Menu, Search, ShoppingBag, X } from "lucide-react";
+import { Heart, Menu, Search, X } from "lucide-react";
 import { useEffect, useState } from "react";
 
+import { CartDrawer } from "@/components/storefront/CartDrawer";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Sheet, SheetContent, SheetTitle, SheetTrigger } from "@/components/ui/sheet";
-import { useCart } from "@/lib/cart";
 import { pushRecentSearch, readRecentSearches } from "@/lib/recently-viewed";
 import { useSettings } from "@/lib/store-context";
 import { cn } from "@/lib/utils";
@@ -22,7 +22,7 @@ const NAV = [
 
 export function Header() {
   const settings = useSettings();
-  const cart = useCart();
+  
   const wishlist = useWishlist();
   const navigate = useNavigate();
   const [searchOpen, setSearchOpen] = useState(false);
@@ -118,12 +118,7 @@ export function Header() {
               {wishlist.count > 0 && <Badge>{wishlist.count}</Badge>}
             </Link>
           </Button>
-          <Button variant="ghost" size="icon" aria-label="কার্ট" asChild>
-            <Link to="/cart" className="relative">
-              <ShoppingBag className="size-5" />
-              {cart.count > 0 && <Badge>{cart.count}</Badge>}
-            </Link>
-          </Button>
+          <CartDrawer />
         </div>
       </div>
 

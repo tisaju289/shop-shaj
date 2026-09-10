@@ -1,26 +1,21 @@
 import { Link, createFileRoute, useNavigate } from "@tanstack/react-router";
+import { Trash2 } from "lucide-react";
 import { useMemo, useState } from "react";
 import { toast } from "sonner";
 
 import { EmptyState } from "@/components/storefront/LoadingSkeleton";
+import { QuantitySelector } from "@/components/storefront/QuantitySelector";
 import { PageHeader, StoreLayout } from "@/components/storefront/StoreLayout";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
 import { supabase } from "@/integrations/supabase/client";
 import { useCart } from "@/lib/cart";
 import { formatMoney } from "@/lib/format";
+import { fallbackImage } from "@/lib/media";
 import { useSettings } from "@/lib/store-context";
-import { DIVISIONS, PAYMENT_METHODS } from "@/lib/types";
 
 export const Route = createFileRoute("/checkout")({
   head: () => ({
@@ -39,20 +34,8 @@ function CheckoutPage() {
   const settings = useSettings();
   const navigate = useNavigate();
 
-  const [form, setForm] = useState({
-    name: "",
-    phone: "",
-    phoneAlt: "",
-    address: "",
-    division: "ঢাকা",
-    district: "",
-    thana: "",
-    note: "",
-  });
+  const [form, setForm] = useState({ name: "", phone: "", address: "" });
   const [zone, setZone] = useState("inside_dhaka");
-  const [paymentMethod, setPaymentMethod] = useState("cod");
-  const [couponCode, setCouponCode] = useState("");
-  const [coupon, setCoupon] = useState<{ code: string; discount: number } | null>(null);
   const [submitting, setSubmitting] = useState(false);
 
   const deliveryCharge = useMemo(() => {
@@ -66,28 +49,7 @@ function CheckoutPage() {
       : settings.delivery_charge_outside;
   }, [zone, cart.subtotal, settings]);
 
-  const discount = coupon?.discount ?? 0;
-  const total = Math.max(0, cart.subtotal - discount) + deliveryCharge;
-
-  async function applyCoupon() {
-    if (!couponCode.trim()) return;
-    const { data, error } = await supabase.rpc("validate_coupon", {
-      _code: couponCode.trim(),
-      _subtotal: cart.subtotal,
-    });
-    if (error) {
-      toast.error("কুপন যাচাই করা যায়নি");
-      return;
-    }
-    const result = data as { valid: boolean; message: string; code?: string; discount?: number };
-    if (!result.valid) {
-      setCoupon(null);
-      toast.error(result.message);
-      return;
-    }
-    setCoupon({ code: result.code ?? couponCode, discount: Number(result.discount ?? 0) });
-    toast.success(result.message);
-  }
+  const total = cart.subtotal + deliveryCharge;
 
   async function placeOrder(e: React.FormEvent) {
     e.preventDefault();
@@ -110,19 +72,13 @@ function CheckoutPage() {
           user_id: session.session?.user.id ?? null,
           customer_name: form.name,
           customer_phone: form.phone,
-          customer_phone_alt: form.phoneAlt || null,
           address: form.address,
-          division: form.division,
-          district: form.district,
-          thana: form.thana,
-          note: form.note || null,
           delivery_zone: zone,
           subtotal: cart.subtotal,
           delivery_charge: deliveryCharge,
-          discount,
-          coupon_code: coupon?.code ?? null,
+          discount: 0,
           total,
-          payment_method: paymentMethod,
+          payment_method: "cod",
         })
         .select("id,order_number")
         .single();
@@ -174,18 +130,60 @@ function CheckoutPage() {
   return (
     <StoreLayout>
       <PageHeader eyebrow="অর্ডার" title="চেকআউট" />
-      <form onSubmit={placeOrder} className="container-x grid gap-8 py-10 lg:grid-cols-[1fr_380px]">
-        <div className="space-y-5 rounded-lg border border-border bg-card p-5 md:p-6">
-          <h2 className="text-base font-semibold">ডেলিভারি তথ্য</h2>
-          <Field label="নাম" required>
-            <Input
-              required
-              value={form.name}
-              onChange={(e) => setForm({ ...form, name: e.target.value })}
-              placeholder="আপনার পূর্ণ নাম"
-            />
-          </Field>
-          <div className="grid gap-5 sm:grid-cols-2">
+      <form onSubmit={placeOrder} className="container-x py-8 md:py-10">
+        <div className="mx-auto max-w-2xl space-y-6 rounded-lg border border-border bg-card p-4 md:p-6">
+          <section>
+            <h2 className="text-base font-semibold">আপনার পণ্য</h2>
+            <ul className="mt-3 divide-y divide-border">
+              {cart.items.map((item) => (
+                <li key={item.key} className="flex gap-3 py-3">
+                  <img
+                    src={item.image || fallbackImage(item.name)}
+                    alt={item.name}
+                    className="size-20 shrink-0 rounded-md object-cover"
+                  />
+                  <div className="min-w-0 flex-1">
+                    <p className="line-clamp-2 text-sm font-medium">{item.name}</p>
+                    {(item.size || item.color) && (
+                      <p className="mt-0.5 text-xs text-muted-foreground">
+                        {[item.size, item.color].filter(Boolean).join(" · ")}
+                      </p>
+                    )}
+                    <div className="mt-2 flex items-center gap-2">
+                      <QuantitySelector
+                        value={item.quantity}
+                        max={item.maxStock}
+                        onChange={(q) => cart.setQuantity(item.key, q)}
+                      />
+                      <Button
+                        type="button"
+                        variant="ghost"
+                        size="icon"
+                        aria-label="সরান"
+                        onClick={() => cart.remove(item.key)}
+                      >
+                        <Trash2 className="size-4" />
+                      </Button>
+                    </div>
+                  </div>
+                  <div className="text-sm font-semibold">
+                    {formatMoney(item.unitPrice * item.quantity, settings.currency)}
+                  </div>
+                </li>
+              ))}
+            </ul>
+          </section>
+
+          <section className="space-y-4 border-t border-border pt-5">
+            <h2 className="text-base font-semibold">আপনার তথ্য</h2>
+            <Field label="নাম" required>
+              <Input
+                required
+                value={form.name}
+                onChange={(e) => setForm({ ...form, name: e.target.value })}
+                placeholder="আপনার পূর্ণ নাম"
+              />
+            </Field>
             <Field label="মোবাইল নম্বর" required>
               <Input
                 required
@@ -195,66 +193,19 @@ function CheckoutPage() {
                 placeholder="01XXXXXXXXX"
               />
             </Field>
-            <Field label="বিকল্প মোবাইল নম্বর">
-              <Input
-                inputMode="tel"
-                value={form.phoneAlt}
-                onChange={(e) => setForm({ ...form, phoneAlt: e.target.value })}
-                placeholder="ঐচ্ছিক"
+            <Field label="বিস্তারিত ঠিকানা" required>
+              <Textarea
+                required
+                rows={3}
+                value={form.address}
+                onChange={(e) => setForm({ ...form, address: e.target.value })}
+                placeholder="বাসা/রোড/এলাকা, থানা, জেলা"
               />
             </Field>
-          </div>
-          <Field label="সম্পূর্ণ ঠিকানা" required>
-            <Textarea
-              required
-              value={form.address}
-              onChange={(e) => setForm({ ...form, address: e.target.value })}
-              placeholder="বাসা/রোড/এলাকা"
-              rows={3}
-            />
-          </Field>
-          <div className="grid gap-5 sm:grid-cols-3">
-            <Field label="বিভাগ">
-              <Select
-                value={form.division}
-                onValueChange={(v) => setForm({ ...form, division: v })}
-              >
-                <SelectTrigger>
-                  <SelectValue />
-                </SelectTrigger>
-                <SelectContent>
-                  {DIVISIONS.map((d) => (
-                    <SelectItem key={d} value={d}>
-                      {d}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-            </Field>
-            <Field label="জেলা">
-              <Input
-                value={form.district}
-                onChange={(e) => setForm({ ...form, district: e.target.value })}
-              />
-            </Field>
-            <Field label="থানা/উপজেলা">
-              <Input
-                value={form.thana}
-                onChange={(e) => setForm({ ...form, thana: e.target.value })}
-              />
-            </Field>
-          </div>
-          <Field label="নোট">
-            <Textarea
-              value={form.note}
-              onChange={(e) => setForm({ ...form, note: e.target.value })}
-              placeholder="বিশেষ কোনো নির্দেশনা থাকলে লিখুন"
-              rows={2}
-            />
-          </Field>
+          </section>
 
-          <div>
-            <h3 className="mb-3 text-sm font-semibold">ডেলিভারি এলাকা</h3>
+          <section className="space-y-3 border-t border-border pt-5">
+            <h2 className="text-base font-semibold">ডেলিভারি এলাকা</h2>
             <RadioGroup value={zone} onValueChange={setZone} className="gap-3">
               <label className="flex items-center gap-3 rounded-md border border-border p-3 text-sm">
                 <RadioGroupItem value="inside_dhaka" />
@@ -265,59 +216,19 @@ function CheckoutPage() {
                 ঢাকার বাইরে — {formatMoney(settings.delivery_charge_outside, settings.currency)}
               </label>
             </RadioGroup>
-          </div>
+          </section>
 
-          <div>
-            <h3 className="mb-3 text-sm font-semibold">পেমেন্ট পদ্ধতি</h3>
-            <RadioGroup value={paymentMethod} onValueChange={setPaymentMethod} className="gap-3">
-              {PAYMENT_METHODS.map((m) => (
-                <label
-                  key={m.value}
-                  className={`flex items-center gap-3 rounded-md border border-border p-3 text-sm ${
-                    m.enabled ? "" : "opacity-50"
-                  }`}
-                >
-                  <RadioGroupItem value={m.value} disabled={!m.enabled} />
-                  {m.label}
-                </label>
-              ))}
-            </RadioGroup>
-          </div>
-        </div>
-
-        <aside className="h-fit space-y-4 rounded-lg border border-border bg-card p-5">
-          <h2 className="text-base font-semibold">আপনার অর্ডার</h2>
-          <ul className="space-y-3 text-sm">
-            {cart.items.map((item) => (
-              <li key={item.key} className="flex justify-between gap-3">
-                <span className="text-muted-foreground">
-                  {item.name} × {item.quantity}
-                </span>
-                <span>{formatMoney(item.unitPrice * item.quantity, settings.currency)}</span>
-              </li>
-            ))}
-          </ul>
-
-          <div className="flex gap-2">
-            <Input
-              value={couponCode}
-              onChange={(e) => setCouponCode(e.target.value)}
-              placeholder="কুপন কোড"
-            />
-            <Button type="button" variant="outline" onClick={applyCoupon}>
-              প্রয়োগ
-            </Button>
-          </div>
-
-          <dl className="space-y-2 border-t border-border pt-4 text-sm">
-            <Row label="সাবটোটাল" value={formatMoney(cart.subtotal, settings.currency)} />
-            {discount > 0 && (
-              <Row label="ডিসকাউন্ট" value={`- ${formatMoney(discount, settings.currency)}`} />
-            )}
-            <Row
-              label="ডেলিভারি চার্জ"
-              value={deliveryCharge === 0 ? "ফ্রি" : formatMoney(deliveryCharge, settings.currency)}
-            />
+          <dl className="space-y-2 border-t border-border pt-5 text-sm">
+            <div className="flex justify-between">
+              <dt className="text-muted-foreground">পণ্যের মূল্য</dt>
+              <dd>{formatMoney(cart.subtotal, settings.currency)}</dd>
+            </div>
+            <div className="flex justify-between">
+              <dt className="text-muted-foreground">ডেলিভারি চার্জ</dt>
+              <dd>
+                {deliveryCharge === 0 ? "ফ্রি" : formatMoney(deliveryCharge, settings.currency)}
+              </dd>
+            </div>
             <div className="flex justify-between border-t border-border pt-2 text-base font-semibold">
               <dt>সর্বমোট</dt>
               <dd>{formatMoney(total, settings.currency)}</dd>
@@ -325,9 +236,10 @@ function CheckoutPage() {
           </dl>
 
           <Button type="submit" size="lg" className="w-full" disabled={submitting}>
-            {submitting ? "অর্ডার জমা হচ্ছে..." : "অর্ডার নিশ্চিত করুন"}
+            {submitting ? "অর্ডার জমা হচ্ছে..." : "অর্ডার করুন"}
           </Button>
-        </aside>
+          <p className="text-center text-xs text-muted-foreground">ক্যাশ অন ডেলিভারি</p>
+        </div>
       </form>
     </StoreLayout>
   );
@@ -349,15 +261,6 @@ function Field({
         {required && <span className="text-destructive"> *</span>}
       </Label>
       {children}
-    </div>
-  );
-}
-
-function Row({ label, value }: { label: string; value: string }) {
-  return (
-    <div className="flex justify-between">
-      <dt className="text-muted-foreground">{label}</dt>
-      <dd>{value}</dd>
     </div>
   );
 }
