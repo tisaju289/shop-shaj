@@ -35,7 +35,7 @@ export function SmartLink({
       to={to as never}
       className={className}
       onClick={onClick}
-      activeProps={activeClassName ? { className: activeClassName } : undefined}
+      activeProps={{ className: activeClassName ?? "" }}
     >
       {children}
     </Link>
