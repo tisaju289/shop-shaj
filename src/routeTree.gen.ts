@@ -28,9 +28,6 @@ import { Route as WishlistRouteImport } from './routes/wishlist'
 import { Route as AdminIndexRouteImport } from './routes/admin.index'
 import { Route as AdminAppearanceRouteImport } from './routes/admin.appearance'
 import { Route as AdminCategoriesRouteImport } from './routes/admin.categories'
-import { Route as AdminCouponsRouteImport } from './routes/admin.coupons'
-import { Route as AdminReportsRouteImport } from './routes/admin.reports'
-import { Route as AdminReviewsRouteImport } from './routes/admin.reviews'
 import { Route as AdminSettingsRouteImport } from './routes/admin.settings'
 import { Route as CategorySlugRouteImport } from './routes/category.$slug'
 import { Route as ProductSlugRouteImport } from './routes/product.$slug'
@@ -134,21 +131,6 @@ const AdminCategoriesRoute = AdminCategoriesRouteImport.update({
   path: '/categories',
   getParentRoute: () => AdminRoute,
 } as any)
-const AdminCouponsRoute = AdminCouponsRouteImport.update({
-  id: '/coupons',
-  path: '/coupons',
-  getParentRoute: () => AdminRoute,
-} as any)
-const AdminReportsRoute = AdminReportsRouteImport.update({
-  id: '/reports',
-  path: '/reports',
-  getParentRoute: () => AdminRoute,
-} as any)
-const AdminReviewsRoute = AdminReviewsRouteImport.update({
-  id: '/reviews',
-  path: '/reviews',
-  getParentRoute: () => AdminRoute,
-} as any)
 const AdminSettingsRoute = AdminSettingsRouteImport.update({
   id: '/settings',
   path: '/settings',
@@ -204,9 +186,6 @@ export interface FileRoutesByFullPath {
   '/wishlist': typeof WishlistRoute
   '/admin/appearance': typeof AdminAppearanceRoute
   '/admin/categories': typeof AdminCategoriesRoute
-  '/admin/coupons': typeof AdminCouponsRoute
-  '/admin/reports': typeof AdminReportsRoute
-  '/admin/reviews': typeof AdminReviewsRoute
   '/admin/settings': typeof AdminSettingsRoute
   '/category/$slug': typeof CategorySlugRoute
   '/product/$slug': typeof ProductSlugRoute
@@ -234,9 +213,6 @@ export interface FileRoutesByTo {
   '/wishlist': typeof WishlistRoute
   '/admin/appearance': typeof AdminAppearanceRoute
   '/admin/categories': typeof AdminCategoriesRoute
-  '/admin/coupons': typeof AdminCouponsRoute
-  '/admin/reports': typeof AdminReportsRoute
-  '/admin/reviews': typeof AdminReviewsRoute
   '/admin/settings': typeof AdminSettingsRoute
   '/category/$slug': typeof CategorySlugRoute
   '/product/$slug': typeof ProductSlugRoute
@@ -266,9 +242,6 @@ export interface FileRoutesById {
   '/wishlist': typeof WishlistRoute
   '/admin/appearance': typeof AdminAppearanceRoute
   '/admin/categories': typeof AdminCategoriesRoute
-  '/admin/coupons': typeof AdminCouponsRoute
-  '/admin/reports': typeof AdminReportsRoute
-  '/admin/reviews': typeof AdminReviewsRoute
   '/admin/settings': typeof AdminSettingsRoute
   '/category/$slug': typeof CategorySlugRoute
   '/product/$slug': typeof ProductSlugRoute
@@ -299,9 +272,6 @@ export interface FileRouteTypes {
     | '/wishlist'
     | '/admin/appearance'
     | '/admin/categories'
-    | '/admin/coupons'
-    | '/admin/reports'
-    | '/admin/reviews'
     | '/admin/settings'
     | '/category/$slug'
     | '/product/$slug'
@@ -329,9 +299,6 @@ export interface FileRouteTypes {
     | '/wishlist'
     | '/admin/appearance'
     | '/admin/categories'
-    | '/admin/coupons'
-    | '/admin/reports'
-    | '/admin/reviews'
     | '/admin/settings'
     | '/category/$slug'
     | '/product/$slug'
@@ -360,9 +327,6 @@ export interface FileRouteTypes {
     | '/wishlist'
     | '/admin/appearance'
     | '/admin/categories'
-    | '/admin/coupons'
-    | '/admin/reports'
-    | '/admin/reviews'
     | '/admin/settings'
     | '/category/$slug'
     | '/product/$slug'
@@ -529,27 +493,6 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AdminCategoriesRouteImport
       parentRoute: typeof AdminRoute
     }
-    '/admin/coupons': {
-      id: '/admin/coupons'
-      path: '/coupons'
-      fullPath: '/admin/coupons'
-      preLoaderRoute: typeof AdminCouponsRouteImport
-      parentRoute: typeof AdminRoute
-    }
-    '/admin/reports': {
-      id: '/admin/reports'
-      path: '/reports'
-      fullPath: '/admin/reports'
-      preLoaderRoute: typeof AdminReportsRouteImport
-      parentRoute: typeof AdminRoute
-    }
-    '/admin/reviews': {
-      id: '/admin/reviews'
-      path: '/reviews'
-      fullPath: '/admin/reviews'
-      preLoaderRoute: typeof AdminReviewsRouteImport
-      parentRoute: typeof AdminRoute
-    }
     '/admin/settings': {
       id: '/admin/settings'
       path: '/settings'
@@ -605,9 +548,6 @@ declare module '@tanstack/react-router' {
 interface AdminRouteChildren {
   AdminAppearanceRoute: typeof AdminAppearanceRoute
   AdminCategoriesRoute: typeof AdminCategoriesRoute
-  AdminCouponsRoute: typeof AdminCouponsRoute
-  AdminReportsRoute: typeof AdminReportsRoute
-  AdminReviewsRoute: typeof AdminReviewsRoute
   AdminSettingsRoute: typeof AdminSettingsRoute
   AdminIndexRoute: typeof AdminIndexRoute
   AdminOrdersIdRoute: typeof AdminOrdersIdRoute
@@ -619,9 +559,6 @@ interface AdminRouteChildren {
 const AdminRouteChildren: AdminRouteChildren = {
   AdminAppearanceRoute: AdminAppearanceRoute,
   AdminCategoriesRoute: AdminCategoriesRoute,
-  AdminCouponsRoute: AdminCouponsRoute,
-  AdminReportsRoute: AdminReportsRoute,
-  AdminReviewsRoute: AdminReviewsRoute,
   AdminSettingsRoute: AdminSettingsRoute,
   AdminIndexRoute: AdminIndexRoute,
   AdminOrdersIdRoute: AdminOrdersIdRoute,
