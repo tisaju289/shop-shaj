@@ -34,7 +34,7 @@ export function MobileBottomNav() {
   return (
     <nav
       aria-label="মোবাইল নেভিগেশন"
-      className="fixed inset-x-0 bottom-0 z-40 border-t border-border bg-background/95 pb-[env(safe-area-inset-bottom)] shadow-[0_-4px_20px_oklch(0.25_0.05_15/0.08)] backdrop-blur lg:hidden"
+      className="fixed inset-x-0 bottom-0 z-40 border-t border-border bg-background/95 pb-[env(safe-area-inset-bottom)] shadow-[0_-4px_20px_oklch(0.25_0.05_15/0.08)] backdrop-blur md:hidden"
     >
       <div className="grid h-[4.5rem] grid-cols-5">
         {navItems.slice(0, 2).map((item) => {

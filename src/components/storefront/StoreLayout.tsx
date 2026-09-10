@@ -6,7 +6,7 @@ import { MobileBottomNav } from "@/components/storefront/MobileBottomNav";
 
 export function StoreLayout({ children }: { children: ReactNode }) {
   return (
-    <div className="flex min-h-screen flex-col pb-[calc(4.5rem+env(safe-area-inset-bottom))] lg:pb-0">
+    <div className="flex min-h-screen flex-col pb-[calc(4.5rem+env(safe-area-inset-bottom))] md:pb-0">
       <Header />
       <main className="flex-1">{children}</main>
       <Footer />
