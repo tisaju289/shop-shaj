@@ -179,17 +179,19 @@ function HomePage() {
         }
       })}
 
-      <section className="border-y border-border bg-card">
-        <div className="container-x grid gap-6 py-10 sm:grid-cols-3">
-          <Feature icon={<Truck className="size-5" />} title="দ্রুত ডেলিভারি">
-            ঢাকার ভিতরে ২৪-৪৮ ঘণ্টা, বাইরে ৩-৫ দিন
-          </Feature>
-          <Feature icon={<ShieldCheck className="size-5" />} title="নিশ্চিত মান">
-            প্রতিটি পণ্য যাচাই করে প্যাকেজিং করা হয়
-          </Feature>
-          <Feature icon={<Undo2 className="size-5" />} title="সহজ রিটার্ন">
-            ডেলিভারির ৩ দিনের মধ্যে রিটার্ন সুবিধা
-          </Feature>
+      <section className="container-x section-py">
+        <div className="rounded-2xl border border-border bg-surface p-4 md:p-6">
+          <div className="grid gap-6 sm:grid-cols-3">
+            <Feature icon={<Truck className="size-5" />} title="দ্রুত ডেলিভারি">
+              ঢাকার ভিতরে ২৪-৪৮ ঘণ্টা, বাইরে ৩-৫ দিন
+            </Feature>
+            <Feature icon={<ShieldCheck className="size-5" />} title="নিশ্চিত মান">
+              প্রতিটি পণ্য যাচাই করে প্যাকেজিং করা হয়
+            </Feature>
+            <Feature icon={<Undo2 className="size-5" />} title="সহজ রিটার্ন">
+              ডেলিভারির ৩ দিনের মধ্যে রিটার্ন সুবিধা
+            </Feature>
+          </div>
         </div>
       </section>
     </StoreLayout>
