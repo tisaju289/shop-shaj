@@ -82,7 +82,7 @@ function HomePage() {
           case "categories":
             return (
               <section key={section.id} className="container-x section-py">
-                <div className="rounded-2xl border border-border bg-surface p-4 md:p-6">
+                <div className="rounded-2xl border border-border bg-surface p-3 md:p-4">
                   <SectionHeading
                     title={section.title || "ক্যাটাগরি"}
                     subtitle={section.subtitle}
@@ -90,7 +90,7 @@ function HomePage() {
                   {categories.length ? (
                     <>
                       <CategoryScroller categories={categories} />
-                      <div className="mt-5 flex justify-center">
+                      <div className="mt-3 flex justify-center">
                         <Button asChild variant="outline">
                           <Link to="/categories">সব ক্যাটাগরি দেখুন</Link>
                         </Button>
@@ -106,7 +106,7 @@ function HomePage() {
           case "promo_banners":
             return banners.length ? (
               <section key={section.id} className="container-x section-py">
-                <div className="rounded-2xl border border-border bg-surface p-4 md:p-6">
+                <div className="rounded-2xl border border-border bg-surface p-3 md:p-4">
                   <PromoBannerCarousel banners={banners} />
                 </div>
               </section>
@@ -115,7 +115,7 @@ function HomePage() {
           case "newsletter":
             return (
               <section key={section.id} className="container-x section-py">
-                <div className="rounded-2xl border border-border bg-surface p-4 md:p-6">
+                <div className="rounded-2xl border border-border bg-surface p-3 md:p-4">
                   <div className="max-w-2xl text-center mx-auto">
                     <Mail className="mx-auto size-8 text-primary" />
                     <h2 className="mt-4 text-2xl font-semibold md:text-3xl">
@@ -150,7 +150,7 @@ function HomePage() {
             const isHot = flag === "hot";
             return (
               <section key={section.id} className="container-x section-py">
-                <div className="rounded-2xl border border-border bg-surface p-4 md:p-6">
+                <div className="rounded-2xl border border-border bg-surface p-3 md:p-4">
                   <SectionHeading
                     title={section.title || ""}
                     subtitle={section.subtitle}
@@ -161,7 +161,7 @@ function HomePage() {
                     isHot ? (
                       <>
                         <ProductMarquee products={products} />
-                        <div className="mt-5 flex justify-center">
+                        <div className="mt-3 flex justify-center">
                           <Button asChild variant="outline">
                             <Link to="/shop">সব দেখুন</Link>
                           </Button>
@@ -170,7 +170,7 @@ function HomePage() {
                     ) : (
                       <>
                         <ProductCarousel products={products} />
-                        <div className="mt-5 flex justify-center">
+                        <div className="mt-3 flex justify-center">
                           <Button asChild variant="outline">
                             <Link to="/shop">সব দেখুন</Link>
                           </Button>
@@ -191,7 +191,7 @@ function HomePage() {
       })}
 
       <section className="container-x section-py">
-        <div className="rounded-2xl border border-border bg-surface p-4 md:p-6">
+        <div className="rounded-2xl border border-border bg-surface p-3 md:p-4">
           <div className="grid gap-6 sm:grid-cols-3">
             <Feature icon={<Truck className="size-5" />} title="দ্রুত ডেলিভারি">
               ঢাকার ভিতরে ২৪-৪৮ ঘণ্টা, বাইরে ৩-৫ দিন

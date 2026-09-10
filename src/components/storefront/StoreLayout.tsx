@@ -48,9 +48,9 @@ export function SectionHeading({
   action?: ReactNode;
 }) {
   return (
-    <div className="mx-auto mb-4 max-w-2xl text-center md:mb-5">
+    <div className="mx-auto mb-3 max-w-2xl text-center md:mb-4">
       <h2 className="text-xl font-semibold md:text-3xl">{title}</h2>
-      {subtitle && <p className="mt-1.5 text-sm text-muted-foreground">{subtitle}</p>}
+      {subtitle && <p className="mt-1 text-sm text-muted-foreground">{subtitle}</p>}
     </div>
   );
 }
