@@ -1,6 +1,6 @@
 import { useQueries, useQuery } from "@tanstack/react-query";
 import { Link, createFileRoute } from "@tanstack/react-router";
-import { Mail, ShieldCheck, Truck, Undo2 } from "lucide-react";
+import { Mail } from "lucide-react";
 
 import { CategoryScroller } from "@/components/storefront/CategoryCard";
 import { HeroFallback, HeroSlider } from "@/components/storefront/HeroSlider";
@@ -190,43 +190,7 @@ function HomePage() {
         }
       })}
 
-      <section className="container-x section-py">
-        <div className="rounded-2xl border border-border bg-surface p-3 md:p-4">
-          <div className="grid gap-6 sm:grid-cols-3">
-            <Feature icon={<Truck className="size-5" />} title="দ্রুত ডেলিভারি">
-              ঢাকার ভিতরে ২৪-৪৮ ঘণ্টা, বাইরে ৩-৫ দিন
-            </Feature>
-            <Feature icon={<ShieldCheck className="size-5" />} title="নিশ্চিত মান">
-              প্রতিটি পণ্য যাচাই করে প্যাকেজিং করা হয়
-            </Feature>
-            <Feature icon={<Undo2 className="size-5" />} title="সহজ রিটার্ন">
-              ডেলিভারির ৩ দিনের মধ্যে রিটার্ন সুবিধা
-            </Feature>
-          </div>
-        </div>
-      </section>
     </StoreLayout>
   );
 }
 
-function Feature({
-  icon,
-  title,
-  children,
-}: {
-  icon: React.ReactNode;
-  title: string;
-  children: React.ReactNode;
-}) {
-  return (
-    <div className="flex flex-col items-center gap-3 text-center sm:flex-row sm:items-start sm:text-left">
-      <span className="grid size-10 shrink-0 place-items-center rounded-full bg-accent text-primary">
-        {icon}
-      </span>
-      <div>
-        <h3 className="text-sm font-semibold">{title}</h3>
-        <p className="mt-1 text-xs text-muted-foreground">{children}</p>
-      </div>
-    </div>
-  );
-}
