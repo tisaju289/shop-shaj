@@ -71,7 +71,7 @@ export function HeroFallback() {
   return (
     <section className="w-full border-b border-border bg-surface">
       <div className="container-x">
-        <div className="grid aspect-[4/3] w-full place-items-center bg-accent md:aspect-video">
+        <div className="grid aspect-[16/9] w-full place-items-center bg-accent">
           <p className="text-sm text-muted-foreground">অ্যাডমিন থেকে হিরো ছবি যোগ করুন</p>
         </div>
       </div>
