@@ -1,6 +1,6 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { createFileRoute } from "@tanstack/react-router";
-import { Save } from "lucide-react";
+import { ArrowUp, Plus, Save, Trash2 } from "lucide-react";
 import { useEffect, useState } from "react";
 import { toast } from "sonner";
 
@@ -16,7 +16,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Textarea } from "@/components/ui/textarea";
 import { supabase } from "@/integrations/supabase/client";
 import { settingsQuery } from "@/lib/store-context";
-import { defaultSettings, type StoreSettings } from "@/lib/types";
+import { defaultSettings, type NavLinkItem, type StoreSettings } from "@/lib/types";
 
 export const Route = createFileRoute("/admin/settings")({
   component: SettingsPage,
@@ -333,6 +333,98 @@ function SettingsPage() {
         <Button disabled={save.isPending} onClick={() => save.mutate()}>
           <Save className="size-4" /> সংরক্ষণ করুন
         </Button>
+      </div>
+    </div>
+  );
+}
+
+function ToggleRow({
+  label,
+  checked,
+  onChange,
+}: {
+  label: string;
+  checked: boolean;
+  onChange: (v: boolean) => void;
+}) {
+  return (
+    <div className="flex items-center justify-between gap-3 rounded-md border border-border p-3">
+      <Label className="font-normal">{label}</Label>
+      <Switch checked={checked} onCheckedChange={onChange} />
+    </div>
+  );
+}
+
+function LinkListEditor({
+  title,
+  items,
+  onChange,
+}: {
+  title: string;
+  items: NavLinkItem[];
+  onChange: (items: NavLinkItem[]) => void;
+}) {
+  const update = (index: number, patch: Partial<NavLinkItem>) =>
+    onChange(items.map((it, i) => (i === index ? { ...it, ...patch } : it)));
+
+  return (
+    <div className="rounded-md border border-border p-3">
+      <div className="mb-3 flex items-center justify-between gap-3">
+        <Label>{title}</Label>
+        <Button
+          type="button"
+          size="sm"
+          variant="outline"
+          onClick={() => onChange([...items, { label: "", url: "/" }])}
+        >
+          <Plus className="size-4" /> নতুন লিংক
+        </Button>
+      </div>
+      {items.length === 0 && (
+        <p className="text-sm text-muted-foreground">কোনো লিংক নেই।</p>
+      )}
+      <div className="space-y-2">
+        {items.map((item, i) => (
+          <div key={i} className="flex flex-col gap-2 sm:flex-row">
+            <Input
+              value={item.label}
+              placeholder="লেখা (যেমন শপ)"
+              onChange={(e) => update(i, { label: e.target.value })}
+            />
+            <Input
+              value={item.url}
+              placeholder="লিংক (যেমন /shop)"
+              onChange={(e) => update(i, { url: e.target.value })}
+            />
+            <div className="flex gap-1">
+              <Button
+                type="button"
+                variant="ghost"
+                size="icon"
+                aria-label="উপরে"
+                disabled={i === 0}
+                onClick={() => {
+                  const next = [...items];
+                  const prev = next[i - 1]!;
+                  next[i - 1] = next[i]!;
+                  next[i] = prev;
+                  onChange(next);
+                }}
+              >
+                <ArrowUp className="size-4" />
+              </Button>
+              <Button
+                type="button"
+                variant="ghost"
+                size="icon"
+                aria-label="মুছুন"
+                onClick={() => onChange(items.filter((_, idx) => idx !== i))}
+              >
+                <Trash2 className="size-4 text-destructive" />
+              </Button>
+            </div>
+          </div>
+        ))}
       </div>
     </div>
   );
