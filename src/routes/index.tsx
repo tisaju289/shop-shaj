@@ -69,7 +69,10 @@ function HomePage() {
         switch (section.section_key) {
           case "hero":
             return slidesLoading ? (
-              <div key={section.id} className="h-[68vh] min-h-[420px] animate-pulse bg-surface" />
+              <div
+                key={section.id}
+                className="h-[calc(100vh-4rem)] min-h-[520px] animate-pulse bg-surface"
+              />
             ) : slides.length ? (
               <HeroSlider key={section.id} slides={slides} />
             ) : (
