@@ -1,4 +1,21 @@
+export type NavLinkItem = { label: string; url: string };
+
 export type StoreSettings = {
+  header_announcement_enabled: boolean;
+  header_announcement_text: string;
+  header_show_search: boolean;
+  header_show_wishlist: boolean;
+  header_sticky: boolean;
+  header_nav: NavLinkItem[];
+  footer_quick_links_title: string;
+  footer_quick_links: NavLinkItem[];
+  footer_service_links_title: string;
+  footer_service_links: NavLinkItem[];
+  footer_categories_title: string;
+  footer_show_categories: boolean;
+  footer_contact_title: string;
+  footer_payment_text: string;
+  footer_show_social: boolean;
   store_name: string;
   tagline: string;
   logo_url: string;
