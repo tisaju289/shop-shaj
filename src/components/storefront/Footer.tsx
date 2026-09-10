@@ -2,26 +2,20 @@ import { Link } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
 import { Facebook, Instagram, Mail, MapPin, Phone, Youtube } from "lucide-react";
 
+import { SmartLink } from "@/components/storefront/SmartLink";
 import { categoriesQuery } from "@/lib/queries";
 import { useSettings } from "@/lib/store-context";
-
-const QUICK_LINKS = [
-  { label: "শপ", to: "/shop" },
-  { label: "অফার", to: "/offers" },
-  { label: "আমাদের সম্পর্কে", to: "/about" },
-  { label: "যোগাযোগ", to: "/contact" },
-] as const;
-
-const SERVICE_LINKS = [
-  { label: "প্রাইভেসি পলিসি", to: "/privacy" },
-  { label: "শর্তাবলী", to: "/terms" },
-  { label: "রিটার্ন ও রিফান্ড", to: "/returns" },
-  { label: "কার্ট", to: "/cart" },
-] as const;
+import { defaultSettings } from "@/lib/types";
 
 export function Footer() {
   const settings = useSettings();
   const { data: categories = [] } = useQuery(categoriesQuery);
+  const quickLinks = settings.footer_quick_links?.length
+    ? settings.footer_quick_links
+    : defaultSettings.footer_quick_links;
+  const serviceLinks = settings.footer_service_links?.length
+    ? settings.footer_service_links
+    : defaultSettings.footer_service_links;
 
   return (
     <footer className="mt-16 border-t border-border bg-surface">
