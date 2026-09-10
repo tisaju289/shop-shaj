@@ -213,9 +213,9 @@ export function ShopBrowser({
       <aside className="hidden lg:block">{filterPanel}</aside>
 
       <div>
-        <div className="mb-6 flex flex-wrap items-center justify-between gap-3">
+        <div className="mb-6 grid grid-cols-[minmax(0,1fr)_auto] items-center gap-3">
           <p className="text-sm text-muted-foreground">{total} টি পণ্য পাওয়া গেছে</p>
-          <div className="flex items-center gap-2">
+          <div className="flex shrink-0 items-center gap-2">
             <Sheet>
               <SheetTrigger asChild>
                 <Button variant="outline" size="sm" className="lg:hidden">
@@ -234,7 +234,7 @@ export function ShopBrowser({
                 setPage(1);
               }}
             >
-              <SelectTrigger className="w-44">
+              <SelectTrigger className="w-32 sm:w-44">
                 <SelectValue />
               </SelectTrigger>
               <SelectContent>

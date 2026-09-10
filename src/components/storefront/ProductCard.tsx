@@ -71,18 +71,20 @@ export function ProductCard({ product, className }: { product: Product; classNam
             wishlist.has(product.id) ? "উইশলিস্ট থেকে সরানো হয়েছে" : "উইশলিস্টে যোগ হয়েছে",
           );
         }}
-        className="absolute right-2.5 top-2.5 grid size-9 place-items-center rounded-full bg-card/90 text-foreground shadow-card backdrop-blur transition-colors hover:text-primary"
+        className="absolute right-2 top-2 grid size-8 place-items-center rounded-full bg-card/90 text-foreground shadow-card backdrop-blur transition-colors hover:text-primary md:right-2.5 md:top-2.5 md:size-9"
       >
         <Heart className={cn("size-4", wishlist.has(product.id) && "fill-primary text-primary")} />
       </button>
 
-      <div className="flex flex-1 flex-col gap-2 p-3 md:p-4">
+      <div className="flex flex-1 flex-col gap-1.5 p-2.5 md:gap-2 md:p-4">
         <Link to="/product/$slug" params={{ slug: product.slug }} className="min-h-10">
           <h3 className="line-clamp-2 text-sm font-medium leading-snug transition-colors group-hover:text-primary md:text-[15px]">
             {product.name}
           </h3>
         </Link>
-        <RatingStars rating={product.rating} reviewCount={product.review_count} />
+        <div className="hidden sm:block">
+          <RatingStars rating={product.rating} reviewCount={product.review_count} />
+        </div>
         <PriceDisplay price={product.price} salePrice={product.sale_price} />
         <div className="mt-auto pt-2">
           {needsVariant ? (
@@ -99,8 +101,8 @@ export function ProductCard({ product, className }: { product: Product; classNam
               disabled={outOfStock}
               onClick={handleAdd}
             >
-              <ShoppingBag className="size-4" />
-              কার্টে যোগ করুন
+              <ShoppingBag className="size-4 shrink-0" />
+              <span className="truncate">কার্টে যোগ করুন</span>
             </Button>
           )}
         </div>

@@ -44,11 +44,11 @@ function CartPage() {
           <div className="grid gap-8 lg:grid-cols-[1fr_360px]">
             <ul className="divide-y divide-border rounded-lg border border-border bg-card">
               {cart.items.map((item) => (
-                <li key={item.key} className="flex gap-4 p-4">
+                <li key={item.key} className="grid grid-cols-[4.5rem_minmax(0,1fr)] gap-3 p-3 sm:grid-cols-[6rem_minmax(0,1fr)_auto] sm:gap-4 sm:p-4">
                   <img
                     src={item.image || fallbackImage(item.name)}
                     alt={item.name}
-                    className="size-24 shrink-0 rounded-md object-cover"
+                    className="size-18 shrink-0 rounded-md object-cover sm:size-24"
                   />
                   <div className="flex-1">
                     <Link
@@ -80,7 +80,7 @@ function CartPage() {
                       </Button>
                     </div>
                   </div>
-                  <div className="text-right text-sm font-semibold">
+                  <div className="col-start-2 text-sm font-semibold sm:col-start-auto sm:text-right">
                     {formatMoney(item.unitPrice * item.quantity, settings.currency)}
                   </div>
                 </li>

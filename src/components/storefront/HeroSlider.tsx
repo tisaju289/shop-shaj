@@ -22,19 +22,19 @@ export function HeroSlider({ slides }: { slides: HeroSlide[] }) {
         <div
           key={slide.id}
           className={cn(
-            "grid h-[calc(100vh-4rem)] min-h-[520px] grid-rows-[1fr] transition-opacity duration-700 ease-[cubic-bezier(0.22,1,0.36,1)] md:grid-rows-1 md:grid-cols-2",
+            "grid min-h-[calc(100svh-8rem)] grid-rows-[42svh_auto] transition-opacity duration-700 ease-[cubic-bezier(0.22,1,0.36,1)] md:h-[calc(100vh-5rem)] md:min-h-[520px] md:grid-rows-1 md:grid-cols-2",
             i === index ? "opacity-100" : "pointer-events-none absolute inset-0 opacity-0",
           )}
         >
           {/* Content side */}
-          <div className="relative order-2 flex min-h-[320px] items-center bg-gradient-to-br from-surface via-surface to-accent px-6 py-10 md:order-1 md:min-h-0 md:px-12 lg:px-16">
+          <div className="relative order-2 flex items-center bg-gradient-to-br from-surface via-surface to-accent px-4 py-7 md:order-1 md:min-h-0 md:px-12 md:py-10 lg:px-16">
             <div className="mx-auto w-full max-w-xl">
               {i === index && (
                 <div className="animate-fade-up">
                   {slide.subtitle && (
                     <p className="eyebrow">{slide.subtitle}</p>
                   )}
-                  <h1 className="mt-3 text-3xl font-semibold leading-tight text-foreground md:text-5xl lg:text-6xl">
+                  <h1 className="mt-2 text-2xl font-semibold leading-tight text-foreground md:mt-3 md:text-5xl lg:text-6xl">
                     {slide.heading}
                   </h1>
                   {slide.description && (
@@ -42,7 +42,7 @@ export function HeroSlider({ slides }: { slides: HeroSlide[] }) {
                       {slide.description}
                     </p>
                   )}
-                  <div className="mt-8 flex flex-wrap gap-3">
+                  <div className="mt-5 flex flex-wrap gap-2 md:mt-8 md:gap-3">
                     {slide.cta_text && (
                       <Button asChild size="lg">
                         <a href={slide.cta_url || "/shop"}>{slide.cta_text}</a>
@@ -62,7 +62,7 @@ export function HeroSlider({ slides }: { slides: HeroSlide[] }) {
           </div>
 
           {/* Image side */}
-          <div className="relative order-1 h-full min-h-[260px] overflow-hidden bg-accent md:order-2 md:min-h-0">
+          <div className="relative order-1 h-full overflow-hidden bg-accent md:order-2 md:min-h-0">
             {slide.image_url ? (
               <picture>
                 {slide.mobile_image_url && (
@@ -85,7 +85,7 @@ export function HeroSlider({ slides }: { slides: HeroSlide[] }) {
       ))}
 
       {slides.length > 1 && (
-        <div className="absolute bottom-5 left-0 right-0 z-10 flex justify-center gap-2">
+        <div className="absolute left-0 right-0 top-[calc(42svh-1.25rem)] z-10 flex justify-center gap-2 md:bottom-5 md:top-auto">
           {slides.map((s, i) => (
             <button
               key={s.id}
@@ -105,11 +105,11 @@ export function HeroSlider({ slides }: { slides: HeroSlide[] }) {
 
 export function HeroFallback() {
   return (
-    <section className="grid h-[calc(100vh-4rem)] min-h-[520px] grid-rows-[1fr] border-b border-border bg-surface md:grid-rows-1 md:grid-cols-2">
-      <div className="order-2 flex min-h-[320px] items-center px-6 py-10 md:order-1 md:px-12 lg:px-16">
+    <section className="grid min-h-[calc(100svh-8rem)] grid-rows-[42svh_auto] border-b border-border bg-surface md:h-[calc(100vh-5rem)] md:min-h-[520px] md:grid-rows-1 md:grid-cols-2">
+      <div className="order-2 flex items-center px-4 py-7 md:order-1 md:px-12 md:py-10 lg:px-16">
         <div className="mx-auto w-full max-w-xl">
           <p className="eyebrow">নতুন কালেকশন</p>
-          <h1 className="mt-3 max-w-2xl text-3xl font-semibold leading-tight text-foreground md:text-5xl">
+          <h1 className="mt-2 max-w-2xl text-2xl font-semibold leading-tight text-foreground md:mt-3 md:text-5xl">
             অ্যাডমিন প্যানেল থেকে হিরো স্লাইড যোগ করুন
           </h1>
           <p className="mt-4 max-w-lg text-muted-foreground">
@@ -122,7 +122,7 @@ export function HeroFallback() {
           </div>
         </div>
       </div>
-      <div className="order-1 h-full min-h-[260px] bg-gradient-to-br from-accent to-surface md:order-2 md:min-h-0" />
+      <div className="order-1 h-full bg-gradient-to-br from-accent to-surface md:order-2 md:min-h-0" />
     </section>
   );
 }

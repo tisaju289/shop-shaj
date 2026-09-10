@@ -2,13 +2,15 @@ import type { ReactNode } from "react";
 
 import { Footer } from "@/components/storefront/Footer";
 import { Header } from "@/components/storefront/Header";
+import { MobileBottomNav } from "@/components/storefront/MobileBottomNav";
 
 export function StoreLayout({ children }: { children: ReactNode }) {
   return (
-    <div className="flex min-h-screen flex-col">
+    <div className="flex min-h-screen flex-col pb-[calc(4.5rem+env(safe-area-inset-bottom))] lg:pb-0">
       <Header />
       <main className="flex-1">{children}</main>
       <Footer />
+      <MobileBottomNav />
     </div>
   );
 }
@@ -47,8 +49,8 @@ export function SectionHeading({
   action?: ReactNode;
 }) {
   return (
-    <div className="mb-7 flex flex-wrap items-end justify-between gap-4">
-      <div>
+    <div className="mb-6 grid grid-cols-[minmax(0,1fr)_auto] items-end gap-3 md:mb-7">
+      <div className="min-w-0">
         <h2 className="text-xl font-semibold md:text-3xl">{title}</h2>
         {subtitle && <p className="mt-1.5 text-sm text-muted-foreground">{subtitle}</p>}
       </div>
