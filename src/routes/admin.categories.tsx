@@ -274,12 +274,14 @@ function AdminCategoriesPage() {
               </div>
               <MediaInput
                 label="ক্যাটাগরির ছবি"
+                hint="প্রস্তাবিত অনুপাত ১:১ — ৬০০×৬০০ পিক্সেল"
                 folder="categories"
                 value={draft.image_url}
                 onChange={(url) => setDraft({ ...draft, image_url: url })}
               />
               <MediaInput
                 label="ব্যানার ছবি"
+                hint="প্রস্তাবিত অনুপাত ১৬:৫ — ১৬০০×৫০০ পিক্সেল"
                 folder="categories"
                 value={draft.banner_url}
                 onChange={(url) => setDraft({ ...draft, banner_url: url })}

@@ -557,6 +557,7 @@ function ProductEditorPage() {
             <CardContent className="space-y-4">
               <MediaInput
                 label="প্রধান ছবি"
+                hint="প্রস্তাবিত অনুপাত ৪:৫ — ৮০০×১০০০ পিক্সেল"
                 folder="products"
                 value={form.thumbnail_url}
                 onChange={(url) => set("thumbnail_url", url)}
@@ -580,6 +581,7 @@ function ProductEditorPage() {
                 </div>
                 <MediaInput
                   label="নতুন গ্যালারি ছবি যোগ করুন"
+                  hint="প্রস্তাবিত অনুপাত ৪:৫ — ৮০০×১০০০ পিক্সেল"
                   folder="products"
                   value={null}
                   onChange={(url) => {

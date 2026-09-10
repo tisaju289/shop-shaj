@@ -120,12 +120,14 @@ function SettingsPage() {
               <div className="md:col-span-2 grid gap-4 md:grid-cols-2">
                 <MediaInput
                   label="লোগো"
+                  hint="প্রস্তাবিত অনুপাত ৩:১ — ৩০০×১০০ পিক্সেল (PNG, ট্রান্সপারেন্ট)"
                   folder="store"
                   value={form.logo_url || null}
                   onChange={(url) => set("logo_url", url ?? "")}
                 />
                 <MediaInput
                   label="ফেভিকন"
+                  hint="প্রস্তাবিত অনুপাত ১:১ — ৫১২×৫১২ পিক্সেল"
                   folder="store"
                   value={form.favicon_url || null}
                   onChange={(url) => set("favicon_url", url ?? "")}
@@ -306,6 +308,7 @@ function SettingsPage() {
               {text("google_verification", "গুগল ভেরিফিকেশন কোড")}
               <MediaInput
                 label="শেয়ারের ছবি (OG image)"
+                hint="প্রস্তাবিত অনুপাত ১.৯১:১ — ১২০০×৬৩০ পিক্সেল"
                 folder="store"
                 value={form.og_image || null}
                 onChange={(url) => set("og_image", url ?? "")}
