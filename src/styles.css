@@ -165,9 +165,9 @@
 }
 
 @utility section-py {
-  padding-block: 3.5rem;
+  padding-block: 2.25rem;
   @media (min-width: 768px) {
-    padding-block: 5rem;
+    padding-block: 3rem;
   }
 }
 
