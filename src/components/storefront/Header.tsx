@@ -106,20 +106,24 @@ export function Header() {
         </nav>
 
         <div className="ml-auto flex items-center gap-0.5 lg:ml-0">
-          <Button
-            variant="ghost"
-            size="icon"
-            aria-label="খুঁজুন"
-            onClick={() => setSearchOpen((v) => !v)}
-          >
-            {searchOpen ? <X className="size-5" /> : <Search className="size-5" />}
-          </Button>
-          <Button variant="ghost" size="icon" aria-label="উইশলিস্ট" asChild>
-            <Link to="/wishlist" className="relative">
-              <Heart className="size-5" />
-              {wishlist.count > 0 && <Badge>{wishlist.count}</Badge>}
-            </Link>
-          </Button>
+          {settings.header_show_search !== false && (
+            <Button
+              variant="ghost"
+              size="icon"
+              aria-label="খুঁজুন"
+              onClick={() => setSearchOpen((v) => !v)}
+            >
+              {searchOpen ? <X className="size-5" /> : <Search className="size-5" />}
+            </Button>
+          )}
+          {settings.header_show_wishlist !== false && (
+            <Button variant="ghost" size="icon" aria-label="উইশলিস্ট" asChild>
+              <Link to="/wishlist" className="relative">
+                <Heart className="size-5" />
+                {wishlist.count > 0 && <Badge>{wishlist.count}</Badge>}
+              </Link>
+            </Button>
+          )}
           <CartDrawer />
         </div>
       </div>
