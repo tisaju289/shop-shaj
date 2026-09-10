@@ -1,6 +1,6 @@
 import { useQueries, useQuery } from "@tanstack/react-query";
 import { Link, createFileRoute } from "@tanstack/react-router";
-import { Mail, ShieldCheck, Truck, Undo2 } from "lucide-react";
+import { Mail } from "lucide-react";
 
 import { CategoryScroller } from "@/components/storefront/CategoryCard";
 import { HeroFallback, HeroSlider } from "@/components/storefront/HeroSlider";
