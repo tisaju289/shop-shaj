@@ -96,6 +96,30 @@ export function ShopBrowser({
 
   const filterPanel = (
     <div className="space-y-7">
+      <FilterGroup title="দামের রেঞ্জ">
+        <div className="flex items-center gap-2">
+          <Input
+            inputMode="numeric"
+            placeholder="সর্বনিম্ন"
+            value={minPrice}
+            onChange={(e) => {
+              setMinPrice(e.target.value.replace(/\D/g, ""));
+              setPage(1);
+            }}
+          />
+          <span className="shrink-0 text-muted-foreground">—</span>
+          <Input
+            inputMode="numeric"
+            placeholder="সর্বোচ্চ"
+            value={maxPrice}
+            onChange={(e) => {
+              setMaxPrice(e.target.value.replace(/\D/g, ""));
+              setPage(1);
+            }}
+          />
+        </div>
+      </FilterGroup>
+
       {!hideCategoryFilter && (
         <FilterGroup title="ক্যাটাগরি">
           <div className="space-y-2">
