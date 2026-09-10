@@ -27,7 +27,7 @@ export function HeroSlider({ slides }: { slides: HeroSlide[] }) {
           )}
         >
           {/* Content side */}
-          <div className="relative order-2 flex items-center bg-gradient-to-br from-surface via-surface to-accent px-4 py-7 md:order-1 md:min-h-0 md:px-12 md:py-10 lg:px-16">
+          <div className="relative order-2 flex items-center bg-gradient-to-br from-surface via-surface to-accent px-4 py-7 text-center md:order-1 md:min-h-0 md:px-12 md:py-10 lg:px-16">
             <div className="mx-auto w-full max-w-xl">
               {i === index && (
                 <div className="animate-fade-up">
@@ -38,11 +38,11 @@ export function HeroSlider({ slides }: { slides: HeroSlide[] }) {
                     {slide.heading}
                   </h1>
                   {slide.description && (
-                    <p className="mt-4 max-w-lg text-sm leading-relaxed text-muted-foreground md:text-lg">
+                    <p className="mx-auto mt-4 max-w-lg text-sm leading-relaxed text-muted-foreground md:text-lg">
                       {slide.description}
                     </p>
                   )}
-                  <div className="mt-5 flex flex-wrap gap-2 md:mt-8 md:gap-3">
+                  <div className="mt-5 flex flex-wrap justify-center gap-2 md:mt-8 md:gap-3">
                     {slide.cta_text && (
                       <Button asChild size="lg">
                         <a href={slide.cta_url || "/shop"}>{slide.cta_text}</a>
@@ -106,16 +106,16 @@ export function HeroSlider({ slides }: { slides: HeroSlide[] }) {
 export function HeroFallback() {
   return (
     <section className="grid min-h-[calc(100svh-8rem)] grid-rows-[42svh_auto] border-b border-border bg-surface md:h-[calc(100vh-5rem)] md:min-h-[520px] md:grid-rows-1 md:grid-cols-2">
-      <div className="order-2 flex items-center px-4 py-7 md:order-1 md:px-12 md:py-10 lg:px-16">
+      <div className="order-2 flex items-center px-4 py-7 text-center md:order-1 md:px-12 md:py-10 lg:px-16">
         <div className="mx-auto w-full max-w-xl">
           <p className="eyebrow">নতুন কালেকশন</p>
-          <h1 className="mt-2 max-w-2xl text-2xl font-semibold leading-tight text-foreground md:mt-3 md:text-5xl">
+          <h1 className="mx-auto mt-2 max-w-2xl text-2xl font-semibold leading-tight text-foreground md:mt-3 md:text-5xl">
             অ্যাডমিন প্যানেল থেকে হিরো স্লাইড যোগ করুন
           </h1>
-          <p className="mt-4 max-w-lg text-muted-foreground">
+          <p className="mx-auto mt-4 max-w-lg text-muted-foreground">
             ছবি, হেডিং ও বাটন সবকিছু অ্যাডমিন থেকে নিয়ন্ত্রণ করা যায়।
           </p>
-          <div className="mt-8">
+          <div className="mt-8 flex justify-center">
             <Button asChild size="lg">
               <Link to="/shop">এখনই শপ করুন</Link>
             </Button>

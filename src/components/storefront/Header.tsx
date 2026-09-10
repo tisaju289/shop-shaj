@@ -1,12 +1,11 @@
 import { Link, useNavigate } from "@tanstack/react-router";
-import { Heart, Menu, Search, X } from "lucide-react";
+import { Heart, Search, X } from "lucide-react";
 import { useEffect, useState } from "react";
 
 import { CartDrawer } from "@/components/storefront/CartDrawer";
 import { SmartLink } from "@/components/storefront/SmartLink";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Sheet, SheetContent, SheetTitle, SheetTrigger } from "@/components/ui/sheet";
 import { pushRecentSearch, readRecentSearches } from "@/lib/recently-viewed";
 import { useSettings } from "@/lib/store-context";
 import { defaultSettings } from "@/lib/types";
@@ -22,7 +21,6 @@ export function Header() {
   const navigate = useNavigate();
   const [searchOpen, setSearchOpen] = useState(false);
   const [term, setTerm] = useState("");
-  const [menuOpen, setMenuOpen] = useState(false);
   const [recent, setRecent] = useState<string[]>([]);
 
   useEffect(() => {
@@ -56,33 +54,7 @@ export function Header() {
       )}
 
 
-      <div className="container-x grid h-16 grid-cols-[auto_minmax(0,1fr)_auto] items-center gap-2 md:h-20 md:gap-3 lg:flex">
-        <Sheet open={menuOpen} onOpenChange={setMenuOpen}>
-          <SheetTrigger asChild>
-            <Button variant="ghost" size="icon" className="lg:hidden" aria-label="মেনু">
-              <Menu className="size-5" />
-            </Button>
-          </SheetTrigger>
-          <SheetContent side="left" className="w-[85vw] max-w-sm p-0">
-            <SheetTitle className="border-b border-border px-5 py-4 text-left text-base">
-              {settings.store_name}
-            </SheetTitle>
-            <nav className="flex flex-col p-2">
-              {nav.map((item) => (
-                <SmartLink
-                  key={item.url + item.label}
-                  to={item.url}
-                  onClick={() => setMenuOpen(false)}
-                  className="rounded-md px-3 py-3 text-[15px] font-medium transition-colors hover:bg-accent"
-                  activeClassName="text-primary"
-                >
-                  {item.label}
-                </SmartLink>
-              ))}
-            </nav>
-          </SheetContent>
-        </Sheet>
-
+      <div className="container-x grid h-16 grid-cols-[minmax(0,1fr)_auto] items-center gap-2 md:h-20 md:gap-3 lg:flex">
         <Link to="/" className="flex min-w-0 items-center gap-2 lg:shrink-0">
           {settings.logo_url && (
             <img src={settings.logo_url} alt={settings.store_name} className="h-9 w-auto md:h-11" />
@@ -105,11 +77,12 @@ export function Header() {
           ))}
         </nav>
 
-        <div className="ml-auto hidden items-center gap-0.5 sm:flex lg:ml-0">
+        <div className="ml-auto flex items-center gap-0.5 lg:ml-0">
           {settings.header_show_search !== false && (
             <Button
               variant="ghost"
               size="icon"
+              className="hidden sm:inline-flex"
               aria-label="খুঁজুন"
               onClick={() => setSearchOpen((v) => !v)}
             >
@@ -117,7 +90,7 @@ export function Header() {
             </Button>
           )}
           {settings.header_show_wishlist !== false && (
-            <Button variant="ghost" size="icon" aria-label="উইশলিস্ট" asChild>
+            <Button variant="ghost" size="icon" className="hidden sm:inline-flex" aria-label="উইশলিস্ট" asChild>
               <Link to="/wishlist" className="relative">
                 <Heart className="size-5" />
                 {wishlist.count > 0 && <Badge>{wishlist.count}</Badge>}
