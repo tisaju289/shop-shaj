@@ -224,6 +224,20 @@ function SettingsPage() {
                     onChange={(v) => set("footer_show_social", v)}
                   />
                 </div>
+                <div className="grid gap-4 md:grid-cols-2">
+                  <ColorField
+                    label="ফুটারের ব্যাকগ্রাউন্ড রঙ"
+                    value={form.footer_bg_color ?? ""}
+                    fallback="#f4efe9"
+                    onChange={(v) => set("footer_bg_color", v)}
+                  />
+                  <ColorField
+                    label="ফুটারের লেখার রঙ"
+                    value={form.footer_text_color ?? ""}
+                    fallback="#3a2b2b"
+                    onChange={(v) => set("footer_text_color", v)}
+                  />
+                </div>
                 {text("footer_quick_links_title", "দ্রুত লিংক কলামের শিরোনাম")}
                 <LinkListEditor
                   title="দ্রুত লিংক"
@@ -380,6 +394,42 @@ function ToggleRow({
     <div className="flex items-center justify-between gap-3 rounded-md border border-border p-3">
       <Label className="font-normal">{label}</Label>
       <Switch checked={checked} onCheckedChange={onChange} />
+    </div>
+  );
+}
+
+function ColorField({
+  label,
+  value,
+  fallback,
+  onChange,
+}: {
+  label: string;
+  value: string;
+  fallback: string;
+  onChange: (v: string) => void;
+}) {
+  return (
+    <div className="space-y-1.5">
+      <Label>{label}</Label>
+      <div className="flex gap-2">
+        <Input
+          type="color"
+          className="w-16 p-1"
+          value={value || fallback}
+          onChange={(e) => onChange(e.target.value)}
+        />
+        <Input
+          value={value}
+          placeholder={`${fallback} (খালি রাখলে ডিফল্ট)`}
+          onChange={(e) => onChange(e.target.value)}
+        />
+        {value && (
+          <Button type="button" variant="outline" onClick={() => onChange("")}>
+            রিসেট
+          </Button>
+        )}
+      </div>
     </div>
   );
 }
