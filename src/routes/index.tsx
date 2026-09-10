@@ -69,10 +69,11 @@ function HomePage() {
         switch (section.section_key) {
           case "hero":
             return slidesLoading ? (
-              <div
-                key={section.id}
-                className="aspect-[4/3] w-full animate-pulse bg-accent md:aspect-video"
-              />
+              <section key={section.id} className="w-full bg-surface">
+                <div className="container-x">
+                  <div className="aspect-[4/3] w-full animate-pulse bg-accent md:aspect-video" />
+                </div>
+              </section>
             ) : slides.length ? (
               <HeroSlider key={section.id} slides={slides} />
             ) : (
