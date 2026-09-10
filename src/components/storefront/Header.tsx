@@ -80,7 +80,13 @@ export function Header() {
           {settings.logo_url && (
             <img src={settings.logo_url} alt={settings.store_name} className="h-9 w-auto md:h-11" />
           )}
-          <span className="truncate text-lg font-semibold text-primary md:text-xl">
+          <span
+            className={cn(
+              "truncate text-lg font-semibold md:text-xl",
+              !settings.header_text_color && "text-primary",
+            )}
+            style={settings.header_text_color ? { color: settings.header_text_color } : undefined}
+          >
             {settings.store_name}
           </span>
         </Link>
