@@ -328,7 +328,7 @@ function ProductPage() {
           </div>
         </div>
 
-        <Tabs defaultValue="description" className="mt-12">
+        <Tabs defaultValue="description" className="mt-8 md:mt-10">
           <TabsList>
             <TabsTrigger value="description">বিবরণ</TabsTrigger>
             <TabsTrigger value="specs">স্পেসিফিকেশন</TabsTrigger>
@@ -376,14 +376,14 @@ function ProductPage() {
         </Tabs>
 
         {related.length > 0 && (
-          <section className="mt-16">
+          <section className="mt-10">
             <SectionHeading title="সম্পর্কিত পণ্য" />
             <ProductCarousel products={related} />
           </section>
         )}
 
         {recentProducts.length > 0 && (
-          <section className="mt-16">
+          <section className="mt-10">
             <SectionHeading title="সম্প্রতি দেখা পণ্য" />
             <ProductCarousel products={recentProducts} />
           </section>
