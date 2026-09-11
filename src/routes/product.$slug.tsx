@@ -201,11 +201,11 @@ function ProductPage() {
                 ))}
               </div>
             )}
-            <div className="flex flex-1 items-stretch overflow-hidden rounded-xl bg-muted">
+            <div className="flex flex-1 items-center justify-center overflow-hidden rounded-xl bg-muted">
               <img
                 src={images[activeImage] ?? images[0]}
                 alt={product.name}
-                className="h-full min-h-72 w-full object-contain p-2 md:min-h-96"
+                className="max-h-full min-h-64 w-full object-contain p-2 md:min-h-96"
               />
             </div>
           </div>
