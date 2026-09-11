@@ -77,9 +77,11 @@ export function buildVideoEmbed(rawUrl: string): VideoEmbed {
       // Direct streamable URL — usable by a native <video> element (no Drive chrome,
       // no pop-out/download button) and supports autoplay.
       src: `https://drive.google.com/file/d/${id}/preview`,
+      // Inline (non-attachment) mp4 stream — usable by a native <video> element,
+      // supports autoplay, and has no Drive pop-out/download button.
       streamUrl: withParams(`https://drive.usercontent.google.com/download`, {
         id,
-        export: "download",
+        export: "view",
         confirm: "t",
       }),
       provider: "drive",
