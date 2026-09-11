@@ -183,13 +183,13 @@ function ProductPage() {
           )}
         </nav>
 
-        <div className="overflow-hidden rounded-2xl border border-border bg-surface shadow-card md:grid md:grid-cols-2">
-          <div className="p-3 md:p-4">
+        <div className="overflow-hidden rounded-2xl border border-border bg-surface shadow-card md:grid md:grid-cols-[1.3fr_1fr]">
+          <div className="p-2 md:p-3">
             <div className="overflow-hidden rounded-xl bg-muted">
               <img
                 src={images[activeImage] ?? images[0]}
                 alt={product.name}
-                className="aspect-[16/9] w-full object-contain"
+                className="aspect-[16/9] w-full object-contain p-2 md:p-3"
               />
             </div>
             {images.length > 1 && (
@@ -199,7 +199,7 @@ function ProductPage() {
                     key={img}
                     onClick={() => setActiveImage(i)}
                     className={cn(
-                      "size-20 shrink-0 overflow-hidden rounded-md border-2 transition-colors",
+                      "size-24 shrink-0 overflow-hidden rounded-md border-2 transition-colors",
                       i === activeImage ? "border-primary" : "border-transparent",
                     )}
                   >
