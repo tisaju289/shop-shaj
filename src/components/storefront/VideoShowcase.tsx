@@ -46,6 +46,18 @@ export function buildVideoEmbed(rawUrl: string): VideoEmbed {
       : null;
   }
 
+  // Google Drive (file links, open?id=, uc?id=)
+  if (host.endsWith("drive.google.com") || host.endsWith("docs.google.com")) {
+    const id =
+      path.match(/\/file\/d\/([\w-]+)/)?.[1] ??
+      parsed.searchParams.get("id") ??
+      path.match(/\/d\/([\w-]+)/)?.[1] ??
+      null;
+    return id
+      ? { src: `https://drive.google.com/file/d/${id}/preview`, provider: "drive" }
+      : null;
+  }
+
   // Facebook (reels, videos, watch)
   if (host.endsWith("facebook.com") || host.endsWith("fb.watch")) {
     return {
