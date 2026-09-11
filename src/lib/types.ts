@@ -53,6 +53,12 @@ export type StoreSettings = {
   return_policy: string;
   privacy_policy: string;
   terms: string;
+  tracking_enabled: boolean;
+  fb_pixel_id: string;
+  fb_capi_enabled: boolean;
+  fb_test_event_code: string;
+  ga4_measurement_id: string;
+  tiktok_pixel_id: string;
 };
 
 export const defaultSettings: StoreSettings = {
