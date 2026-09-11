@@ -160,6 +160,15 @@
   text-align: start !important;
 }
 
+.content-start :where(.prose-bn, [class*="whitespace-pre-line"]) {
+  margin-inline: 0;
+  text-align: start !important;
+}
+
+.content-start :where(.section-heading, dl, ul, ol) {
+  margin-inline: 0;
+}
+
 @utility hide-scrollbar {
   scrollbar-width: none;
   -ms-overflow-style: none;
