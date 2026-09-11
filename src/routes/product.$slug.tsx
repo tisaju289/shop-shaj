@@ -284,9 +284,26 @@ function ProductPage() {
               </div>
             )}
 
-            <div className="mt-5 grid grid-cols-[auto_minmax(0,1fr)_auto] items-center gap-2 sm:flex sm:flex-wrap sm:gap-3">
-              <QuantitySelector value={quantity} max={stock} onChange={setQuantity} />
-              <Button onClick={addToCart} disabled={outOfStock} size="lg" className="min-w-0 px-3 sm:flex-1 md:flex-none md:px-6">
+            <div className="mt-5 flex flex-col gap-2 sm:flex-row sm:flex-wrap sm:items-center sm:gap-3">
+              <div className="flex items-center justify-between gap-2 sm:contents">
+                <QuantitySelector value={quantity} max={stock} onChange={setQuantity} />
+                <Button
+                  variant="outline"
+                  size="icon"
+                  aria-label="উইশলিস্ট"
+                  onClick={() => wishlist.toggle(product.id)}
+                >
+                  <Heart
+                    className={cn("size-4", wishlist.has(product.id) && "fill-primary text-primary")}
+                  />
+                </Button>
+              </div>
+              <Button
+                onClick={addToCart}
+                disabled={outOfStock}
+                size="lg"
+                className="w-full sm:flex-1 md:flex-none md:px-6"
+              >
                 কার্টে যোগ করুন
               </Button>
               <Button
@@ -294,21 +311,11 @@ function ProductPage() {
                 variant="secondary"
                 size="lg"
                 disabled={outOfStock}
-                className="col-span-3 w-full sm:col-span-1 sm:flex-1 md:w-auto md:flex-none"
+                className="w-full sm:flex-1 md:w-auto md:flex-none"
               >
                 <Link to="/checkout" onClick={addToCart}>
                   এখনই কিনুন
                 </Link>
-              </Button>
-              <Button
-                variant="outline"
-                size="icon"
-                aria-label="উইশলিস্ট"
-                onClick={() => wishlist.toggle(product.id)}
-              >
-                <Heart
-                  className={cn("size-4", wishlist.has(product.id) && "fill-primary text-primary")}
-                />
               </Button>
             </div>
 
