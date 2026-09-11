@@ -231,7 +231,7 @@ function ProductPage() {
               price={price}
               salePrice={variant?.price ? null : product.sale_price}
               size="lg"
-              className="mt-5"
+              className="mt-4"
             />
 
             {product.short_description && (
@@ -241,7 +241,7 @@ function ProductPage() {
             )}
 
             {product.sizes?.length > 0 && (
-              <div className="mt-6">
+              <div className="mt-5">
                 <h3 className="mb-2 text-sm font-medium">সাইজ নির্বাচন করুন</h3>
                 <div className="flex flex-wrap gap-2">
                   {product.sizes.map((s) => (
@@ -263,7 +263,7 @@ function ProductPage() {
             )}
 
             {product.colors?.length > 0 && (
-              <div className="mt-5">
+              <div className="mt-4">
                 <h3 className="mb-2 text-sm font-medium">রঙ নির্বাচন করুন</h3>
                 <div className="flex flex-wrap gap-2">
                   {product.colors.map((c) => (
@@ -284,7 +284,7 @@ function ProductPage() {
               </div>
             )}
 
-            <div className="mt-6 grid grid-cols-[auto_minmax(0,1fr)_auto] items-center gap-2 sm:flex sm:flex-wrap sm:gap-3">
+            <div className="mt-5 grid grid-cols-[auto_minmax(0,1fr)_auto] items-center gap-2 sm:flex sm:flex-wrap sm:gap-3">
               <QuantitySelector value={quantity} max={stock} onChange={setQuantity} />
               <Button onClick={addToCart} disabled={outOfStock} size="lg" className="min-w-0 px-3 sm:flex-1 md:flex-none md:px-6">
                 কার্টে যোগ করুন
@@ -312,7 +312,7 @@ function ProductPage() {
               </Button>
             </div>
 
-            <div className="mt-7 grid gap-3 rounded-lg border border-border bg-surface p-4 text-sm">
+            <div className="mt-5 grid gap-2.5 rounded-lg border border-border bg-muted/40 p-3 text-sm md:p-4">
               <InfoRow icon={<Truck className="size-4" />}>
                 ঢাকার ভিতরে ডেলিভারি চার্জ {settings.currency}
                 {settings.delivery_charge_inside} · ঢাকার বাইরে {settings.currency}
