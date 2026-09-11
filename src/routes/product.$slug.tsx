@@ -104,7 +104,7 @@ function ProductPage() {
     return (
       <StoreLayout>
         <div className="container-x grid gap-6 py-6 md:grid-cols-2 md:py-8">
-          <Skeleton className="aspect-[4/5] w-full rounded-xl" />
+          <Skeleton className="aspect-[16/9] w-full rounded-xl" />
           <div className="space-y-4">
             <Skeleton className="h-8 w-3/4" />
             <Skeleton className="h-6 w-1/3" />
@@ -189,7 +189,7 @@ function ProductPage() {
               <img
                 src={images[activeImage] ?? images[0]}
                 alt={product.name}
-                className="aspect-[4/5] w-full object-cover"
+                className="aspect-[16/9] w-full object-cover"
               />
             </div>
             {images.length > 1 && (
