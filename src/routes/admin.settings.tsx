@@ -298,6 +298,61 @@ function SettingsPage() {
               {text("youtube_url", "ইউটিউব লিংক")}
             </CardContent>
           </Card>
+
+          <Card>
+            <CardHeader>
+              <CardTitle className="text-base">WhatsApp ফ্লোটিং বাটন</CardTitle>
+            </CardHeader>
+            <CardContent className="grid gap-4">
+              <div className="flex items-center justify-between gap-3 rounded-md border border-border p-3">
+                <Label className="font-normal">ফ্লোটিং বাটন চালু করুন</Label>
+                <Switch
+                  checked={form.whatsapp_float_enabled}
+                  onCheckedChange={(v) => set("whatsapp_float_enabled", v)}
+                />
+              </div>
+              {form.whatsapp_float_enabled && (
+                <>
+                  <div className="space-y-1.5">
+                    <Label>ডিফল্ট মেসেজ</Label>
+                    <Textarea
+                      value={form.whatsapp_float_message ?? ""}
+                      placeholder="যেমন: আমরা সাহায্য করতে প্রস্তুত!"
+                      onChange={(e) => set("whatsapp_float_message", e.target.value)}
+                      rows={2}
+                    />
+                    <p className="text-xs text-muted-foreground">
+                      বাটনে ক্লিক করলে এই মেসেজটি WhatsApp-এ অটো লেখা হবে।
+                    </p>
+                  </div>
+                  <div className="space-y-1.5">
+                    <Label>বাটনের অবস্থান</Label>
+                    <div className="flex gap-2">
+                      <Button
+                        type="button"
+                        size="sm"
+                        variant={form.whatsapp_float_position === "left" ? "default" : "outline"}
+                        onClick={() => set("whatsapp_float_position", "left")}
+                      >
+                        বাম
+                      </Button>
+                      <Button
+                        type="button"
+                        size="sm"
+                        variant={form.whatsapp_float_position === "right" ? "default" : "outline"}
+                        onClick={() => set("whatsapp_float_position", "right")}
+                      >
+                        ডান
+                      </Button>
+                    </div>
+                  </div>
+                  <p className="rounded-md bg-muted/50 p-3 text-xs text-muted-foreground">
+                    ফ্লোটিং বাটনে উপরের “হোয়াটসঅ্যাপ নম্বর” ব্যবহৃত হবে। নম্বর দেওয়া না থাকলে বাটন দেখাবে না।
+                  </p>
+                </>
+              )}
+            </CardContent>
+          </Card>
         </TabsContent>
 
         <TabsContent value="delivery" className="pt-5">

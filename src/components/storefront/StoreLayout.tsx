@@ -3,6 +3,7 @@ import type { ReactNode } from "react";
 import { Footer } from "@/components/storefront/Footer";
 import { Header } from "@/components/storefront/Header";
 import { MobileBottomNav } from "@/components/storefront/MobileBottomNav";
+import { WhatsAppFloat } from "@/components/storefront/WhatsAppFloat";
 
 export function StoreLayout({ children }: { children: ReactNode }) {
   return (
@@ -11,6 +12,7 @@ export function StoreLayout({ children }: { children: ReactNode }) {
       <main className="mobile-centered-content flex-1">{children}</main>
       <Footer />
       <MobileBottomNav />
+      <WhatsAppFloat />
     </div>
   );
 }
