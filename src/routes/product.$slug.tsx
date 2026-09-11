@@ -183,10 +183,10 @@ function ProductPage() {
           )}
         </nav>
 
-        <div className="grid grid-cols-[1.3fr_1fr] overflow-hidden rounded-2xl border border-border bg-surface shadow-card">
-          <div className="flex flex-row items-stretch gap-2 p-2">
+        <div className="grid grid-cols-1 overflow-hidden rounded-2xl border border-border bg-surface shadow-card md:grid-cols-[1.3fr_1fr]">
+          <div className="flex flex-row items-stretch gap-2 p-2 md:items-stretch">
             {images.length > 1 && (
-              <div className="hide-scrollbar flex max-h-full flex-col gap-2 overflow-y-auto overflow-x-hidden">
+              <div className="hide-scrollbar flex max-h-44 flex-col gap-2 overflow-y-auto overflow-x-hidden md:max-h-full">
                 {images.map((img, i) => (
                   <button
                     key={img}
@@ -201,14 +201,15 @@ function ProductPage() {
                 ))}
               </div>
             )}
-            <div className="flex flex-1 items-center justify-center overflow-hidden rounded-xl bg-muted">
+            <div className="flex flex-1 items-center justify-center overflow-hidden rounded-xl bg-muted md:items-center">
               <img
                 src={images[activeImage] ?? images[0]}
                 alt={product.name}
-                className="max-h-full min-h-64 w-full object-contain p-2 md:min-h-96"
+                className="aspect-[4/5] w-full object-contain p-2 md:aspect-auto md:h-full md:min-h-96"
               />
             </div>
           </div>
+
 
           <div className="border-l border-border p-3 md:p-4">
             <h1 className="text-xl font-semibold leading-snug md:text-3xl">{product.name}</h1>
