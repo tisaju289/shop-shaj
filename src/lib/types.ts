@@ -53,6 +53,12 @@ export type StoreSettings = {
   return_policy: string;
   privacy_policy: string;
   terms: string;
+  facebook_pixel_enabled: boolean;
+  facebook_pixel_id: string;
+  facebook_capi_enabled: boolean;
+  facebook_test_event_code: string;
+  ga4_enabled: boolean;
+  ga4_measurement_id: string;
 };
 
 export const defaultSettings: StoreSettings = {
@@ -125,6 +131,12 @@ export const defaultSettings: StoreSettings = {
   return_policy: "",
   privacy_policy: "",
   terms: "",
+  facebook_pixel_enabled: false,
+  facebook_pixel_id: "",
+  facebook_capi_enabled: false,
+  facebook_test_event_code: "",
+  ga4_enabled: false,
+  ga4_measurement_id: "",
 };
 
 export type Category = {
