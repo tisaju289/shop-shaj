@@ -103,8 +103,8 @@ function ProductPage() {
   if (isLoading) {
     return (
       <StoreLayout>
-        <div className="container-x grid gap-10 py-10 md:grid-cols-2">
-          <Skeleton className="aspect-[3/4] w-full rounded-lg" />
+        <div className="container-x grid gap-6 py-6 md:grid-cols-2 md:py-8">
+          <Skeleton className="aspect-[4/5] w-full rounded-xl" />
           <div className="space-y-4">
             <Skeleton className="h-8 w-3/4" />
             <Skeleton className="h-6 w-1/3" />
@@ -160,8 +160,8 @@ function ProductPage() {
 
   return (
     <StoreLayout>
-      <div className="container-x content-start py-6 md:py-10">
-        <nav className="mb-6 flex flex-wrap items-center gap-1.5 text-xs text-muted-foreground">
+      <div className="container-x content-start py-4 md:py-6">
+        <nav className="mb-4 flex flex-wrap items-center gap-1.5 text-xs text-muted-foreground">
           <Link to="/" className="hover:text-primary">
             হোম
           </Link>
@@ -183,13 +183,13 @@ function ProductPage() {
           )}
         </nav>
 
-        <div className="grid gap-8 md:grid-cols-2 md:gap-12">
-          <div>
-            <div className="overflow-hidden rounded-lg bg-surface">
+        <div className="overflow-hidden rounded-2xl border border-border bg-surface shadow-card md:grid md:grid-cols-2">
+          <div className="p-3 md:p-4">
+            <div className="overflow-hidden rounded-xl bg-muted">
               <img
                 src={images[activeImage] ?? images[0]}
                 alt={product.name}
-                className="aspect-[3/4] w-full object-cover"
+                className="aspect-[4/5] w-full object-cover"
               />
             </div>
             {images.length > 1 && (
@@ -210,7 +210,7 @@ function ProductPage() {
             )}
           </div>
 
-          <div>
+          <div className="border-t border-border p-3 md:border-l md:border-t-0 md:p-4">
             <h1 className="text-xl font-semibold leading-snug md:text-3xl">{product.name}</h1>
             <div className="mt-3 flex flex-wrap items-center gap-4">
               <RatingStars rating={product.rating} reviewCount={product.review_count} />
@@ -231,7 +231,7 @@ function ProductPage() {
               price={price}
               salePrice={variant?.price ? null : product.sale_price}
               size="lg"
-              className="mt-5"
+              className="mt-4"
             />
 
             {product.short_description && (
@@ -241,7 +241,7 @@ function ProductPage() {
             )}
 
             {product.sizes?.length > 0 && (
-              <div className="mt-6">
+              <div className="mt-5">
                 <h3 className="mb-2 text-sm font-medium">সাইজ নির্বাচন করুন</h3>
                 <div className="flex flex-wrap gap-2">
                   {product.sizes.map((s) => (
@@ -263,7 +263,7 @@ function ProductPage() {
             )}
 
             {product.colors?.length > 0 && (
-              <div className="mt-5">
+              <div className="mt-4">
                 <h3 className="mb-2 text-sm font-medium">রঙ নির্বাচন করুন</h3>
                 <div className="flex flex-wrap gap-2">
                   {product.colors.map((c) => (
@@ -284,7 +284,7 @@ function ProductPage() {
               </div>
             )}
 
-            <div className="mt-6 grid grid-cols-[auto_minmax(0,1fr)_auto] items-center gap-2 sm:flex sm:flex-wrap sm:gap-3">
+            <div className="mt-5 grid grid-cols-[auto_minmax(0,1fr)_auto] items-center gap-2 sm:flex sm:flex-wrap sm:gap-3">
               <QuantitySelector value={quantity} max={stock} onChange={setQuantity} />
               <Button onClick={addToCart} disabled={outOfStock} size="lg" className="min-w-0 px-3 sm:flex-1 md:flex-none md:px-6">
                 কার্টে যোগ করুন
@@ -312,7 +312,7 @@ function ProductPage() {
               </Button>
             </div>
 
-            <div className="mt-7 grid gap-3 rounded-lg border border-border bg-surface p-4 text-sm">
+            <div className="mt-5 grid gap-2.5 rounded-lg border border-border bg-muted/40 p-3 text-sm md:p-4">
               <InfoRow icon={<Truck className="size-4" />}>
                 ঢাকার ভিতরে ডেলিভারি চার্জ {settings.currency}
                 {settings.delivery_charge_inside} · ঢাকার বাইরে {settings.currency}
@@ -328,7 +328,7 @@ function ProductPage() {
           </div>
         </div>
 
-        <Tabs defaultValue="description" className="mt-12">
+        <Tabs defaultValue="description" className="mt-8 md:mt-10">
           <TabsList>
             <TabsTrigger value="description">বিবরণ</TabsTrigger>
             <TabsTrigger value="specs">স্পেসিফিকেশন</TabsTrigger>
@@ -376,14 +376,14 @@ function ProductPage() {
         </Tabs>
 
         {related.length > 0 && (
-          <section className="mt-16">
+          <section className="mt-10">
             <SectionHeading title="সম্পর্কিত পণ্য" />
             <ProductCarousel products={related} />
           </section>
         )}
 
         {recentProducts.length > 0 && (
-          <section className="mt-16">
+          <section className="mt-10">
             <SectionHeading title="সম্প্রতি দেখা পণ্য" />
             <ProductCarousel products={recentProducts} />
           </section>
