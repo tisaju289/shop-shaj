@@ -11,11 +11,13 @@ const purchaseSchema = z.object({
 });
 
 async function ensureAdmin(context: { supabase: any; userId: string }) {
-  const { data, error } = await context.supabase.rpc("has_role", {
-    _user_id: context.userId,
-    _role: "admin",
-  });
-  if (error || !data) throw new Error("Forbidden");
+  const { data, error } = await context.supabase
+    .from("user_roles")
+    .select("role")
+    .eq("user_id", context.userId);
+  if (error || !data?.some((row: { role: string }) => row.role === "admin" || row.role === "staff")) {
+    throw new Error("Forbidden");
+  }
 }
 
 export const getCapiTokenStatus = createServerFn({ method: "GET" })
