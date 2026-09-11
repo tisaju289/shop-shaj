@@ -103,7 +103,7 @@ function ProductPage() {
   if (isLoading) {
     return (
       <StoreLayout>
-        <div className="container-x grid gap-6 py-6 md:grid-cols-[1.3fr_1fr] md:py-8">
+        <div className="container-x grid grid-cols-1 gap-6 py-4 md:grid-cols-[1.3fr_1fr] md:py-6">
           <Skeleton className="aspect-[16/9] w-full rounded-xl" />
           <div className="space-y-4">
             <Skeleton className="h-8 w-3/4" />
@@ -183,16 +183,16 @@ function ProductPage() {
           )}
         </nav>
 
-        <div className="overflow-hidden rounded-2xl border border-border bg-surface shadow-card md:grid md:grid-cols-[1.3fr_1fr]">
-          <div className="flex flex-col-reverse gap-3 p-2 md:flex-row md:items-stretch md:p-3">
+        <div className="grid grid-cols-1 overflow-hidden rounded-2xl border border-border bg-surface shadow-card md:grid-cols-[1.3fr_1fr]">
+          <div className="flex flex-row items-stretch gap-2 p-2 md:items-stretch">
             {images.length > 1 && (
-              <div className="hide-scrollbar flex gap-3 overflow-x-auto md:flex-col md:overflow-y-auto md:overflow-x-hidden">
+              <div className="hide-scrollbar flex max-h-44 flex-col gap-2 overflow-y-auto overflow-x-hidden md:max-h-full">
                 {images.map((img, i) => (
                   <button
                     key={img}
                     onClick={() => setActiveImage(i)}
                     className={cn(
-                      "size-20 shrink-0 overflow-hidden rounded-md border-2 transition-colors",
+                      "size-14 shrink-0 overflow-hidden rounded-md border-2 transition-colors sm:size-16 md:size-20",
                       i === activeImage ? "border-primary" : "border-transparent",
                     )}
                   >
@@ -201,14 +201,15 @@ function ProductPage() {
                 ))}
               </div>
             )}
-            <div className="flex flex-1 items-stretch overflow-hidden rounded-xl bg-muted">
+            <div className="flex flex-1 items-center justify-center overflow-hidden rounded-xl bg-muted md:items-center">
               <img
                 src={images[activeImage] ?? images[0]}
                 alt={product.name}
-                className="aspect-[16/9] w-full object-contain p-2 md:aspect-auto md:h-full md:min-h-96"
+                className="aspect-[4/5] w-full object-contain p-2 md:aspect-auto md:h-full md:min-h-96"
               />
             </div>
           </div>
+
 
           <div className="border-t border-border p-3 md:border-l md:border-t-0 md:p-4">
             <h1 className="text-xl font-semibold leading-snug md:text-3xl">{product.name}</h1>
@@ -284,9 +285,26 @@ function ProductPage() {
               </div>
             )}
 
-            <div className="mt-5 grid grid-cols-[auto_minmax(0,1fr)_auto] items-center gap-2 sm:flex sm:flex-wrap sm:gap-3">
-              <QuantitySelector value={quantity} max={stock} onChange={setQuantity} />
-              <Button onClick={addToCart} disabled={outOfStock} size="lg" className="min-w-0 px-3 sm:flex-1 md:flex-none md:px-6">
+            <div className="mt-5 flex flex-col gap-2 sm:flex-row sm:flex-wrap sm:items-center sm:gap-3">
+              <div className="flex items-center justify-between gap-2 sm:contents">
+                <QuantitySelector value={quantity} max={stock} onChange={setQuantity} />
+                <Button
+                  variant="outline"
+                  size="icon"
+                  aria-label="উইশলিস্ট"
+                  onClick={() => wishlist.toggle(product.id)}
+                >
+                  <Heart
+                    className={cn("size-4", wishlist.has(product.id) && "fill-primary text-primary")}
+                  />
+                </Button>
+              </div>
+              <Button
+                onClick={addToCart}
+                disabled={outOfStock}
+                size="lg"
+                className="w-full sm:flex-1 md:flex-none md:px-6"
+              >
                 কার্টে যোগ করুন
               </Button>
               <Button
@@ -294,21 +312,11 @@ function ProductPage() {
                 variant="secondary"
                 size="lg"
                 disabled={outOfStock}
-                className="col-span-3 w-full sm:col-span-1 sm:flex-1 md:w-auto md:flex-none"
+                className="w-full sm:flex-1 md:w-auto md:flex-none"
               >
                 <Link to="/checkout" onClick={addToCart}>
                   এখনই কিনুন
                 </Link>
-              </Button>
-              <Button
-                variant="outline"
-                size="icon"
-                aria-label="উইশলিস্ট"
-                onClick={() => wishlist.toggle(product.id)}
-              >
-                <Heart
-                  className={cn("size-4", wishlist.has(product.id) && "fill-primary text-primary")}
-                />
               </Button>
             </div>
 
