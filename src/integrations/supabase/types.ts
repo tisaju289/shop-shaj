@@ -709,24 +709,6 @@ export type Database = {
         }
         Relationships: []
       }
-      tracking_secrets: {
-        Row: {
-          fb_access_token: string | null
-          id: string
-          updated_at: string
-        }
-        Insert: {
-          fb_access_token?: string | null
-          id?: string
-          updated_at?: string
-        }
-        Update: {
-          fb_access_token?: string | null
-          id?: string
-          updated_at?: string
-        }
-        Relationships: []
-      }
       user_roles: {
         Row: {
           created_at: string
