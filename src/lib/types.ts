@@ -131,6 +131,12 @@ export const defaultSettings: StoreSettings = {
   return_policy: "",
   privacy_policy: "",
   terms: "",
+  tracking_enabled: false,
+  fb_pixel_id: "",
+  fb_capi_enabled: false,
+  fb_test_event_code: "",
+  ga4_measurement_id: "",
+  tiktok_pixel_id: "",
 };
 
 export type Category = {
