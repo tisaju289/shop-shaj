@@ -6,7 +6,7 @@ import type { ShowcaseVideo } from "@/lib/types";
 export type VideoEmbed = {
   src: string;
   provider: string;
-  /** Direct playable stream URL (native <video>), when available. */
+  /** Direct playable stream URL for a native <video> element, when available. */
   streamUrl?: string;
 } | null;
 
@@ -16,9 +16,18 @@ function withParams(base: string, params: Record<string, string | undefined>) {
   return url.toString();
 }
 
+const VIDEO_FILE_RE = /\.(mp4|webm|mov|m4v|ogv|ogg)(\?.*)?$/i;
+
 export function buildVideoEmbed(rawUrl: string): VideoEmbed {
   const url = rawUrl.trim();
   if (!url) return null;
+
+  // Direct video files (including the store's own hosted assets) play in a
+  // native <video> element: autoplay works and there is no provider download
+  // / pop-out button to hide.
+  if (VIDEO_FILE_RE.test(url)) {
+    return { src: url, streamUrl: url, provider: "file" };
+  }
 
   let parsed: URL;
   try {
@@ -33,10 +42,7 @@ export function buildVideoEmbed(rawUrl: string): VideoEmbed {
   if (host === "youtu.be") {
     const id = path.split("/").filter(Boolean)[0];
     if (!id) return null;
-    return {
-      src: withParams(`https://www.youtube.com/embed/${id}`, { rel: "0" }),
-      provider: "youtube",
-    };
+    return { src: withParams(`https://www.youtube.com/embed/${id}`, { rel: "0" }), provider: "youtube" };
   }
   if (host.endsWith("youtube.com") || host.endsWith("youtube-nocookie.com")) {
     const id =
@@ -44,10 +50,7 @@ export function buildVideoEmbed(rawUrl: string): VideoEmbed {
       path.match(/\/(?:shorts|embed|live|v)\/([\w-]+)/)?.[1] ??
       null;
     if (!id) return null;
-    return {
-      src: withParams(`https://www.youtube.com/embed/${id}`, { rel: "0" }),
-      provider: "youtube",
-    };
+    return { src: withParams(`https://www.youtube.com/embed/${id}`, { rel: "0" }), provider: "youtube" };
   }
 
   // TikTok
@@ -65,7 +68,7 @@ export function buildVideoEmbed(rawUrl: string): VideoEmbed {
       : null;
   }
 
-  // Google Drive (file links, open?id=, uc?id=)
+  // Google Drive (preview embed — no autoplay; pop-out button is provider chrome)
   if (host.endsWith("drive.google.com") || host.endsWith("docs.google.com")) {
     const id =
       path.match(/\/file\/d\/([\w-]+)/)?.[1] ??
@@ -73,19 +76,7 @@ export function buildVideoEmbed(rawUrl: string): VideoEmbed {
       path.match(/\/d\/([\w-]+)/)?.[1] ??
       null;
     if (!id) return null;
-    return {
-      // Direct streamable URL — usable by a native <video> element (no Drive chrome,
-      // no pop-out/download button) and supports autoplay.
-      src: `https://drive.google.com/file/d/${id}/preview`,
-      // Inline (non-attachment) mp4 stream — usable by a native <video> element,
-      // supports autoplay, and has no Drive pop-out/download button.
-      streamUrl: withParams(`https://drive.usercontent.google.com/download`, {
-        id,
-        export: "view",
-        confirm: "t",
-      }),
-      provider: "drive",
-    };
+    return { src: `https://drive.google.com/file/d/${id}/preview`, provider: "drive" };
   }
 
   // Facebook (reels, videos, watch)
@@ -104,11 +95,9 @@ function VideoCard({ video }: { video: ShowcaseVideo }) {
   const embed = buildVideoEmbed(video.video_url);
   if (!embed) return null;
 
-  const isDrive = embed.provider === "drive" && embed.streamUrl;
-  const isYoutube = embed.provider === "youtube";
-
-  // Native <video> for providers that give a direct stream (Google Drive).
-  if (isDrive) {
+  // Native <video> for direct/streamable files — autoplays muted and has no
+  // download / pop-out link icon to worry about.
+  if (embed.streamUrl) {
     return (
       <figure className="w-[calc((100%-0.75rem)/2)] shrink-0 snap-start md:w-[calc((100%-3rem)/4)]">
         <div className="relative aspect-[9/16] w-full overflow-hidden rounded-xl border border-border bg-black">
@@ -136,7 +125,7 @@ function VideoCard({ video }: { video: ShowcaseVideo }) {
     );
   }
 
-  // YouTube autoplays muted; others start on click.
+  const isYoutube = embed.provider === "youtube";
   const autoplay = isYoutube;
   const iframeSrc =
     playing || autoplay
