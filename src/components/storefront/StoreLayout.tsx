@@ -26,11 +26,11 @@ export function PageHeader({
 }) {
   return (
     <div className="border-b border-border bg-surface">
-      <div className="container-x py-10 text-center md:py-14 md:text-left">
+      <div className="container-x py-10 text-center md:py-14">
         {eyebrow && <p className="eyebrow">{eyebrow}</p>}
         <h1 className="mt-2 text-2xl font-semibold md:text-4xl">{title}</h1>
         {description && (
-          <p className="mx-auto mt-3 max-w-2xl text-sm leading-relaxed text-muted-foreground md:mx-0 md:text-base">
+          <p className="mx-auto mt-3 max-w-2xl text-sm leading-relaxed text-muted-foreground md:text-base">
             {description}
           </p>
         )}
