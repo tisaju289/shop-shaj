@@ -38,7 +38,8 @@ import {
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Textarea } from "@/components/ui/textarea";
 import { supabase } from "@/integrations/supabase/client";
-import type { HeroSlide, HomepageSection, PromoBanner } from "@/lib/types";
+import { buildVideoEmbed } from "@/components/storefront/VideoShowcase";
+import type { HeroSlide, HomepageSection, PromoBanner, ShowcaseVideo } from "@/lib/types";
 
 export const Route = createFileRoute("/admin/appearance")({
   component: AppearancePage,
@@ -55,6 +56,7 @@ function AppearancePage() {
         <TabsList>
           <TabsTrigger value="hero">হিরো স্লাইডার</TabsTrigger>
           <TabsTrigger value="banners">প্রোমো ব্যানার</TabsTrigger>
+          <TabsTrigger value="videos">ভিডিও</TabsTrigger>
           <TabsTrigger value="sections">হোমপেজ সেকশন</TabsTrigger>
         </TabsList>
         <TabsContent value="hero" className="pt-5">
@@ -62,6 +64,9 @@ function AppearancePage() {
         </TabsContent>
         <TabsContent value="banners" className="pt-5">
           <BannerTab />
+        </TabsContent>
+        <TabsContent value="videos" className="pt-5">
+          <VideoTab />
         </TabsContent>
         <TabsContent value="sections" className="pt-5">
           <SectionsTab />
@@ -616,13 +621,14 @@ const PRODUCT_FLAGS: { value: string; label: string }[] = [
   { value: "new", label: "নতুন পণ্য" },
 ];
 
-const FIXED_KEYS = ["hero", "categories", "promo_banners", "newsletter"];
+const FIXED_KEYS = ["hero", "categories", "promo_banners", "videos", "newsletter"];
 
 const sectionTypeLabel = (s: HomepageSection) => {
   const fixed: Record<string, string> = {
     hero: "হিরো স্লাইডার",
     categories: "ক্যাটাগরি",
     promo_banners: "প্রোমো ব্যানার",
+    videos: "ভিডিও সেকশন",
     newsletter: "নিউজলেটার",
   };
   if (fixed[s.section_key]) return fixed[s.section_key]!;
@@ -836,6 +842,223 @@ function SectionsTab() {
                   onCheckedChange={(v) => patch({ is_visible: v })}
                 />
                 <Label className="font-normal">হোমপেজে দেখাও</Label>
+              </div>
+            </div>
+          )}
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setEditing(null)}>
+              বাতিল
+            </Button>
+            <Button disabled={save.isPending} onClick={() => editing && save.mutate(editing)}>
+              <Save className="size-4" /> সংরক্ষণ
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+    </div>
+  );
+}
+
+/* ---------------- Videos ---------------- */
+
+const emptyVideo = (order: number): ShowcaseVideo => ({
+  id: "new",
+  title: "নতুন ভিডিও",
+  video_url: "",
+  thumbnail_url: null,
+  is_active: true,
+  sort_order: order,
+});
+
+const providerLabel = (url: string) => {
+  const embed = buildVideoEmbed(url);
+  const labels: Record<string, string> = {
+    youtube: "YouTube",
+    tiktok: "TikTok",
+    instagram: "Instagram",
+    facebook: "Facebook",
+    other: "অন্য লিংক",
+  };
+  return embed ? (labels[embed.provider] ?? "অন্য লিংক") : "লিংক সঠিক নয়";
+};
+
+function VideoTab() {
+  const qc = useQueryClient();
+  const [editing, setEditing] = useState<ShowcaseVideo | null>(null);
+  const { data = [], isLoading } = useQuery({
+    queryKey: ["admin", "videos"],
+    queryFn: async (): Promise<ShowcaseVideo[]> => {
+      const { data, error } = await supabase
+        .from("showcase_videos")
+        .select("*")
+        .order("sort_order");
+      if (error) throw error;
+      return (data ?? []) as ShowcaseVideo[];
+    },
+  });
+
+  const invalidate = () => {
+    void qc.invalidateQueries({ queryKey: ["admin", "videos"] });
+    void qc.invalidateQueries({ queryKey: ["showcase-videos"] });
+  };
+
+  const save = useMutation({
+    mutationFn: async (v: ShowcaseVideo) => {
+      if (!buildVideoEmbed(v.video_url)) throw new Error("invalid");
+      const payload = {
+        title: v.title,
+        video_url: v.video_url.trim(),
+        thumbnail_url: v.thumbnail_url,
+        is_active: v.is_active,
+        sort_order: Number(v.sort_order),
+      };
+      const { error } =
+        v.id === "new"
+          ? await supabase.from("showcase_videos").insert(payload)
+          : await supabase.from("showcase_videos").update(payload).eq("id", v.id);
+      if (error) throw error;
+    },
+    onSuccess: () => {
+      toast.success("ভিডিও সংরক্ষণ হয়েছে");
+      setEditing(null);
+      invalidate();
+    },
+    onError: (error) =>
+      toast.error(
+        error instanceof Error && error.message === "invalid"
+          ? "ভিডিও লিংকটি সঠিক নয়"
+          : "সংরক্ষণ করা যায়নি",
+      ),
+  });
+
+  const remove = useMutation({
+    mutationFn: async (id: string) => {
+      const { error } = await supabase.from("showcase_videos").delete().eq("id", id);
+      if (error) throw error;
+    },
+    onSuccess: () => {
+      toast.success("ভিডিও মুছে ফেলা হয়েছে");
+      invalidate();
+    },
+    onError: () => toast.error("মুছে ফেলা যায়নি"),
+  });
+
+  const toggle = useMutation({
+    mutationFn: async ({ id, value }: { id: string; value: boolean }) => {
+      const { error } = await supabase
+        .from("showcase_videos")
+        .update({ is_active: value })
+        .eq("id", id);
+      if (error) throw error;
+    },
+    onSuccess: invalidate,
+  });
+
+  if (isLoading) return <Skeleton className="h-64 w-full rounded-lg" />;
+
+  const patch = (p: Partial<ShowcaseVideo>) => setEditing((v) => (v ? { ...v, ...p } : v));
+
+  return (
+    <div>
+      <p className="mb-4 text-sm text-muted-foreground">
+        YouTube Shorts, TikTok, Facebook Reels বা Instagram Reels-এর লিংক বসান। ভিডিও ৯:১৬
+        অনুপাতে দেখানো হবে।
+      </p>
+      <TableToolbar label="নতুন ভিডিও" onAdd={() => setEditing(emptyVideo(data.length))} />
+      <div className="overflow-x-auto rounded-lg border border-border bg-card">
+        <Table>
+          <TableHeader>
+            <TableRow>
+              <TableHead>থাম্বনেইল</TableHead>
+              <TableHead>শিরোনাম</TableHead>
+              <TableHead>প্ল্যাটফর্ম</TableHead>
+              <TableHead>ক্রম</TableHead>
+              <TableHead>অবস্থা</TableHead>
+              <TableHead className="text-right">কাজ</TableHead>
+            </TableRow>
+          </TableHeader>
+          <TableBody>
+            {data.length === 0 && (
+              <TableRow>
+                <TableCell colSpan={6} className="py-10 text-center text-muted-foreground">
+                  এখনও কোনো ভিডিও নেই
+                </TableCell>
+              </TableRow>
+            )}
+            {data.map((v) => (
+              <TableRow key={v.id}>
+                <TableCell>
+                  <Thumb url={v.thumbnail_url} />
+                </TableCell>
+                <TableCell className="font-medium">{v.title || "ভিডিও"}</TableCell>
+                <TableCell className="text-muted-foreground">{providerLabel(v.video_url)}</TableCell>
+                <TableCell>{v.sort_order}</TableCell>
+                <TableCell>
+                  <div className="flex items-center gap-2">
+                    <Switch
+                      checked={v.is_active}
+                      onCheckedChange={(value) => toggle.mutate({ id: v.id, value })}
+                    />
+                    <StatusBadge active={v.is_active} />
+                  </div>
+                </TableCell>
+                <TableCell>
+                  <div className="flex justify-end gap-2">
+                    <Button size="icon" variant="outline" aria-label="সম্পাদনা" onClick={() => setEditing(v)}>
+                      <Pencil className="size-4" />
+                    </Button>
+                    <Button
+                      size="icon"
+                      variant="outline"
+                      aria-label="মুছে ফেলুন"
+                      onClick={() => remove.mutate(v.id)}
+                    >
+                      <Trash2 className="size-4 text-destructive" />
+                    </Button>
+                  </div>
+                </TableCell>
+              </TableRow>
+            ))}
+          </TableBody>
+        </Table>
+      </div>
+
+      <Dialog open={!!editing} onOpenChange={(o) => !o && setEditing(null)}>
+        <DialogContent className="max-h-[85vh] overflow-y-auto sm:max-w-2xl">
+          <DialogHeader>
+            <DialogTitle>{editing?.id === "new" ? "নতুন ভিডিও" : "ভিডিও সম্পাদনা"}</DialogTitle>
+            <DialogDescription>শর্টস/রিলসের লিংক বসান — ৯:১৬ অনুপাতে দেখানো হবে</DialogDescription>
+          </DialogHeader>
+          {editing && (
+            <div className="space-y-4">
+              <Field label="শিরোনাম" value={editing.title ?? ""} onChange={(v) => patch({ title: v })} />
+              <Field
+                label="ভিডিও লিংক (YouTube / TikTok / Facebook / Instagram)"
+                value={editing.video_url}
+                onChange={(v) => patch({ video_url: v })}
+              />
+              <p className="text-xs text-muted-foreground">শনাক্ত: {providerLabel(editing.video_url)}</p>
+              <MediaInput
+                label="কভার ছবি (৯:১৬, ঐচ্ছিক)"
+                hint="প্রস্তাবিত অনুপাত ৯:১৬ — ৭২০×১২৮০ পিক্সেল"
+                folder="videos"
+                value={editing.thumbnail_url}
+                onChange={(url) => patch({ thumbnail_url: url })}
+              />
+              <div className="grid gap-3 sm:grid-cols-2">
+                <Field
+                  label="ক্রম"
+                  type="number"
+                  value={String(editing.sort_order)}
+                  onChange={(v) => patch({ sort_order: Number(v || 0) })}
+                />
+                <div className="flex items-center gap-2 pb-1 pt-6">
+                  <Switch
+                    checked={editing.is_active}
+                    onCheckedChange={(v) => patch({ is_active: v })}
+                  />
+                  <Label className="font-normal">সক্রিয়</Label>
+                </div>
               </div>
             </div>
           )}

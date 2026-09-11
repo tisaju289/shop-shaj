@@ -8,6 +8,7 @@ import { EmptyState, ProductGridSkeleton } from "@/components/storefront/Loading
 import { ProductCarousel, ProductMarquee } from "@/components/storefront/ProductCarousel";
 import { PromoBannerCarousel } from "@/components/storefront/PromoBanner";
 import { SectionHeading, StoreLayout } from "@/components/storefront/StoreLayout";
+import { VideoShowcase } from "@/components/storefront/VideoShowcase";
 import { Button } from "@/components/ui/button";
 import {
   categoriesQuery,
@@ -15,6 +16,7 @@ import {
   heroSlidesQuery,
   homepageSectionsQuery,
   promoBannersQuery,
+  showcaseVideosQuery,
   type ProductFlag,
 } from "@/lib/queries";
 import { useSettings } from "@/lib/store-context";
@@ -53,6 +55,7 @@ function HomePage() {
   const { data: slides = [], isLoading: slidesLoading } = useQuery(heroSlidesQuery);
   const { data: categories = [] } = useQuery(categoriesQuery);
   const { data: banners = [] } = useQuery(promoBannersQuery);
+  const { data: videos = [] } = useQuery(showcaseVideosQuery);
 
   const productSections = sections.filter((s) => s.is_visible && sectionFlag(s));
 
@@ -108,6 +111,19 @@ function HomePage() {
               <section key={section.id} className="container-x section-py">
                 <div className="rounded-2xl border border-border bg-surface p-3 md:p-4">
                   <PromoBannerCarousel banners={banners} />
+                </div>
+              </section>
+            ) : null;
+
+          case "videos":
+            return videos.length ? (
+              <section key={section.id} className="container-x section-py">
+                <div className="rounded-2xl border border-border bg-surface p-3 md:p-4">
+                  <SectionHeading
+                    title={section.title || "ভিডিও কালেকশন"}
+                    subtitle={section.subtitle}
+                  />
+                  <VideoShowcase videos={videos.slice(0, section.product_limit || 8)} />
                 </div>
               </section>
             ) : null;

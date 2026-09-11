@@ -232,6 +232,15 @@ export type PromoBanner = {
   sort_order: number;
 };
 
+export type ShowcaseVideo = {
+  id: string;
+  title: string | null;
+  video_url: string;
+  thumbnail_url: string | null;
+  is_active: boolean;
+  sort_order: number;
+};
+
 export type HomepageSection = {
   id: string;
   section_key: string;
