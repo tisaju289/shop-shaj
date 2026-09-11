@@ -103,8 +103,8 @@ function ProductPage() {
   if (isLoading) {
     return (
       <StoreLayout>
-        <div className="container-x grid gap-10 py-10 md:grid-cols-2">
-          <Skeleton className="aspect-[3/4] w-full rounded-lg" />
+        <div className="grid gap-6 py-6 md:grid-cols-2 md:py-8">
+          <Skeleton className="aspect-[4/5] w-full rounded-xl" />
           <div className="space-y-4">
             <Skeleton className="h-8 w-3/4" />
             <Skeleton className="h-6 w-1/3" />
