@@ -962,8 +962,8 @@ function VideoTab() {
   return (
     <div>
       <p className="mb-4 text-sm text-muted-foreground">
-        YouTube Shorts, TikTok, Facebook Reels বা Instagram Reels-এর লিংক বসান। ভিডিও ৯:১৬
-        অনুপাতে দেখানো হবে।
+        YouTube Shorts, TikTok, Facebook Reels, Instagram Reels বা Google Drive-এর লিংক বসান।
+        Drive ফাইলটি “যে কেউ দেখতে পারবে” করে শেয়ার করুন। ভিডিও ৯:১৬ অনুপাতে দেখানো হবে।
       </p>
       <TableToolbar label="নতুন ভিডিও" onAdd={() => setEditing(emptyVideo(data.length))} />
       <div className="overflow-x-auto rounded-lg border border-border bg-card">
