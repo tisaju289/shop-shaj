@@ -78,14 +78,21 @@ function VideoCard({ video }: { video: ShowcaseVideo }) {
     <figure className="w-[calc((100%-0.75rem)/2)] shrink-0 snap-start md:w-[calc((100%-3rem)/4)]">
       <div className="relative aspect-[9/16] w-full overflow-hidden rounded-xl border border-border bg-black">
         {playing || !video.thumbnail_url ? (
-          <iframe
-            src={playing ? `${embed.src}${embed.src.includes("?") ? "&" : "?"}autoplay=1` : embed.src}
-            title={video.title || "ভিডিও"}
-            loading="lazy"
-            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
-            allowFullScreen
-            className="absolute inset-0 size-full border-0"
-          />
+          <>
+            <iframe
+              src={playing ? `${embed.src}${embed.src.includes("?") ? "&" : "?"}autoplay=1` : embed.src}
+              title={video.title || "ভিডিও"}
+              loading="lazy"
+              allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture"
+              className="absolute inset-0 size-full border-0"
+              style={{ objectFit: "contain" }}
+            />
+            {/* Hide provider's top-right watch/download link icon and block clicks to it */}
+            <span
+              aria-hidden="true"
+              className="pointer-events-auto absolute right-0 top-0 z-10 h-12 w-16 bg-black"
+            />
+          </>
         ) : (
           <button
             type="button"
@@ -97,7 +104,7 @@ function VideoCard({ video }: { video: ShowcaseVideo }) {
               src={video.thumbnail_url}
               alt={video.title || "ভিডিও থাম্বনেইল"}
               loading="lazy"
-              className="size-full object-cover transition-transform duration-300 group-hover:scale-105"
+              className="size-full object-contain"
             />
             <span className="absolute inset-0 flex items-center justify-center bg-black/25">
               <span className="flex size-14 items-center justify-center rounded-full bg-background/90 text-foreground">
