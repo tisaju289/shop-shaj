@@ -160,8 +160,8 @@ function ProductPage() {
 
   return (
     <StoreLayout>
-      <div className="container-x content-start py-6 md:py-10">
-        <nav className="mb-6 flex flex-wrap items-center gap-1.5 text-xs text-muted-foreground">
+      <div className="container-x content-start py-4 md:py-6">
+        <nav className="mb-4 flex flex-wrap items-center gap-1.5 text-xs text-muted-foreground">
           <Link to="/" className="hover:text-primary">
             হোম
           </Link>
@@ -183,13 +183,13 @@ function ProductPage() {
           )}
         </nav>
 
-        <div className="grid gap-8 md:grid-cols-2 md:gap-12">
-          <div>
-            <div className="overflow-hidden rounded-lg bg-surface">
+        <div className="overflow-hidden rounded-2xl border border-border bg-surface shadow-card md:grid md:grid-cols-2">
+          <div className="p-3 md:p-4">
+            <div className="overflow-hidden rounded-xl bg-muted">
               <img
                 src={images[activeImage] ?? images[0]}
                 alt={product.name}
-                className="aspect-[3/4] w-full object-cover"
+                className="aspect-[4/5] w-full object-cover"
               />
             </div>
             {images.length > 1 && (
