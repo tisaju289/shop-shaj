@@ -59,6 +59,9 @@ export type StoreSettings = {
   facebook_test_event_code: string;
   ga4_enabled: boolean;
   ga4_measurement_id: string;
+  whatsapp_float_enabled: boolean;
+  whatsapp_float_message: string;
+  whatsapp_float_position: "left" | "right";
 };
 
 export const defaultSettings: StoreSettings = {
@@ -137,6 +140,9 @@ export const defaultSettings: StoreSettings = {
   facebook_test_event_code: "",
   ga4_enabled: false,
   ga4_measurement_id: "",
+  whatsapp_float_enabled: true,
+  whatsapp_float_message: "আসসালামু আলাইকুম! কীভাবে সাহায্য করতে পারি?",
+  whatsapp_float_position: "right",
 };
 
 export type Category = {
