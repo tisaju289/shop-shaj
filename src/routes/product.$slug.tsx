@@ -210,7 +210,7 @@ function ProductPage() {
             </div>
           </div>
 
-          <div className="border-t border-border p-3 md:border-l md:border-t-0 md:p-4">
+          <div className="border-l border-border p-3 md:p-4">
             <h1 className="text-xl font-semibold leading-snug md:text-3xl">{product.name}</h1>
             <div className="mt-3 flex flex-wrap items-center gap-4">
               <RatingStars rating={product.rating} reviewCount={product.review_count} />
