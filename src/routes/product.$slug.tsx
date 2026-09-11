@@ -189,7 +189,7 @@ function ProductPage() {
               <img
                 src={images[activeImage] ?? images[0]}
                 alt={product.name}
-                className="aspect-[16/9] w-full object-cover"
+                className="aspect-[16/9] w-full object-contain"
               />
             </div>
             {images.length > 1 && (
