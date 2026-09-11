@@ -877,6 +877,7 @@ const providerLabel = (url: string) => {
     tiktok: "TikTok",
     instagram: "Instagram",
     facebook: "Facebook",
+    drive: "Google Drive",
     other: "অন্য লিংক",
   };
   return embed ? (labels[embed.provider] ?? "অন্য লিংক") : "লিংক সঠিক নয়";
