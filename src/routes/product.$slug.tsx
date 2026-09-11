@@ -184,9 +184,9 @@ function ProductPage() {
         </nav>
 
         <div className="overflow-hidden rounded-2xl border border-border bg-surface shadow-card md:grid md:grid-cols-[1.3fr_1fr]">
-          <div className="flex gap-3 p-2 md:p-3">
+          <div className="flex flex-col-reverse gap-3 p-2 md:flex-row md:items-stretch md:p-3">
             {images.length > 1 && (
-              <div className="hide-scrollbar flex shrink-0 flex-col gap-3 overflow-y-auto">
+              <div className="hide-scrollbar flex gap-3 overflow-x-auto md:flex-col md:overflow-y-auto md:overflow-x-hidden">
                 {images.map((img, i) => (
                   <button
                     key={img}
@@ -205,7 +205,7 @@ function ProductPage() {
               <img
                 src={images[activeImage] ?? images[0]}
                 alt={product.name}
-                className="h-full min-h-72 w-full object-contain p-2 md:min-h-96"
+                className="aspect-[16/9] w-full object-contain p-2 md:aspect-auto md:h-full md:min-h-96"
               />
             </div>
           </div>
