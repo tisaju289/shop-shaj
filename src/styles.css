@@ -154,6 +154,12 @@
   text-align: center !important;
 }
 
+/* Opt-out: restore the original left-aligned layout for pages that should keep it
+   (e.g. product details). Sourced after the centering rule so it wins on equal specificity. */
+.content-start :where(h1, h2, h3, h4, h5, h6, p, li, label, dt, dd, figcaption, blockquote, input, textarea, select) {
+  text-align: start !important;
+}
+
 @utility hide-scrollbar {
   scrollbar-width: none;
   -ms-overflow-style: none;
