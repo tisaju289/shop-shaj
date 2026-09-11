@@ -184,22 +184,15 @@ function ProductPage() {
         </nav>
 
         <div className="overflow-hidden rounded-2xl border border-border bg-surface shadow-card md:grid md:grid-cols-[1.3fr_1fr]">
-          <div className="p-2 md:p-3">
-            <div className="overflow-hidden rounded-xl bg-muted">
-              <img
-                src={images[activeImage] ?? images[0]}
-                alt={product.name}
-                className="aspect-[16/9] w-full object-contain p-2 md:p-3"
-              />
-            </div>
+          <div className="flex flex-col-reverse gap-3 p-2 md:flex-row md:items-stretch md:p-3">
             {images.length > 1 && (
-              <div className="hide-scrollbar mt-3 flex gap-3 overflow-x-auto">
+              <div className="hide-scrollbar flex gap-3 overflow-x-auto md:flex-col md:overflow-y-auto md:overflow-x-hidden">
                 {images.map((img, i) => (
                   <button
                     key={img}
                     onClick={() => setActiveImage(i)}
                     className={cn(
-                      "size-24 shrink-0 overflow-hidden rounded-md border-2 transition-colors",
+                      "size-20 shrink-0 overflow-hidden rounded-md border-2 transition-colors",
                       i === activeImage ? "border-primary" : "border-transparent",
                     )}
                   >
@@ -208,6 +201,13 @@ function ProductPage() {
                 ))}
               </div>
             )}
+            <div className="flex flex-1 items-stretch overflow-hidden rounded-xl bg-muted">
+              <img
+                src={images[activeImage] ?? images[0]}
+                alt={product.name}
+                className="aspect-[16/9] w-full object-contain p-2 md:aspect-auto md:h-full md:min-h-96"
+              />
+            </div>
           </div>
 
           <div className="border-t border-border p-3 md:border-l md:border-t-0 md:p-4">
