@@ -105,7 +105,13 @@ function CheckoutPage() {
       const eventId = `purchase_${order.id}`;
       if (await canTrackVisitor()) {
         await Promise.allSettled([
-          trackPurchase({ eventId, value: total, orderNumber: order.order_number }),
+          trackPurchase({
+            eventId,
+            value: total,
+            orderNumber: order.order_number,
+            facebookEnabled: settings.facebook_pixel_enabled,
+            ga4Enabled: settings.ga4_enabled,
+          }),
           reportFacebookPurchase({ data: { orderId: order.id, eventId, sourceUrl: window.location.href } }),
         ]);
       }

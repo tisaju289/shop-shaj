@@ -73,9 +73,10 @@ export const reportFacebookPurchase = createServerFn({ method: "POST" })
       .from("tracking_events")
       .select("status")
       .eq("provider", "facebook")
-      .eq("event_id", data.eventId)
+      .eq("order_id", order.id)
+      .eq("event_name", "Purchase")
       .maybeSingle();
-    if (existing?.status === "sent") return { sent: true };
+    if (existing) return { sent: existing.status === "sent" };
 
     await supabaseAdmin.from("tracking_events").upsert({
       order_id: order.id,

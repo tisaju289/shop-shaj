@@ -39,14 +39,24 @@ function gtag(...args: unknown[]) {
   window.dataLayer.push(args);
 }
 
-export async function trackPurchase(input: { eventId: string; value: number; orderNumber: string }) {
+export async function trackPurchase(input: {
+  eventId: string;
+  value: number;
+  orderNumber: string;
+  facebookEnabled: boolean;
+  ga4Enabled: boolean;
+}) {
   if (!(await canTrackVisitor())) return;
-  window.fbq?.("track", "Purchase", { value: input.value, currency: "BDT" }, { eventID: input.eventId });
-  gtag("event", "purchase", {
-    transaction_id: input.orderNumber,
-    value: input.value,
-    currency: "BDT",
-  });
+  if (input.facebookEnabled) {
+    window.fbq?.("track", "Purchase", { value: input.value, currency: "BDT" }, { eventID: input.eventId });
+  }
+  if (input.ga4Enabled) {
+    gtag("event", "purchase", {
+      transaction_id: input.orderNumber,
+      value: input.value,
+      currency: "BDT",
+    });
+  }
 }
 
 export function TrackingManager() {
