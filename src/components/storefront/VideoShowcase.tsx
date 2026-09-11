@@ -75,7 +75,7 @@ function VideoCard({ video }: { video: ShowcaseVideo }) {
   if (!embed) return null;
 
   return (
-    <figure className="w-[78vw] shrink-0 sm:w-64 md:w-full">
+    <figure className="w-[calc((100%-0.75rem)/2)] shrink-0 snap-start md:w-[calc((100%-3rem)/4)]">
       <div className="relative aspect-[9/16] w-full overflow-hidden rounded-xl border border-border bg-black">
         {playing || !video.thumbnail_url ? (
           <iframe
@@ -119,7 +119,7 @@ function VideoCard({ video }: { video: ShowcaseVideo }) {
 export function VideoShowcase({ videos }: { videos: ShowcaseVideo[] }) {
   if (!videos.length) return null;
   return (
-    <div className="-mx-3 flex snap-x gap-3 overflow-x-auto px-3 pb-2 md:mx-0 md:grid md:grid-cols-4 md:gap-4 md:overflow-visible md:px-0">
+    <div className="hide-scrollbar flex snap-x snap-mandatory gap-3 overflow-x-auto pb-2 md:gap-4">
       {videos.map((video) => (
         <VideoCard key={video.id} video={video} />
       ))}
