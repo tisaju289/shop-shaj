@@ -351,9 +351,12 @@ function ProductPage() {
             {product.specifications?.length ? (
               <dl className="max-w-xl divide-y divide-border text-sm">
                 {product.specifications.map((spec) => (
-                  <div key={spec.label} className="flex justify-between py-2.5">
+                  <div
+                    key={spec.label}
+                    className="grid grid-cols-1 gap-0.5 py-2.5 sm:grid-cols-[auto_1fr] sm:items-start sm:gap-4"
+                  >
                     <dt className="text-muted-foreground">{spec.label}</dt>
-                    <dd className="font-medium">{spec.value}</dd>
+                    <dd className="font-medium sm:text-right">{spec.value}</dd>
                   </div>
                 ))}
               </dl>
