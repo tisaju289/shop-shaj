@@ -160,7 +160,7 @@ function ProductPage() {
 
   return (
     <StoreLayout>
-      <div className="container-x py-6 md:py-10">
+      <div className="container-x content-start py-6 md:py-10">
         <nav className="mb-6 flex flex-wrap items-center gap-1.5 text-xs text-muted-foreground">
           <Link to="/" className="hover:text-primary">
             হোম
