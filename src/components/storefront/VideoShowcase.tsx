@@ -3,7 +3,18 @@ import { useState } from "react";
 
 import type { ShowcaseVideo } from "@/lib/types";
 
-export type VideoEmbed = { src: string; provider: string } | null;
+export type VideoEmbed = {
+  src: string;
+  provider: string;
+  /** Direct playable stream URL (native <video>), when available. */
+  streamUrl?: string;
+} | null;
+
+function withParams(base: string, params: Record<string, string | undefined>) {
+  const url = new URL(base);
+  for (const [k, v] of Object.entries(params)) if (v) url.searchParams.set(k, v);
+  return url.toString();
+}
 
 export function buildVideoEmbed(rawUrl: string): VideoEmbed {
   const url = rawUrl.trim();
@@ -21,14 +32,22 @@ export function buildVideoEmbed(rawUrl: string): VideoEmbed {
   // YouTube (shorts, watch, youtu.be, embed)
   if (host === "youtu.be") {
     const id = path.split("/").filter(Boolean)[0];
-    return id ? { src: `https://www.youtube.com/embed/${id}?rel=0`, provider: "youtube" } : null;
+    if (!id) return null;
+    return {
+      src: withParams(`https://www.youtube.com/embed/${id}`, { rel: "0" }),
+      provider: "youtube",
+    };
   }
   if (host.endsWith("youtube.com") || host.endsWith("youtube-nocookie.com")) {
     const id =
       parsed.searchParams.get("v") ??
       path.match(/\/(?:shorts|embed|live|v)\/([\w-]+)/)?.[1] ??
       null;
-    return id ? { src: `https://www.youtube.com/embed/${id}?rel=0`, provider: "youtube" } : null;
+    if (!id) return null;
+    return {
+      src: withParams(`https://www.youtube.com/embed/${id}`, { rel: "0" }),
+      provider: "youtube",
+    };
   }
 
   // TikTok
@@ -53,9 +72,18 @@ export function buildVideoEmbed(rawUrl: string): VideoEmbed {
       parsed.searchParams.get("id") ??
       path.match(/\/d\/([\w-]+)/)?.[1] ??
       null;
-    return id
-      ? { src: `https://drive.google.com/file/d/${id}/preview`, provider: "drive" }
-      : null;
+    if (!id) return null;
+    return {
+      // Direct streamable URL — usable by a native <video> element (no Drive chrome,
+      // no pop-out/download button) and supports autoplay.
+      src: `https://drive.google.com/file/d/${id}/preview`,
+      streamUrl: withParams(`https://drive.usercontent.google.com/download`, {
+        id,
+        export: "download",
+        confirm: "t",
+      }),
+      provider: "drive",
+    };
   }
 
   // Facebook (reels, videos, watch)
@@ -74,25 +102,57 @@ function VideoCard({ video }: { video: ShowcaseVideo }) {
   const embed = buildVideoEmbed(video.video_url);
   if (!embed) return null;
 
+  const isDrive = embed.provider === "drive" && embed.streamUrl;
+  const isYoutube = embed.provider === "youtube";
+
+  // Native <video> for providers that give a direct stream (Google Drive).
+  if (isDrive) {
+    return (
+      <figure className="w-[calc((100%-0.75rem)/2)] shrink-0 snap-start md:w-[calc((100%-3rem)/4)]">
+        <div className="relative aspect-[9/16] w-full overflow-hidden rounded-xl border border-border bg-black">
+          <video
+            src={embed.streamUrl}
+            poster={video.thumbnail_url || undefined}
+            title={video.title || "ভিডিও"}
+            className="absolute inset-0 size-full object-contain"
+            autoPlay
+            muted
+            loop
+            playsInline
+            controls
+            controlsList="nodownload noremoteplayback noplaybackrate"
+            disablePictureInPicture
+            preload="metadata"
+          />
+        </div>
+        {video.title && (
+          <figcaption className="mt-2 line-clamp-2 text-center text-sm font-medium text-foreground">
+            {video.title}
+          </figcaption>
+        )}
+      </figure>
+    );
+  }
+
+  // YouTube autoplays muted; others start on click.
+  const autoplay = isYoutube;
+  const iframeSrc =
+    playing || autoplay
+      ? withParams(embed.src, isYoutube ? { autoplay: "1", mute: "1", rel: "0" } : { autoplay: "1" })
+      : embed.src;
+
   return (
     <figure className="w-[calc((100%-0.75rem)/2)] shrink-0 snap-start md:w-[calc((100%-3rem)/4)]">
       <div className="relative aspect-[9/16] w-full overflow-hidden rounded-xl border border-border bg-black">
-        {playing || !video.thumbnail_url ? (
-          <>
-            <iframe
-              src={playing ? `${embed.src}${embed.src.includes("?") ? "&" : "?"}autoplay=1` : embed.src}
-              title={video.title || "ভিডিও"}
-              loading="lazy"
-              allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture"
-              className="absolute inset-0 size-full border-0"
-              style={{ objectFit: "contain" }}
-            />
-            {/* Hide provider's top-right watch/download link icon and block clicks to it */}
-            <span
-              aria-hidden="true"
-              className="pointer-events-auto absolute right-0 top-0 z-10 h-12 w-16 bg-black"
-            />
-          </>
+        {playing || autoplay || !video.thumbnail_url ? (
+          <iframe
+            src={iframeSrc}
+            title={video.title || "ভিডিও"}
+            loading="lazy"
+            allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture"
+            className="absolute inset-0 size-full border-0"
+            style={{ objectFit: "contain" }}
+          />
         ) : (
           <button
             type="button"
