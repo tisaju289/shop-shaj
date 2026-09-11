@@ -12,6 +12,7 @@ export function StoreLayout({ children }: { children: ReactNode }) {
       <main className="mobile-centered-content flex-1">{children}</main>
       <Footer />
       <MobileBottomNav />
+      <WhatsAppFloat />
     </div>
   );
 }
