@@ -6,6 +6,7 @@ import type {
   Product,
   PromoBanner,
   Review,
+  ShowcaseVideo,
 } from "@/lib/types";
 
 const PRODUCT_LIST_FIELDS =
@@ -66,6 +67,20 @@ export const homepageSectionsQuery = {
       .order("sort_order");
     if (error) throw error;
     return (data ?? []) as HomepageSection[];
+  },
+  staleTime: 5 * 60_000,
+};
+
+export const showcaseVideosQuery = {
+  queryKey: ["showcase-videos"],
+  queryFn: async (): Promise<ShowcaseVideo[]> => {
+    const { data, error } = await supabase
+      .from("showcase_videos")
+      .select("*")
+      .eq("is_active", true)
+      .order("sort_order");
+    if (error) throw error;
+    return (data ?? []) as ShowcaseVideo[];
   },
   staleTime: 5 * 60_000,
 };
