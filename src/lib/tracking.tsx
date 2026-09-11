@@ -10,6 +10,13 @@ declare global {
   }
 }
 
+type FacebookQueue = ((...args: unknown[]) => void) & {
+  callMethod?: (...args: unknown[]) => void;
+  queue?: unknown[];
+  loaded?: boolean;
+  version?: string;
+};
+
 const RESTRICTED_REGIONS = new Set(["AT", "BE", "BG", "HR", "CY", "CZ", "DE", "DK", "EE", "ES", "FI", "FR", "GR", "HU", "IE", "IS", "IT", "LI", "LT", "LU", "LV", "MT", "NL", "NO", "PL", "PT", "RO", "SE", "SI", "SK", "GB"]);
 let permissionPromise: Promise<boolean> | null = null;
 
@@ -51,7 +58,7 @@ export function TrackingManager() {
       if (!allowed) return;
       if (settings.facebook_pixel_enabled && /^\d{5,25}$/.test(settings.facebook_pixel_id)) {
         if (!window.fbq) {
-          const fbq = function (...args: unknown[]) {
+          const fbq: FacebookQueue = function (...args: unknown[]) {
             if (fbq.callMethod) fbq.callMethod(...args);
             else (fbq.queue ??= []).push(args);
           };
@@ -69,7 +76,7 @@ export function TrackingManager() {
         if (!document.querySelector(`script[data-ga4-id="${settings.ga4_measurement_id}"]`)) {
           const script = document.createElement("script");
           script.async = true;
-          script.dataset.ga4Id = settings.ga4_measurement_id;
+          script.dataset["ga4Id"] = settings.ga4_measurement_id;
           script.src = `https://www.googletagmanager.com/gtag/js?id=${encodeURIComponent(settings.ga4_measurement_id)}`;
           document.head.appendChild(script);
           gtag("js", new Date());
