@@ -17,6 +17,7 @@ import { CartProvider } from "@/lib/cart";
 import { DynamicHead } from "@/lib/dynamic-head";
 import { StoreProvider } from "@/lib/store-context";
 import { WishlistProvider } from "@/lib/wishlist";
+import { TrackingManager } from "@/lib/tracking";
 
 
 function NotFoundComponent() {
@@ -126,6 +127,7 @@ function RootComponent() {
       <AuthProvider>
         <StoreProvider>
           <DynamicHead />
+          <TrackingManager />
           <CartProvider>
             <WishlistProvider>
               {/* Required: nested routes render here. Removing <Outlet /> breaks all child routes. */}

@@ -1,0 +1,1 @@
+CREATE POLICY "Backend manages tracking events" ON public.tracking_events FOR ALL TO service_role USING (true) WITH CHECK (true);

@@ -16,6 +16,8 @@ import { useCart } from "@/lib/cart";
 import { formatMoney } from "@/lib/format";
 import { fallbackImage } from "@/lib/media";
 import { useSettings } from "@/lib/store-context";
+import { reportFacebookPurchase } from "@/lib/tracking.functions";
+import { canTrackVisitor, trackPurchase } from "@/lib/tracking";
 
 export const Route = createFileRoute("/checkout")({
   head: () => ({
@@ -100,6 +102,19 @@ function CheckoutPage() {
       );
       if (itemsError) throw itemsError;
 
+      const eventId = `purchase_${order.id}`;
+      if (await canTrackVisitor()) {
+        await Promise.allSettled([
+          trackPurchase({
+            eventId,
+            value: total,
+            orderNumber: order.order_number,
+            facebookEnabled: settings.facebook_pixel_enabled,
+            ga4Enabled: settings.ga4_enabled,
+          }),
+          reportFacebookPurchase({ data: { orderId: order.id, eventId, sourceUrl: window.location.href } }),
+        ]);
+      }
       cart.clear();
       navigate({ to: "/order-success", search: { order: order.order_number } });
     } catch {

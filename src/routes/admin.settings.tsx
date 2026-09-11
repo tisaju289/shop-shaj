@@ -1,6 +1,6 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { createFileRoute } from "@tanstack/react-router";
-import { ArrowUp, Plus, Save, Trash2 } from "lucide-react";
+import { ArrowUp, Eye, EyeOff, Plus, Save, Trash2 } from "lucide-react";
 import { useEffect, useState } from "react";
 import { toast } from "sonner";
 
@@ -16,6 +16,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Textarea } from "@/components/ui/textarea";
 import { supabase } from "@/integrations/supabase/client";
 import { settingsQuery } from "@/lib/store-context";
+import { getCapiTokenStatus, removeCapiToken, saveCapiToken } from "@/lib/tracking.functions";
 import { defaultSettings, type NavLinkItem, type StoreSettings } from "@/lib/types";
 
 export const Route = createFileRoute("/admin/settings")({
@@ -26,6 +27,12 @@ function SettingsPage() {
   const qc = useQueryClient();
   const { data, isLoading } = useQuery(settingsQuery);
   const [form, setForm] = useState<StoreSettings>(defaultSettings);
+  const [capiToken, setCapiToken] = useState("");
+  const [showCapiToken, setShowCapiToken] = useState(false);
+  const { data: capiStatus, refetch: refetchCapiStatus } = useQuery({
+    queryKey: ["capi-token-status"],
+    queryFn: () => getCapiTokenStatus(),
+  });
 
   useEffect(() => {
     if (data) setForm(data);
@@ -43,6 +50,25 @@ function SettingsPage() {
       void qc.invalidateQueries({ queryKey: ["store-settings"] });
     },
     onError: () => toast.error("সংরক্ষণ করা যায়নি"),
+  });
+
+  const saveToken = useMutation({
+    mutationFn: () => saveCapiToken({ data: { token: capiToken } }),
+    onSuccess: () => {
+      setCapiToken("");
+      void refetchCapiStatus();
+      toast.success("CAPI token নিরাপদে সংরক্ষণ হয়েছে");
+    },
+    onError: () => toast.error("CAPI token সংরক্ষণ করা যায়নি"),
+  });
+
+  const removeToken = useMutation({
+    mutationFn: () => removeCapiToken(),
+    onSuccess: () => {
+      void refetchCapiStatus();
+      toast.success("CAPI token সরানো হয়েছে");
+    },
+    onError: () => toast.error("CAPI token সরানো যায়নি"),
   });
 
   if (isLoading) return <Skeleton className="h-96 w-full rounded-lg" />;
@@ -103,6 +129,7 @@ function SettingsPage() {
           <TabsTrigger value="delivery">ডেলিভারি</TabsTrigger>
           <TabsTrigger value="design">ডিজাইন</TabsTrigger>
           <TabsTrigger value="seo">এসইও</TabsTrigger>
+          <TabsTrigger value="tracking">ট্র্যাকিং</TabsTrigger>
           <TabsTrigger value="policy">নীতিমালা</TabsTrigger>
         </TabsList>
 
@@ -355,6 +382,82 @@ function SettingsPage() {
               />
             </CardContent>
           </Card>
+        </TabsContent>
+
+        <TabsContent value="tracking" className="pt-5">
+          <div className="grid gap-5">
+            <Card>
+              <CardHeader>
+                <CardTitle className="text-base">Facebook Pixel ও Conversions API</CardTitle>
+              </CardHeader>
+              <CardContent className="grid gap-4">
+                <div className="grid gap-4 md:grid-cols-2">
+                  <ToggleRow
+                    label="Facebook Pixel চালু"
+                    checked={form.facebook_pixel_enabled}
+                    onChange={(v) => set("facebook_pixel_enabled", v)}
+                  />
+                  <ToggleRow
+                    label="Conversions API (CAPI) চালু"
+                    checked={form.facebook_capi_enabled}
+                    onChange={(v) => set("facebook_capi_enabled", v)}
+                  />
+                </div>
+                {text("facebook_pixel_id", "Pixel ID", "যেমন 123456789012345")}
+                {text("facebook_test_event_code", "Test event code (ঐচ্ছিক)", "পরীক্ষা শেষে খালি রাখুন")}
+                <div className="space-y-1.5">
+                  <Label>Conversions API access token</Label>
+                  <div className="flex flex-col gap-2 sm:flex-row">
+                    <div className="relative flex-1">
+                      <Input
+                        type={showCapiToken ? "text" : "password"}
+                        value={capiToken}
+                        placeholder={capiStatus?.configured ? "•••••••••••••••• (সংরক্ষিত)" : "Meta Events Manager থেকে token দিন"}
+                        onChange={(e) => setCapiToken(e.target.value)}
+                        className="pr-10"
+                        autoComplete="new-password"
+                      />
+                      <Button
+                        type="button"
+                        variant="ghost"
+                        size="icon"
+                        className="absolute right-0 top-0"
+                        aria-label={showCapiToken ? "Token লুকান" : "Token দেখুন"}
+                        onClick={() => setShowCapiToken((value) => !value)}
+                      >
+                        {showCapiToken ? <EyeOff className="size-4" /> : <Eye className="size-4" />}
+                      </Button>
+                    </div>
+                    <Button type="button" variant="outline" disabled={saveToken.isPending || capiToken.trim().length < 20} onClick={() => saveToken.mutate()}>
+                      Token সংরক্ষণ
+                    </Button>
+                    {capiStatus?.configured && (
+                      <Button type="button" variant="ghost" disabled={removeToken.isPending} onClick={() => removeToken.mutate()}>
+                        Token সরান
+                      </Button>
+                    )}
+                  </div>
+                  <p className="text-xs text-muted-foreground">Token গোপন রাখা হয় এবং সংরক্ষণের পর আর দেখানো হয় না। Purchase event-এ কোনো নাম, ফোন বা ইমেইল পাঠানো হয় না।</p>
+                </div>
+              </CardContent>
+            </Card>
+
+            <Card>
+              <CardHeader>
+                <CardTitle className="text-base">Google Analytics 4</CardTitle>
+              </CardHeader>
+              <CardContent className="grid gap-4">
+                <ToggleRow
+                  label="GA4 চালু"
+                  checked={form.ga4_enabled}
+                  onChange={(v) => set("ga4_enabled", v)}
+                />
+                {text("ga4_measurement_id", "Measurement ID", "যেমন G-XXXXXXXXXX")}
+              </CardContent>
+            </Card>
+
+            <p className="text-sm text-muted-foreground">সেটিংস সংরক্ষণ করলে page view এবং সফল অর্ডার মাপা শুরু হবে। নিয়ন্ত্রিত বা অঞ্চল শনাক্ত করা যায়নি—এমন দর্শকদের tracking পাঠানো হবে না।</p>
+          </div>
         </TabsContent>
 
         <TabsContent value="policy" className="pt-5">

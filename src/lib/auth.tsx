@@ -2,6 +2,7 @@ import type { Session, User } from "@supabase/supabase-js";
 import { createContext, useContext, useEffect, useState, type ReactNode } from "react";
 
 import { supabase } from "@/integrations/supabase/client";
+import { claimInitialAdmin } from "@/lib/auth.functions";
 
 type AuthState = {
   session: Session | null;
@@ -45,7 +46,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       return;
     }
     // Bootstrap: the very first signed-in user becomes the store owner.
-    const { data: claimed } = await supabase.rpc("claim_admin");
+    const claimed = await claimInitialAdmin();
     setIsAdmin(claimed === true);
   }
 

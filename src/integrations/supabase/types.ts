@@ -709,6 +709,50 @@ export type Database = {
         }
         Relationships: []
       }
+      tracking_events: {
+        Row: {
+          created_at: string
+          event_id: string
+          event_name: string
+          id: string
+          order_id: string
+          provider: string
+          provider_response: string | null
+          status: string
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          event_id: string
+          event_name: string
+          id?: string
+          order_id: string
+          provider: string
+          provider_response?: string | null
+          status?: string
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          event_id?: string
+          event_name?: string
+          id?: string
+          order_id?: string
+          provider?: string
+          provider_response?: string | null
+          status?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "tracking_events_order_id_fkey"
+            columns: ["order_id"]
+            isOneToOne: false
+            referencedRelation: "orders"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       tracking_secrets: {
         Row: {
           fb_access_token: string | null
