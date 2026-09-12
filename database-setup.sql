@@ -667,13 +667,3 @@ INSERT INTO storage.buckets (id, name, public, file_size_limit, allowed_mime_typ
 VALUES ('store-media', 'store-media', false, 10485760,
   ARRAY['image/jpeg','image/png','image/webp','image/gif','image/avif'])
 ON CONFLICT (id) DO NOTHING;
-
--- সাইনড URL দিয়ে ছবি দেখা/আপলোড — বাকেটের মালিক অ্যাডমিন
-CREATE POLICY "admin manage store media" ON storage.objects
-  FOR ALL TO authenticated
-  USING (bucket_id = 'store-media' AND public.is_admin())
-  WITH CHECK (bucket_id = 'store-media' AND public.is_admin());
-
-CREATE POLICY "public read store media" ON storage.objects
-  FOR SELECT TO anon, authenticated
-  USING (bucket_id = 'store-media');
