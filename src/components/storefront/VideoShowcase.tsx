@@ -42,7 +42,10 @@ export function buildVideoEmbed(rawUrl: string): VideoEmbed {
   if (host === "youtu.be") {
     const id = path.split("/").filter(Boolean)[0];
     if (!id) return null;
-    return { src: withParams(`https://www.youtube.com/embed/${id}`, { rel: "0" }), provider: "youtube" };
+    return {
+      src: withParams(`https://www.youtube.com/embed/${id}`, { rel: "0" }),
+      provider: "youtube",
+    };
   }
   if (host.endsWith("youtube.com") || host.endsWith("youtube-nocookie.com")) {
     const id =
@@ -50,7 +53,10 @@ export function buildVideoEmbed(rawUrl: string): VideoEmbed {
       path.match(/\/(?:shorts|embed|live|v)\/([\w-]+)/)?.[1] ??
       null;
     if (!id) return null;
-    return { src: withParams(`https://www.youtube.com/embed/${id}`, { rel: "0" }), provider: "youtube" };
+    return {
+      src: withParams(`https://www.youtube.com/embed/${id}`, { rel: "0" }),
+      provider: "youtube",
+    };
   }
 
   // TikTok
@@ -68,7 +74,8 @@ export function buildVideoEmbed(rawUrl: string): VideoEmbed {
       : null;
   }
 
-  // Google Drive (preview embed — no autoplay; pop-out button is provider chrome)
+  // Google Drive direct stream: the preview iframe adds Drive chrome and does
+  // not reliably autoplay on mobile.
   if (host.endsWith("drive.google.com") || host.endsWith("docs.google.com")) {
     const id =
       path.match(/\/file\/d\/([\w-]+)/)?.[1] ??
@@ -76,7 +83,8 @@ export function buildVideoEmbed(rawUrl: string): VideoEmbed {
       path.match(/\/d\/([\w-]+)/)?.[1] ??
       null;
     if (!id) return null;
-    return { src: `https://drive.google.com/file/d/${id}/preview`, provider: "drive" };
+    const streamUrl = `https://drive.google.com/uc?export=download&id=${encodeURIComponent(id)}`;
+    return { src: streamUrl, streamUrl, provider: "drive" };
   }
 
   // Facebook (reels, videos, watch)
@@ -105,15 +113,12 @@ function VideoCard({ video }: { video: ShowcaseVideo }) {
             src={embed.streamUrl}
             poster={video.thumbnail_url || undefined}
             title={video.title || "ভিডিও"}
-            className="absolute inset-0 size-full object-contain"
+            className="absolute inset-0 size-full object-cover"
             autoPlay
             muted
             loop
             playsInline
-            controls
-            controlsList="nodownload noremoteplayback noplaybackrate"
-            disablePictureInPicture
-            preload="metadata"
+            preload="auto"
           />
         </div>
         {video.title && (
@@ -129,7 +134,10 @@ function VideoCard({ video }: { video: ShowcaseVideo }) {
   const autoplay = isYoutube;
   const iframeSrc =
     playing || autoplay
-      ? withParams(embed.src, isYoutube ? { autoplay: "1", mute: "1", rel: "0" } : { autoplay: "1" })
+      ? withParams(
+          embed.src,
+          isYoutube ? { autoplay: "1", mute: "1", rel: "0" } : { autoplay: "1" },
+        )
       : embed.src;
 
   return (
@@ -142,7 +150,7 @@ function VideoCard({ video }: { video: ShowcaseVideo }) {
             loading="lazy"
             allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture"
             className="absolute inset-0 size-full border-0"
-            style={{ objectFit: "contain" }}
+            style={{ objectFit: "cover" }}
           />
         ) : (
           <button
@@ -155,7 +163,7 @@ function VideoCard({ video }: { video: ShowcaseVideo }) {
               src={video.thumbnail_url}
               alt={video.title || "ভিডিও থাম্বনেইল"}
               loading="lazy"
-              className="size-full object-contain"
+              className="size-full object-cover"
             />
             <span className="absolute inset-0 flex items-center justify-center bg-black/25">
               <span className="flex size-14 items-center justify-center rounded-full bg-background/90 text-foreground">
