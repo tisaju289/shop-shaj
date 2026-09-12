@@ -74,8 +74,8 @@ export function buildVideoEmbed(rawUrl: string): VideoEmbed {
       : null;
   }
 
-  // Google Drive direct stream: the preview iframe adds Drive chrome and does
-  // not reliably autoplay on mobile.
+  // Google Drive files need the supported preview player. The download
+  // endpoint can return a confirmation page instead of video bytes.
   if (host.endsWith("drive.google.com") || host.endsWith("docs.google.com")) {
     const id =
       path.match(/\/file\/d\/([\w-]+)/)?.[1] ??
@@ -83,8 +83,7 @@ export function buildVideoEmbed(rawUrl: string): VideoEmbed {
       path.match(/\/d\/([\w-]+)/)?.[1] ??
       null;
     if (!id) return null;
-    const streamUrl = `https://drive.google.com/uc?export=download&id=${encodeURIComponent(id)}`;
-    return { src: streamUrl, streamUrl, provider: "drive" };
+    return { src: `https://drive.google.com/file/d/${id}/preview`, provider: "drive" };
   }
 
   // Facebook (reels, videos, watch)
@@ -131,7 +130,7 @@ function VideoCard({ video }: { video: ShowcaseVideo }) {
   }
 
   const isYoutube = embed.provider === "youtube";
-  const autoplay = isYoutube;
+  const autoplay = isYoutube || embed.provider === "drive";
   const iframeSrc =
     playing || autoplay
       ? withParams(
