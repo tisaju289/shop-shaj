@@ -62,33 +62,36 @@ bun run build
 wrangler deploy         # প্রথমবার worker নাম চাইলে দিন (যেমন client-x-store)
 ```
 
-### Environment Variables / Secrets (Cloudflare-এ) — বিস্তারিত
+### Environment Variables / Secrets (Cloudflare-এ) — ৬টি variable
 
-`.env` শুধু **লোকাল বিল্ডে** (`bun run build`) কাজ করে। `bun run build` চালানোর সময় `VITE_` দিয়ে শুরু হওয়া ভ্যারিয়েবলগুলো ব্রাউজারের কোডের ভেতর গেঁথে (inline) যায়। কিন্তু সার্ভার-সাইড কোড (SSR + server functions) রানটাইমে `process.env` থেকে পড়ে, তাই প্রোডাকশনে Cloudflare Worker-এ নিচের ভ্যারিয়েবলগুলো **বসাতেই হবে**, নাহলে অ্যাডমিন/ট্র্যাকিং ফিচার কাজ করবে না।
+এই project-এ আলাদা `SUPABASE_SERVICE_ROLE_KEY` বা `LOVABLE_CRON_SECRET` দেওয়ার দরকার নেই। Cloudflare Worker-এ নিচের ৬টি variable দিলেই store, auth, admin, products, orders, uploads এবং dashboard কাজ করবে।
 
 Cloudflare Dashboard → **Workers & Pages → আপনার Worker → Settings → Variables and Secrets**-এ গিয়ে **Add** করুন। প্রতিটির Type সঠিকভাবে বেছে নিন — সিক্রেট কি-গুলো অবশ্যই **Secret (encrypted)** টাইপে রাখবেন, প্লেইন টেক্সটে নয়।
 
 | নাম | Type | বাধ্যতামূলক? | কী কাজ করে | কোথা থেকে পাবেন |
 |---|---|---|---|---|
-| `SUPABASE_URL` | Plaintext | হ্যাঁ | সার্ভার-সাইড সাপ্লাইবেজ ক্লায়েন্ট ও auth middleware (লগইন/অথেনটিকেশন) এটা ব্যবহার করে | Supabase Dashboard → Project Settings → API → Project URL (যেমন `https://abcdefgh.supabase.co`) |
-| `SUPABASE_PUBLISHABLE_KEY` | Plaintext | হ্যাঁ | SSR + auth middleware-এ ব্যবহৃত হয় (RLS সহ পাবলিক/অথেনটিকেটেড রিড) | Project Settings → API → `sb_publishable_...` (anon) key |
-| `SUPABASE_SERVICE_ROLE_KEY` | **Secret (encrypted)** | হ্যাঁ | RLS বাইপাস করে সার্ভার-সাইড অ্যাডমিন কাজ (প্রথম অ্যাডমিন তৈরি `claim_admin`, Facebook CAPI ট্র্যাকিং, GA4 সার্ভার ইভেন্ট) এটা ছাড়া চলবে না | Project Settings → API → `sb_secret_...` বা `service_role` key |
-| `LOVABLE_CRON_SECRET` | Secret (encrypted) | ঐচ্ছিক | শুধু তখন লাগে যখন কোনো cron/পাবলিক webhook এন্ডপয়েন্ট যোগ করবেন (বর্তমানে বেসিক স্টোরে লাগে না) | নিজে তৈরি করুন: `openssl rand -hex 32` |
+| `SUPABASE_PROJECT_ID` | Plaintext | হ্যাঁ | Project identity/configuration | Supabase Dashboard → Project Settings → General → Reference ID |
+| `SUPABASE_PUBLISHABLE_KEY` | Plaintext | হ্যাঁ | SSR, auth middleware এবং server-side RLS queries | Supabase Dashboard → Project Settings → API → Publishable key |
+| `SUPABASE_URL` | Plaintext | হ্যাঁ | Server-side Supabase URL | Supabase Dashboard → Project Settings → API → Project URL |
+| `VITE_SUPABASE_PROJECT_ID` | Plaintext | হ্যাঁ | Browser build-time project identity | `SUPABASE_PROJECT_ID`-এর একই value |
+| `VITE_SUPABASE_PUBLISHABLE_KEY` | Plaintext | হ্যাঁ | Browser build-time publishable key | `SUPABASE_PUBLISHABLE_KEY`-এর একই value |
+| `VITE_SUPABASE_URL` | Plaintext | হ্যাঁ | Browser build-time Supabase URL | `SUPABASE_URL`-এর একই value |
 
-> **নিরাপত্তা সতর্কতা:** `SUPABASE_SERVICE_ROLE_KEY` সব RLS নিয়ম বাইপাস করতে পারে — এটা কখনো ব্রাউজার/ক্লায়েন্ট কোডে বা `.env`-এ রাখবেন না, শুধু Cloudflare Secret হিসেবেই রাখবেন। `SUPABASE_PUBLISHABLE_KEY` পাবলিক, সেটা নিরাপদ।
+> **নিরাপত্তা সতর্কতা:** Publishable key browser-এ থাকা স্বাভাবিক। Database-এর নিরাপত্তা RLS policy দিয়ে নিয়ন্ত্রিত হয়। Service-role key না থাকায় server-side client-ও RLS bypass করে না।
 
 #### কীভাবে যোগ করবেন (ধাপে ধাপে)
 1. Cloudflare Dashboard → **Workers & Pages** → আপনার Worker সিলেক্ট করুন
 2. **Settings** ট্যাব → **Variables and Secrets** সেকশনে যান
 3. **Add variable** ক্লিক করুন
 4. **Variable name** এ উপরের নাম (যেমন `SUPABASE_URL`) হুবহু বসান (বড়/ছোট হাতের মিল থাকতে হবে)
-5. **Type** বেছে নিন — `SUPABASE_SERVICE_ROLE_KEY` ও `LOVABLE_CRON_SECRET`-এর জন্য **Secret (encrypted)**, বাকিগুলো **Plaintext**
+5. **Type** হিসেবে ৬টি variable-এর জন্য **Plaintext** বেছে নিন
 6. **Value** বসিয়ে **Deploy / Save** করুন
 7. সবগুলো যোগ হওয়ার পর Worker টা একবার রিডিপ্লয় (`wrangler deploy`) করুন, যাতে নতুন ভ্যারিয়েবলগুলো কার্যকর হয়
 
 #### বিল্ড টাইম বনাম রানটাইম — খেয়াল রাখুন
-- **বিল্ড টাইম (`.env`):** `VITE_SUPABASE_URL`, `VITE_SUPABASE_PUBLISHABLE_KEY`, `VITE_SUPABASE_PROJECT_ID` — এগুলো `bun run build`-এ ব্রাউজার বান্ডলে গেঁথে যায়। তাই বিল্ডের আগে `.env`-এ সঠিক মান থাকতে হবে।
-- **রানটাইম (Cloudflare Variables/Secrets):** `SUPABASE_URL`, `SUPABASE_PUBLISHABLE_KEY`, `SUPABASE_SERVICE_ROLE_KEY` — এগুলো সার্ভার কোড লাইভ থাকাকালীন `process.env` থেকে পড়ে। `.env` প্রোডাকশনে থাকে না, তাই অবশ্যই Cloudflare-এ বসাতে হবে।
+- **বিল্ড টাইম:** `VITE_`-এর ৩টি variable browser bundle-এ ব্যবহৃত হয়। Cloudflare build/deploy-এর আগে এগুলোর সঠিক value দিতে হবে।
+- **রানটাইম:** `SUPABASE_URL`, `SUPABASE_PUBLISHABLE_KEY` এবং `SUPABASE_PROJECT_ID` Worker environment থেকে server code-এ ব্যবহৃত হয়।
+- **Facebook CAPI:** service-role key না দিলে এই optional server-side tracking বন্ধ থাকবে; store/order/auth কাজ বন্ধ হবে না। CAPI বাধ্যতামূলক হলে আলাদা secret এবং RLS-bypass backend দরকার হবে।
 
 ### কাস্টম ডোমেইন
 Cloudflare Dashboard → Workers → আপনার worker → **Settings → Domains & Routes** → **Add Custom Domain** (ডোমেইন Cloudflare-এ থাকলে ১ ক্লিকেই হয়)
@@ -109,7 +112,7 @@ Cloudflare Dashboard → Workers → আপনার worker → **Settings → D
 |---|---|---|
 | ১ | নতুন Supabase প্রজেক্ট | ৩ মিনিট |
 | ২ | `database-setup.sql` রান | ১ মিনিট |
-| ৩ | `.env`-এ ৩টি মান বসানো | ২ মিনিট |
+| ৩ | Worker-এ ৬টি variable বসানো | ২ মিনিট |
 | ৪ | `wrangler deploy` | ২ মিনিট |
 | ৫ | ক্লায়েন্টকে `/auth` দিয়ে অ্যাডমিন বানাতে বলা | ২ মিনিট |
 
@@ -119,5 +122,5 @@ Cloudflare Dashboard → Workers → আপনার worker → **Settings → D
 
 - প্রতিটি ক্লায়েন্টের ডেটা সম্পূর্ণ আলাদা থাকে (আলাদা Supabase প্রজেক্ট) — একজনের অর্ডার/কাস্টমার অন্যজন দেখতে পায় না
 - `database-setup.sql` শুধু একবার রান করতে হয় নতুন প্রজেক্টে; পুনরায় রান করলে ডুপ্লিকেট এরর আসতে পারে
-- সার্ভিস রোল কি (service role key) কখনো ক্লায়েন্টের সাইটের কোডে বা `.env`-তে রাখবেন না
+- প্রথম sign-in করা user-এর admin claim database-এর `claim_admin()` RPC দিয়ে হয়, তাই service-role key লাগে না
 - ডেমো প্রোডাক্টের ছবি নেই — অ্যাডমিন প্যানেল থেকে ক্লায়েন্ট নিজের ছবি আপলোড করবে
