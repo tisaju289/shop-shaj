@@ -113,10 +113,10 @@ function VideoCard({ video }: { video: ShowcaseVideo }) {
             poster={video.thumbnail_url || undefined}
             title={video.title || "ভিডিও"}
             className="absolute inset-0 size-full object-cover"
-            autoPlay
             muted
             loop
             playsInline
+            controls
             preload="auto"
           />
         </div>
@@ -130,7 +130,8 @@ function VideoCard({ video }: { video: ShowcaseVideo }) {
   }
 
   const isYoutube = embed.provider === "youtube";
-  const autoplay = isYoutube || embed.provider === "drive";
+  const isDrive = embed.provider === "drive";
+  const autoplay = isYoutube;
   const iframeSrc =
     playing || autoplay
       ? withParams(
@@ -143,14 +144,19 @@ function VideoCard({ video }: { video: ShowcaseVideo }) {
     <figure className="w-[calc((100%-0.75rem)/2)] shrink-0 snap-start md:w-[calc((100%-3rem)/4)]">
       <div className="relative aspect-[9/16] w-full overflow-hidden rounded-xl border border-border bg-black">
         {playing || autoplay || !video.thumbnail_url ? (
-          <iframe
-            src={iframeSrc}
-            title={video.title || "ভিডিও"}
-            loading="lazy"
-            allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture"
-            className="absolute inset-0 size-full border-0"
-            style={{ objectFit: "cover" }}
-          />
+          <div className="absolute inset-0">
+            <iframe
+              src={iframeSrc}
+              title={video.title || "ভিডিও"}
+              loading="lazy"
+              allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture"
+              className="absolute inset-0 size-full border-0"
+              style={{ objectFit: "cover" }}
+            />
+            {isDrive && (
+              <span aria-hidden="true" className="absolute right-2 top-2 z-10 h-16 w-20 bg-black" />
+            )}
+          </div>
         ) : (
           <button
             type="button"
