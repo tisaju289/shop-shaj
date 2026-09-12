@@ -550,6 +550,31 @@ END; $$;
 REVOKE ALL ON FUNCTION public.claim_admin() FROM public;
 GRANT EXECUTE ON FUNCTION public.claim_admin() TO authenticated;
 
+-- Automatically make the first email-confirmed user the store admin.
+CREATE OR REPLACE FUNCTION public.handle_first_verified_user()
+RETURNS trigger
+LANGUAGE plpgsql
+SECURITY DEFINER
+SET search_path = public
+AS $$
+BEGIN
+  IF NOT EXISTS (SELECT 1 FROM public.user_roles WHERE role = 'admin') THEN
+    INSERT INTO public.user_roles (user_id, role)
+    VALUES (NEW.id, 'admin')
+    ON CONFLICT DO NOTHING;
+  END IF;
+  RETURN NEW;
+END;
+$$;
+
+REVOKE ALL ON FUNCTION public.handle_first_verified_user() FROM public, anon, authenticated;
+DROP TRIGGER IF EXISTS on_first_user_verified ON auth.users;
+CREATE TRIGGER on_first_user_verified
+  AFTER UPDATE OF confirmed_at ON auth.users
+  FOR EACH ROW
+  WHEN (OLD.confirmed_at IS NULL AND NEW.confirmed_at IS NOT NULL)
+  EXECUTE FUNCTION public.handle_first_verified_user();
+
 -- Admin dashboard needs to read profiles of customers
 CREATE OR REPLACE FUNCTION public.admin_dashboard_stats()
 RETURNS jsonb
@@ -622,7 +647,8 @@ CREATE TRIGGER tracking_events_touch BEFORE UPDATE ON public.tracking_events FOR
 -- ============ Migration: supabase/migrations/20260911151034_e82b682c-225f-4ae5-a89c-1b27d8a11a02.sql ============
 CREATE POLICY "Backend manages tracking events" ON public.tracking_events FOR ALL TO service_role USING (true) WITH CHECK (true);
 -- ============ Migration: supabase/migrations/20260911155421_3879859e-8db8-454a-818f-d24101b61087.sql ============
-REVOKE ALL ON FUNCTION public.claim_admin() FROM PUBLIC, anon, authenticated;
+REVOKE ALL ON FUNCTION public.claim_admin() FROM PUBLIC, anon;
+GRANT EXECUTE ON FUNCTION public.claim_admin() TO authenticated;
 REVOKE ALL ON FUNCTION public.validate_coupon(text, numeric) FROM PUBLIC, anon, authenticated;
 REVOKE ALL ON FUNCTION public.has_role(uuid, public.app_role) FROM PUBLIC, anon;
 REVOKE ALL ON FUNCTION public.apply_order_item() FROM PUBLIC, anon, authenticated;

@@ -1,4 +1,5 @@
-REVOKE ALL ON FUNCTION public.claim_admin() FROM PUBLIC, anon, authenticated;
+REVOKE ALL ON FUNCTION public.claim_admin() FROM PUBLIC, anon;
+GRANT EXECUTE ON FUNCTION public.claim_admin() TO authenticated;
 REVOKE ALL ON FUNCTION public.validate_coupon(text, numeric) FROM PUBLIC, anon, authenticated;
 REVOKE ALL ON FUNCTION public.has_role(uuid, public.app_role) FROM PUBLIC, anon;
 REVOKE ALL ON FUNCTION public.apply_order_item() FROM PUBLIC, anon, authenticated;

@@ -24,6 +24,31 @@ END; $$;
 REVOKE ALL ON FUNCTION public.claim_admin() FROM public;
 GRANT EXECUTE ON FUNCTION public.claim_admin() TO authenticated;
 
+-- Automatically make the first email-confirmed user the store admin.
+CREATE OR REPLACE FUNCTION public.handle_first_verified_user()
+RETURNS trigger
+LANGUAGE plpgsql
+SECURITY DEFINER
+SET search_path = public
+AS $$
+BEGIN
+  IF NOT EXISTS (SELECT 1 FROM public.user_roles WHERE role = 'admin') THEN
+    INSERT INTO public.user_roles (user_id, role)
+    VALUES (NEW.id, 'admin')
+    ON CONFLICT DO NOTHING;
+  END IF;
+  RETURN NEW;
+END;
+$$;
+
+REVOKE ALL ON FUNCTION public.handle_first_verified_user() FROM public, anon, authenticated;
+DROP TRIGGER IF EXISTS on_first_user_verified ON auth.users;
+CREATE TRIGGER on_first_user_verified
+  AFTER UPDATE OF confirmed_at ON auth.users
+  FOR EACH ROW
+  WHEN (OLD.confirmed_at IS NULL AND NEW.confirmed_at IS NOT NULL)
+  EXECUTE FUNCTION public.handle_first_verified_user();
+
 -- Admin dashboard needs to read profiles of customers
 CREATE OR REPLACE FUNCTION public.admin_dashboard_stats()
 RETURNS jsonb
