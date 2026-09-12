@@ -130,7 +130,6 @@ function VideoCard({ video }: { video: ShowcaseVideo }) {
   }
 
   const isYoutube = embed.provider === "youtube";
-  const isDrive = embed.provider === "drive";
   const autoplay = isYoutube;
   const iframeSrc =
     playing || autoplay
@@ -150,12 +149,8 @@ function VideoCard({ video }: { video: ShowcaseVideo }) {
               title={video.title || "ভিডিও"}
               loading="lazy"
               allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture"
-              className="absolute inset-0 size-full border-0"
-              style={{ objectFit: "cover" }}
+              className="absolute -left-[7.5%] -top-[7.5%] h-[115%] w-[115%] max-w-none border-0"
             />
-            {isDrive && (
-              <span aria-hidden="true" className="absolute right-2 top-2 z-10 h-16 w-20 bg-black" />
-            )}
           </div>
         ) : (
           <button
