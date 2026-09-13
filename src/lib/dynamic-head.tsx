@@ -56,6 +56,8 @@ export function DynamicHead() {
 
   useEffect(() => {
     const icon = favicon_url || logo_url;
+    upsertMeta("name", "application-name", store_name?.trim() || "আমার স্টোর");
+    upsertMeta("name", "apple-mobile-web-app-title", store_name?.trim() || "আমার স্টোর");
     if (icon) {
       upsertIcon("icon", icon);
       upsertIcon("apple-touch-icon", icon);
