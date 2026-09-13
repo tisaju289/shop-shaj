@@ -30,6 +30,7 @@ import { Route as AdminAppearanceRouteImport } from './routes/admin.appearance'
 import { Route as AdminCategoriesRouteImport } from './routes/admin.categories'
 import { Route as AdminSettingsRouteImport } from './routes/admin.settings'
 import { Route as CategorySlugRouteImport } from './routes/category.$slug'
+import { Route as ManifestWebmanifestRouteImport } from './routes/manifest.webmanifest'
 import { Route as ProductSlugRouteImport } from './routes/product.$slug'
 import { Route as AdminOrdersIndexRouteImport } from './routes/admin.orders.index'
 import { Route as AdminOrdersIdRouteImport } from './routes/admin.orders.$id'
@@ -141,6 +142,11 @@ const CategorySlugRoute = CategorySlugRouteImport.update({
   path: '/category/$slug',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ManifestWebmanifestRoute = ManifestWebmanifestRouteImport.update({
+  id: '/manifest/webmanifest',
+  path: '/manifest/webmanifest',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const ProductSlugRoute = ProductSlugRouteImport.update({
   id: '/product/$slug',
   path: '/product/$slug',
@@ -188,6 +194,7 @@ export interface FileRoutesByFullPath {
   '/admin/categories': typeof AdminCategoriesRoute
   '/admin/settings': typeof AdminSettingsRoute
   '/category/$slug': typeof CategorySlugRoute
+  '/manifest/webmanifest': typeof ManifestWebmanifestRoute
   '/product/$slug': typeof ProductSlugRoute
   '/admin/': typeof AdminIndexRoute
   '/admin/orders/$id': typeof AdminOrdersIdRoute
@@ -215,6 +222,7 @@ export interface FileRoutesByTo {
   '/admin/categories': typeof AdminCategoriesRoute
   '/admin/settings': typeof AdminSettingsRoute
   '/category/$slug': typeof CategorySlugRoute
+  '/manifest/webmanifest': typeof ManifestWebmanifestRoute
   '/product/$slug': typeof ProductSlugRoute
   '/admin': typeof AdminIndexRoute
   '/admin/orders/$id': typeof AdminOrdersIdRoute
@@ -244,6 +252,7 @@ export interface FileRoutesById {
   '/admin/categories': typeof AdminCategoriesRoute
   '/admin/settings': typeof AdminSettingsRoute
   '/category/$slug': typeof CategorySlugRoute
+  '/manifest/webmanifest': typeof ManifestWebmanifestRoute
   '/product/$slug': typeof ProductSlugRoute
   '/admin/': typeof AdminIndexRoute
   '/admin/orders/$id': typeof AdminOrdersIdRoute
@@ -274,6 +283,7 @@ export interface FileRouteTypes {
     | '/admin/categories'
     | '/admin/settings'
     | '/category/$slug'
+    | '/manifest/webmanifest'
     | '/product/$slug'
     | '/admin/'
     | '/admin/orders/$id'
@@ -301,6 +311,7 @@ export interface FileRouteTypes {
     | '/admin/categories'
     | '/admin/settings'
     | '/category/$slug'
+    | '/manifest/webmanifest'
     | '/product/$slug'
     | '/admin'
     | '/admin/orders/$id'
@@ -329,6 +340,7 @@ export interface FileRouteTypes {
     | '/admin/categories'
     | '/admin/settings'
     | '/category/$slug'
+    | '/manifest/webmanifest'
     | '/product/$slug'
     | '/admin/'
     | '/admin/orders/$id'
@@ -355,6 +367,7 @@ export interface RootRouteChildren {
   TermsRoute: typeof TermsRoute
   WishlistRoute: typeof WishlistRoute
   CategorySlugRoute: typeof CategorySlugRoute
+  ManifestWebmanifestRoute: typeof ManifestWebmanifestRoute
   ProductSlugRoute: typeof ProductSlugRoute
 }
 
@@ -507,6 +520,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof CategorySlugRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/manifest/webmanifest': {
+      id: '/manifest/webmanifest'
+      path: '/manifest/webmanifest'
+      fullPath: '/manifest/webmanifest'
+      preLoaderRoute: typeof ManifestWebmanifestRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/product/$slug': {
       id: '/product/$slug'
       path: '/product/$slug'
@@ -587,6 +607,7 @@ const rootRouteChildren: RootRouteChildren = {
   TermsRoute: TermsRoute,
   WishlistRoute: WishlistRoute,
   CategorySlugRoute: CategorySlugRoute,
+  ManifestWebmanifestRoute: ManifestWebmanifestRoute,
   ProductSlugRoute: ProductSlugRoute,
 }
 export const routeTree = rootRouteImport
