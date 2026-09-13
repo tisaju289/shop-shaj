@@ -10,10 +10,11 @@ export const Route = createFileRoute("/manifest.webmanifest")({
       GET: async () => {
         let name = "আমার স্টোর";
         let tagline = "";
+        let icon = "/icons/icon-512.png";
         try {
           const base = process.env["VITE_SUPABASE_URL"]!;
           const key = process.env["VITE_SUPABASE_PUBLISHABLE_KEY"]!;
-          const res = await fetch(`${base}/rest/v1/store_settings?select=data&limit=1`, {
+          const res = await fetch(`${base}/rest/v1/store_settings?select=data&id=eq.default`, {
             headers: { apikey: key, Authorization: `Bearer ${key}` },
           });
           const rows = (await res.json()) as Array<{ data: Record<string, unknown> }>;
@@ -22,6 +23,11 @@ export const Route = createFileRoute("/manifest.webmanifest")({
             name = data["store_name"].trim();
           }
           if (typeof data["tagline"] === "string") tagline = data["tagline"].trim();
+          if (typeof data["favicon_url"] === "string" && data["favicon_url"].trim()) {
+            icon = data["favicon_url"].trim();
+          } else if (typeof data["logo_url"] === "string" && data["logo_url"].trim()) {
+            icon = data["logo_url"].trim();
+          }
         } catch {
           // fall back to defaults
         }
@@ -38,10 +44,10 @@ export const Route = createFileRoute("/manifest.webmanifest")({
           theme_color: "#7a2b3f",
           lang: "bn",
           icons: [
-            { src: "/icons/icon-192.png", sizes: "192x192", type: "image/png" },
-            { src: "/icons/icon-512.png", sizes: "512x512", type: "image/png" },
+            { src: icon, sizes: "192x192", type: "image/png" },
+            { src: icon, sizes: "512x512", type: "image/png" },
             {
-              src: "/icons/icon-512.png",
+              src: icon,
               sizes: "512x512",
               type: "image/png",
               purpose: "maskable",
@@ -52,7 +58,7 @@ export const Route = createFileRoute("/manifest.webmanifest")({
         return new Response(JSON.stringify(manifest), {
           headers: {
             "content-type": "application/manifest+json; charset=utf-8",
-            "cache-control": "public, max-age=3600",
+            "cache-control": "no-cache, must-revalidate",
           },
         });
       },
