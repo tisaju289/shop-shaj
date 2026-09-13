@@ -18,8 +18,22 @@ function withParams(base: string, params: Record<string, string | undefined>) {
 
 const VIDEO_FILE_RE = /\.(mp4|webm|mov|m4v|ogv|ogg)(\?.*)?$/i;
 
-export function buildVideoEmbed(rawUrl: string): VideoEmbed {
+/**
+ * Lovable CDN assets are stored as site-relative `/__l5e/...` paths. On
+ * Lovable hosting those resolve on the same origin, but on a self-hosted
+ * (e.g. Cloudflare) deployment they must point at the stable project CDN
+ * host so videos keep working in production.
+ */
+const CDN_HOST = "https://4e17ed21-fa8e-4673-93ce-01ad4c130e96.lovableproject.com";
+
+export function resolveVideoUrl(rawUrl: string): string {
   const url = rawUrl.trim();
+  if (url.startsWith("/__l5e/")) return `${CDN_HOST}${url}`;
+  return url;
+}
+
+export function buildVideoEmbed(rawUrl: string): VideoEmbed {
+  const url = resolveVideoUrl(rawUrl);
   if (!url) return null;
 
   // Direct video files (including the store's own hosted assets) play in a
