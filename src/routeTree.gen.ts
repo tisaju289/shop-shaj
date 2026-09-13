@@ -17,6 +17,7 @@ import { Route as CartRouteImport } from './routes/cart'
 import { Route as CategoriesRouteImport } from './routes/categories'
 import { Route as CheckoutRouteImport } from './routes/checkout'
 import { Route as ContactRouteImport } from './routes/contact'
+import { Route as ManifestDotwebmanifestRouteImport } from './routes/manifest[.]webmanifest'
 import { Route as OffersRouteImport } from './routes/offers'
 import { Route as OrderSuccessRouteImport } from './routes/order-success'
 import { Route as PrivacyRouteImport } from './routes/privacy'
@@ -74,6 +75,11 @@ const CheckoutRoute = CheckoutRouteImport.update({
 const ContactRoute = ContactRouteImport.update({
   id: '/contact',
   path: '/contact',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ManifestDotwebmanifestRoute = ManifestDotwebmanifestRouteImport.update({
+  id: '/manifest.webmanifest',
+  path: '/manifest.webmanifest',
   getParentRoute: () => rootRouteImport,
 } as any)
 const OffersRoute = OffersRouteImport.update({
@@ -176,6 +182,7 @@ export interface FileRoutesByFullPath {
   '/categories': typeof CategoriesRoute
   '/checkout': typeof CheckoutRoute
   '/contact': typeof ContactRoute
+  '/manifest.webmanifest': typeof ManifestDotwebmanifestRoute
   '/offers': typeof OffersRoute
   '/order-success': typeof OrderSuccessRoute
   '/privacy': typeof PrivacyRoute
@@ -203,6 +210,7 @@ export interface FileRoutesByTo {
   '/categories': typeof CategoriesRoute
   '/checkout': typeof CheckoutRoute
   '/contact': typeof ContactRoute
+  '/manifest.webmanifest': typeof ManifestDotwebmanifestRoute
   '/offers': typeof OffersRoute
   '/order-success': typeof OrderSuccessRoute
   '/privacy': typeof PrivacyRoute
@@ -232,6 +240,7 @@ export interface FileRoutesById {
   '/categories': typeof CategoriesRoute
   '/checkout': typeof CheckoutRoute
   '/contact': typeof ContactRoute
+  '/manifest.webmanifest': typeof ManifestDotwebmanifestRoute
   '/offers': typeof OffersRoute
   '/order-success': typeof OrderSuccessRoute
   '/privacy': typeof PrivacyRoute
@@ -262,6 +271,7 @@ export interface FileRouteTypes {
     | '/categories'
     | '/checkout'
     | '/contact'
+    | '/manifest.webmanifest'
     | '/offers'
     | '/order-success'
     | '/privacy'
@@ -289,6 +299,7 @@ export interface FileRouteTypes {
     | '/categories'
     | '/checkout'
     | '/contact'
+    | '/manifest.webmanifest'
     | '/offers'
     | '/order-success'
     | '/privacy'
@@ -317,6 +328,7 @@ export interface FileRouteTypes {
     | '/categories'
     | '/checkout'
     | '/contact'
+    | '/manifest.webmanifest'
     | '/offers'
     | '/order-success'
     | '/privacy'
@@ -346,6 +358,7 @@ export interface RootRouteChildren {
   CategoriesRoute: typeof CategoriesRoute
   CheckoutRoute: typeof CheckoutRoute
   ContactRoute: typeof ContactRoute
+  ManifestDotwebmanifestRoute: typeof ManifestDotwebmanifestRoute
   OffersRoute: typeof OffersRoute
   OrderSuccessRoute: typeof OrderSuccessRoute
   PrivacyRoute: typeof PrivacyRoute
@@ -414,6 +427,13 @@ declare module '@tanstack/react-router' {
       path: '/contact'
       fullPath: '/contact'
       preLoaderRoute: typeof ContactRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/manifest.webmanifest': {
+      id: '/manifest.webmanifest'
+      path: '/manifest.webmanifest'
+      fullPath: '/manifest.webmanifest'
+      preLoaderRoute: typeof ManifestDotwebmanifestRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/offers': {
@@ -578,6 +598,7 @@ const rootRouteChildren: RootRouteChildren = {
   CategoriesRoute: CategoriesRoute,
   CheckoutRoute: CheckoutRoute,
   ContactRoute: ContactRoute,
+  ManifestDotwebmanifestRoute: ManifestDotwebmanifestRoute,
   OffersRoute: OffersRoute,
   OrderSuccessRoute: OrderSuccessRoute,
   PrivacyRoute: PrivacyRoute,
