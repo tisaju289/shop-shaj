@@ -4,7 +4,7 @@ import { createFileRoute } from "@tanstack/react-router";
  * Dynamic PWA manifest — name/branding come from admin store settings, so the
  * same build works for every client deployment.
  */
-export const Route = createFileRoute("/manifest/webmanifest")({
+export const Route = createFileRoute("/manifest.webmanifest")({
   server: {
     handlers: {
       GET: async () => {
