@@ -12,11 +12,14 @@ export const Route = createFileRoute("/manifest.webmanifest")({
         let tagline = "";
         let icon = "/icons/icon-512.png";
         try {
-          const base = process.env["VITE_SUPABASE_URL"]!;
-          const key = process.env["VITE_SUPABASE_PUBLISHABLE_KEY"]!;
+          const base = process.env["SUPABASE_URL"] || process.env["VITE_SUPABASE_URL"];
+          const key =
+            process.env["SUPABASE_PUBLISHABLE_KEY"] || process.env["VITE_SUPABASE_PUBLISHABLE_KEY"];
+          if (!base || !key) throw new Error("Supabase manifest configuration is missing");
           const res = await fetch(`${base}/rest/v1/store_settings?select=data&id=eq.default`, {
-            headers: { apikey: key, Authorization: `Bearer ${key}` },
+            headers: { apikey: key },
           });
+          if (!res.ok) throw new Error(`Manifest settings request failed: ${res.status}`);
           const rows = (await res.json()) as Array<{ data: Record<string, unknown> }>;
           const data = rows[0]?.data ?? {};
           if (typeof data["store_name"] === "string" && data["store_name"].trim()) {
