@@ -882,15 +882,22 @@ function SectionTypographyFields({
   );
 
   return (
-    <div className="rounded-md border border-border p-3">
-      <Label className="mb-3 block">এই সেকশনের heading style (খালি রাখলে global style)</Label>
-      <div className="grid gap-3 md:grid-cols-2">
-        {field("heading_font", "শিরোনামের ফন্ট", "CSS font-family")}
-        {field("heading_color", "শিরোনামের রঙ", "#3a2b2b")}
-        {field("heading_size", "শিরোনামের সাইজ", "2rem বা 32px")}
-        {field("subheading_font", "সাব-শিরোনামের ফন্ট", "CSS font-family")}
-        {field("subheading_color", "সাব-শিরোনামের রঙ", "#6b625e")}
-        {field("subheading_size", "সাব-শিরোনামের সাইজ", "1rem বা 16px")}
+    <div className="space-y-3">
+      <div className="rounded-md border border-border p-3">
+        <Label className="mb-3 block">এই সেকশনের heading (খালি রাখলে global style)</Label>
+        <div className="grid gap-3 md:grid-cols-3">
+          {field("heading_font", "ফন্ট", "CSS font-family")}
+          {field("heading_color", "রঙ", "#3a2b2b")}
+          {field("heading_size", "সাইজ", "2rem বা 32px")}
+        </div>
+      </div>
+      <div className="rounded-md border border-border p-3">
+        <Label className="mb-3 block">এই সেকশনের subheading (খালি রাখলে global style)</Label>
+        <div className="grid gap-3 md:grid-cols-3">
+          {field("subheading_font", "ফন্ট", "CSS font-family")}
+          {field("subheading_color", "রঙ", "#6b625e")}
+          {field("subheading_size", "সাইজ", "1rem বা 16px")}
+        </div>
       </div>
     </div>
   );
