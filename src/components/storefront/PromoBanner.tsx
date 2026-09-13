@@ -2,9 +2,12 @@ import { useEffect, useState } from "react";
 
 import { Button } from "@/components/ui/button";
 import type { PromoBanner as Banner } from "@/lib/types";
+import { useSettings } from "@/lib/store-context";
+import { typographyStyle } from "@/lib/typography";
 import { cn } from "@/lib/utils";
 
 export function PromoBannerCarousel({ banners }: { banners: Banner[] }) {
+  const settings = useSettings();
   const [index, setIndex] = useState(0);
 
   useEffect(() => {
@@ -48,12 +51,18 @@ export function PromoBannerCarousel({ banners }: { banners: Banner[] }) {
               )}
             >
               {banner.title && (
-                <h3 className="mx-auto max-w-lg text-xl font-semibold text-background md:mx-0 md:text-3xl">
+                <h3
+                  className="mx-auto max-w-lg text-xl font-semibold text-background md:mx-0 md:text-3xl"
+                  style={typographyStyle(settings, "heading")}
+                >
                   {banner.title}
                 </h3>
               )}
               {banner.subtitle && (
-                <p className="mx-auto max-w-lg text-sm text-background/85 md:mx-0 md:text-base">
+                <p
+                  className="mx-auto max-w-lg text-sm text-background/85 md:mx-0 md:text-base"
+                  style={typographyStyle(settings, "subheading")}
+                >
                   {banner.subtitle}
                 </p>
               )}

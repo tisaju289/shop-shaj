@@ -820,6 +820,10 @@ function SectionsTab() {
                 value={editing.subtitle ?? ""}
                 onChange={(v) => patch({ subtitle: v })}
               />
+              <SectionTypographyFields
+                config={editing.config}
+                onChange={(config) => patch({ config })}
+              />
               <div className="grid gap-3 sm:grid-cols-2">
                 <Field
                   label="ক্রম"
@@ -855,6 +859,39 @@ function SectionsTab() {
           </DialogFooter>
         </DialogContent>
       </Dialog>
+    </div>
+  );
+}
+
+function SectionTypographyFields({
+  config,
+  onChange,
+}: {
+  config: Record<string, unknown>;
+  onChange: (config: Record<string, unknown>) => void;
+}) {
+  const field = (key: string, label: string, placeholder: string) => (
+    <div className="space-y-1.5">
+      <Label className="text-xs">{label}</Label>
+      <Input
+        value={typeof config[key] === "string" ? config[key] as string : ""}
+        placeholder={placeholder}
+        onChange={(e) => onChange({ ...config, [key]: e.target.value })}
+      />
+    </div>
+  );
+
+  return (
+    <div className="rounded-md border border-border p-3">
+      <Label className="mb-3 block">এই সেকশনের heading style (খালি রাখলে global style)</Label>
+      <div className="grid gap-3 md:grid-cols-2">
+        {field("heading_font", "শিরোনামের ফন্ট", "CSS font-family")}
+        {field("heading_color", "শিরোনামের রঙ", "#3a2b2b")}
+        {field("heading_size", "শিরোনামের সাইজ", "2rem বা 32px")}
+        {field("subheading_font", "সাব-শিরোনামের ফন্ট", "CSS font-family")}
+        {field("subheading_color", "সাব-শিরোনামের রঙ", "#6b625e")}
+        {field("subheading_size", "সাব-শিরোনামের সাইজ", "1rem বা 16px")}
+      </div>
     </div>
   );
 }

@@ -379,7 +379,7 @@ function SettingsPage() {
         <TabsContent value="design" className="pt-5">
           <Card>
             <CardHeader>
-              <CardTitle className="text-base">রঙ ও ডিজাইন</CardTitle>
+              <CardTitle className="text-base">রঙ ও টাইপোগ্রাফি</CardTitle>
             </CardHeader>
             <CardContent className="grid gap-4 md:grid-cols-2">
               <div className="space-y-1.5">
@@ -415,6 +415,22 @@ function SettingsPage() {
                 </div>
               </div>
               {text("radius", "কোণার গোলাকৃতি (যেমন 0.5rem)")}
+              <TypographyFields
+                title="সব পেজের শিরোনাম"
+                fontKey="heading_font"
+                colorKey="heading_color"
+                sizeKey="heading_size"
+                form={form}
+                set={set}
+              />
+              <TypographyFields
+                title="সব পেজের সাব-শিরোনাম"
+                fontKey="subheading_font"
+                colorKey="subheading_color"
+                sizeKey="subheading_size"
+                form={form}
+                set={set}
+              />
             </CardContent>
           </Card>
         </TabsContent>
@@ -534,6 +550,52 @@ function SettingsPage() {
         <Button disabled={save.isPending} onClick={() => save.mutate()}>
           <Save className="size-4" /> সংরক্ষণ করুন
         </Button>
+      </div>
+    </div>
+  );
+}
+
+function TypographyFields({
+  title,
+  fontKey,
+  colorKey,
+  sizeKey,
+  form,
+  set,
+}: {
+  title: string;
+  fontKey: "heading_font" | "subheading_font";
+  colorKey: "heading_color" | "subheading_color";
+  sizeKey: "heading_size" | "subheading_size";
+  form: StoreSettings;
+  set: <K extends keyof StoreSettings>(key: K, value: StoreSettings[K]) => void;
+}) {
+  return (
+    <div className="rounded-md border border-border p-3 md:col-span-2">
+      <Label className="mb-3 block">{title}</Label>
+      <div className="grid gap-3 md:grid-cols-3">
+        <div className="space-y-1.5">
+          <Label className="text-xs">ফন্ট</Label>
+          <Input
+            value={form[fontKey]}
+            placeholder="যেমন: Hind Siliguri, sans-serif"
+            onChange={(e) => set(fontKey, e.target.value)}
+          />
+        </div>
+        <ColorField
+          label="রঙ"
+          value={form[colorKey]}
+          fallback={colorKey === "heading_color" ? "#3a2b2b" : "#6b625e"}
+          onChange={(value) => set(colorKey, value)}
+        />
+        <div className="space-y-1.5">
+          <Label className="text-xs">সাইজ</Label>
+          <Input
+            value={form[sizeKey]}
+            placeholder="যেমন: 2rem বা 32px"
+            onChange={(e) => set(sizeKey, e.target.value)}
+          />
+        </div>
       </div>
     </div>
   );

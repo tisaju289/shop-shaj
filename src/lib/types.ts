@@ -49,6 +49,12 @@ export type StoreSettings = {
   primary_color: string;
   secondary_color: string;
   radius: string;
+  heading_font: string;
+  heading_color: string;
+  heading_size: string;
+  subheading_font: string;
+  subheading_color: string;
+  subheading_size: string;
   about_text: string;
   return_policy: string;
   privacy_policy: string;
@@ -130,6 +136,12 @@ export const defaultSettings: StoreSettings = {
   primary_color: "",
   secondary_color: "",
   radius: "0.5rem",
+  heading_font: "",
+  heading_color: "",
+  heading_size: "",
+  subheading_font: "",
+  subheading_color: "",
+  subheading_size: "",
   about_text: "",
   return_policy: "",
   privacy_policy: "",

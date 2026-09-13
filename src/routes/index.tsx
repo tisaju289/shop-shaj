@@ -20,6 +20,7 @@ import {
   type ProductFlag,
 } from "@/lib/queries";
 import { useSettings } from "@/lib/store-context";
+import { sectionTypography, typographyStyle } from "@/lib/typography";
 
 export const Route = createFileRoute("/")({
   head: () => ({
@@ -89,6 +90,8 @@ function HomePage() {
                   <SectionHeading
                     title={section.title || "ক্যাটাগরি"}
                     subtitle={section.subtitle}
+                    titleStyle={sectionTypography(section.config, "heading")}
+                    subtitleStyle={sectionTypography(section.config, "subheading")}
                   />
                   {categories.length ? (
                     <>
@@ -122,6 +125,8 @@ function HomePage() {
                   <SectionHeading
                     title={section.title || "ভিডিও কালেকশন"}
                     subtitle={section.subtitle}
+                    titleStyle={sectionTypography(section.config, "heading")}
+                    subtitleStyle={sectionTypography(section.config, "subheading")}
                   />
                   <VideoShowcase videos={videos.slice(0, section.product_limit || 8)} />
                 </div>
@@ -134,10 +139,16 @@ function HomePage() {
                 <div className="rounded-2xl border border-border bg-surface p-3 md:p-4">
                   <div className="max-w-2xl text-center mx-auto">
                     <Mail className="mx-auto size-8 text-primary" />
-                    <h2 className="mt-4 text-2xl font-semibold md:text-3xl">
+                    <h2
+                      className="mt-4 text-2xl font-semibold md:text-3xl"
+                      style={typographyStyle(settings, "heading", sectionTypography(section.config, "heading"))}
+                    >
                       {section.title || "আমাদের সাথে থাকুন"}
                     </h2>
-                    <p className="mt-3 text-sm text-muted-foreground md:text-base">
+                    <p
+                      className="mt-3 text-sm text-muted-foreground md:text-base"
+                      style={typographyStyle(settings, "subheading", sectionTypography(section.config, "subheading"))}
+                    >
                       {section.subtitle || "নতুন কালেকশন ও অফারের খবর সবার আগে পান।"}
                     </p>
                     <div className="mt-6 flex flex-wrap justify-center gap-3">
@@ -170,6 +181,8 @@ function HomePage() {
                   <SectionHeading
                     title={section.title || ""}
                     subtitle={section.subtitle}
+                    titleStyle={sectionTypography(section.config, "heading")}
+                    subtitleStyle={sectionTypography(section.config, "subheading")}
                   />
                   {result?.isLoading ? (
                     <ProductGridSkeleton count={4} />
