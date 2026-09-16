@@ -7,11 +7,13 @@ export function PriceDisplay({
   salePrice,
   className,
   size = "md",
+  showDiscount = true,
 }: {
   price: number;
   salePrice?: number | null;
   className?: string;
   size?: "sm" | "md" | "lg";
+  showDiscount?: boolean;
 }) {
   const { currency } = useSettings();
   const final = effectivePrice(price, salePrice);
@@ -39,9 +41,11 @@ export function PriceDisplay({
           >
             {formatMoney(price, currency)}
           </span>
-          <span className="rounded-sm bg-destructive/10 px-1.5 py-0.5 text-[11px] font-medium text-destructive">
-            {off}% ছাড়
-          </span>
+          {showDiscount && (
+            <span className="rounded-sm bg-destructive/10 px-1.5 py-0.5 text-[11px] font-medium text-destructive">
+              {off}% ছাড়
+            </span>
+          )}
         </>
       )}
     </div>
