@@ -1,40 +1,19 @@
 import { Link } from "@tanstack/react-router";
-import { Heart, ShoppingBag } from "lucide-react";
+import { Heart } from "lucide-react";
 import { toast } from "sonner";
 
 import { PriceDisplay } from "@/components/storefront/PriceDisplay";
 import { RatingStars } from "@/components/storefront/RatingStars";
 import { Button } from "@/components/ui/button";
-import { useCart } from "@/lib/cart";
-import { effectivePrice } from "@/lib/format";
 import { fallbackImage } from "@/lib/media";
 import type { Product } from "@/lib/types";
 import { cn } from "@/lib/utils";
 import { useWishlist } from "@/lib/wishlist";
 
 export function ProductCard({ product, className }: { product: Product; className?: string }) {
-  const cart = useCart();
   const wishlist = useWishlist();
   const image = product.thumbnail_url || fallbackImage(product.name);
   const outOfStock = product.stock <= 0;
-  const needsVariant = (product.sizes?.length ?? 0) > 0 || (product.colors?.length ?? 0) > 0;
-
-  function handleAdd() {
-    if (outOfStock) return;
-    cart.add({
-      productId: product.id,
-      variantId: null,
-      slug: product.slug,
-      name: product.name,
-      image: product.thumbnail_url,
-      size: product.sizes?.[0] ?? null,
-      color: product.colors?.[0] ?? null,
-      unitPrice: effectivePrice(product.price, product.sale_price),
-      quantity: 1,
-      maxStock: product.stock,
-    });
-    toast.success("কার্টে যোগ করা হয়েছে");
-  }
 
   return (
     <article
@@ -87,24 +66,11 @@ export function ProductCard({ product, className }: { product: Product; classNam
         </div>
         <PriceDisplay price={product.price} salePrice={product.sale_price} />
         <div className="mt-auto pt-2">
-          {needsVariant ? (
-            <Button asChild variant="outline" size="sm" className="w-full">
-              <Link to="/product/$slug" params={{ slug: product.slug }}>
-                বিস্তারিত দেখুন
-              </Link>
-            </Button>
-          ) : (
-            <Button
-              size="sm"
-              variant="outline"
-              className="w-full"
-              disabled={outOfStock}
-              onClick={handleAdd}
-            >
-              <ShoppingBag className="size-4 shrink-0" />
-              <span className="truncate">কার্টে যোগ করুন</span>
-            </Button>
-          )}
+          <Button asChild variant="outline" size="sm" className="w-full">
+            <Link to="/product/$slug" params={{ slug: product.slug }}>
+              বিস্তারিত দেখুন
+            </Link>
+          </Button>
         </div>
       </div>
     </article>
