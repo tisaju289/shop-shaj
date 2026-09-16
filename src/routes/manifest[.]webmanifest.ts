@@ -15,11 +15,11 @@ export const Route = createFileRoute("/manifest.webmanifest")({
           const base =
             process.env["SUPABASE_URL"] ||
             process.env["VITE_SUPABASE_URL"] ||
-            import.meta.env.VITE_SUPABASE_URL;
+            import.meta.env["VITE_SUPABASE_URL"];
           const key =
             process.env["SUPABASE_PUBLISHABLE_KEY"] ||
             process.env["VITE_SUPABASE_PUBLISHABLE_KEY"] ||
-            import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY;
+            import.meta.env["VITE_SUPABASE_PUBLISHABLE_KEY"];
           if (!base || !key) throw new Error("Supabase manifest configuration is missing");
           const res = await fetch(`${base}/rest/v1/store_settings?select=data&id=eq.default`, {
             headers: { apikey: key },
