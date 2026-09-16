@@ -38,8 +38,7 @@ export function buildVideoEmbed(rawUrl: string): VideoEmbed {
   if (!url) return null;
 
   // Direct video files (including the store's own hosted assets) play in a
-  // native <video> element: autoplay works and there is no provider download
-  // / pop-out button to hide.
+  // native <video> element, so no provider UI can appear.
   if (VIDEO_FILE_RE.test(url)) {
     return { src: url, streamUrl: url, provider: "file" };
   }
@@ -134,22 +133,37 @@ function NativeVideo({ src, video }: { src: string; video: ShowcaseVideo }) {
       poster={video.thumbnail_url || undefined}
       title={video.title || "ভিডিও"}
       className="absolute inset-0 size-full object-contain"
-      autoPlay
-      muted
-      loop
       playsInline
       controls
       controlsList="nodownload noremoteplayback noplaybackrate"
       disablePictureInPicture
-      preload="auto"
+      preload="metadata"
     />
+  );
+}
+
+function VideoUnavailable({ video }: { video: ShowcaseVideo }) {
+  return (
+    <div className="absolute inset-0 flex items-center justify-center bg-muted p-4 text-center">
+      {video.thumbnail_url ? (
+        <img
+          src={video.thumbnail_url}
+          alt=""
+          className="absolute inset-0 size-full object-contain"
+          loading="lazy"
+        />
+      ) : null}
+      <p className="relative z-10 rounded bg-background/90 px-3 py-2 text-sm text-foreground shadow-sm">
+        সরাসরি ভিডিও ফাইল আপলোড করুন
+      </p>
+    </div>
   );
 }
 
 function VideoCard({ video }: { video: ShowcaseVideo }) {
   const embed = buildVideoEmbed(video.video_url);
   const resolve = useServerFn(resolveVideoStream);
-  const needsResolve = !!embed && !embed.streamUrl && embed.provider !== "youtube";
+  const needsResolve = !!embed && !embed.streamUrl;
 
   const { data } = useQuery({
     queryKey: ["video-stream", video.video_url],
@@ -179,31 +193,12 @@ function VideoCard({ video }: { video: ShowcaseVideo }) {
     );
   }
 
-  const isYoutube = embed.provider === "youtube";
-  const youtubeId = isYoutube ? embed.src.match(/\/embed\/([\w-]+)/)?.[1] : undefined;
-  const iframeSrc = isYoutube
-    ? withParams(embed.src, {
-        autoplay: "1",
-        mute: "1",
-        loop: "1",
-        controls: "0",
-        rel: "0",
-        modestbranding: "1",
-        playsinline: "1",
-        iv_load_policy: "3",
-        ...(youtubeId ? { playlist: youtubeId } : {}),
-      })
-    : withParams(embed.src, { autoplay: "1", mute: "1", loop: "1" });
-
+  // Never fall back to a provider iframe. Provider frames add profile chrome,
+  // scrolling, pop-out controls, and related videos that the storefront
+  // cannot reliably hide. A native stream is the only permanent clean mode.
   return (
     <Frame video={video}>
-      <iframe
-        src={iframeSrc}
-        title={video.title || "ভিডিও"}
-        loading="lazy"
-        allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture"
-        className="absolute inset-0 size-full border-0"
-      />
+      <VideoUnavailable video={video} />
     </Frame>
   );
 }
