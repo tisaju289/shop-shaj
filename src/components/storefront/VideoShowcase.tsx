@@ -1,7 +1,8 @@
-import { Play } from "lucide-react";
-import { useState } from "react";
+import { useQuery } from "@tanstack/react-query";
+import { useServerFn } from "@tanstack/react-start";
 
 import type { ShowcaseVideo } from "@/lib/types";
+import { resolveVideoStream } from "@/lib/video-resolve.functions";
 
 export type VideoEmbed = {
   src: string;
