@@ -8,8 +8,9 @@ import { z } from "zod";
  * profile", related-video grid at the end) and gives smooth, looping playback
  * of only the video the admin linked.
  *
- * Returns { streamUrl: null } when extraction is not possible; the caller then
- * falls back to the provider iframe.
+ * Returns { streamUrl: null } when extraction is not possible. The storefront
+ * deliberately never falls back to a provider iframe, preventing profile UI,
+ * internal scrolling, and related-video screens from appearing.
  */
 export const resolveVideoStream = createServerFn({ method: "GET" })
   .inputValidator((data) => z.object({ url: z.string().min(4) }).parse(data))
