@@ -126,7 +126,7 @@ function VideoCard({ video }: { video: ShowcaseVideo }) {
             src={embed.streamUrl}
             poster={video.thumbnail_url || undefined}
             title={video.title || "ভিডিও"}
-            className="absolute inset-0 size-full object-cover"
+            className="absolute inset-0 size-full object-contain"
             muted
             loop
             playsInline
