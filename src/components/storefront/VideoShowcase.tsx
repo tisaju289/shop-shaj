@@ -112,81 +112,11 @@ export function buildVideoEmbed(rawUrl: string): VideoEmbed {
   return { src: parsed.toString(), provider: "other" };
 }
 
-function VideoCard({ video }: { video: ShowcaseVideo }) {
-  const [playing, setPlaying] = useState(false);
-  const embed = buildVideoEmbed(video.video_url);
-  if (!embed) return null;
-
-  // Native <video> for direct/streamable files — autoplays muted and has no
-  // download / pop-out link icon to worry about.
-  if (embed.streamUrl) {
-    return (
-      <figure className="w-[calc((100%-0.75rem)/2)] shrink-0 snap-start md:w-[calc((100%-3rem)/4)]">
-        <div className="relative aspect-[9/16] w-full overflow-hidden rounded-xl border border-border bg-black">
-          <video
-            src={embed.streamUrl}
-            poster={video.thumbnail_url || undefined}
-            title={video.title || "ভিডিও"}
-            className="absolute inset-0 size-full object-contain"
-            muted
-            loop
-            playsInline
-            controls
-            preload="auto"
-          />
-        </div>
-        {video.title && (
-          <figcaption className="mt-2 line-clamp-2 text-center text-sm font-medium text-foreground">
-            {video.title}
-          </figcaption>
-        )}
-      </figure>
-    );
-  }
-
-  const isYoutube = embed.provider === "youtube";
-  const autoplay = isYoutube;
-  const iframeSrc =
-    playing || autoplay
-      ? withParams(
-          embed.src,
-          isYoutube ? { autoplay: "1", mute: "1", rel: "0" } : { autoplay: "1" },
-        )
-      : embed.src;
-
+function Frame({ video, children }: { video: ShowcaseVideo; children: React.ReactNode }) {
   return (
     <figure className="w-[calc((100%-0.75rem)/2)] shrink-0 snap-start md:w-[calc((100%-3rem)/4)]">
       <div className="relative aspect-[9/16] w-full overflow-hidden rounded-xl border border-border bg-black">
-        {playing || autoplay || !video.thumbnail_url ? (
-          <div className="absolute inset-0">
-            <iframe
-              src={iframeSrc}
-              title={video.title || "ভিডিও"}
-              loading="lazy"
-              allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture"
-              className="absolute inset-0 size-full border-0"
-            />
-          </div>
-        ) : (
-          <button
-            type="button"
-            onClick={() => setPlaying(true)}
-            className="group absolute inset-0 size-full"
-            aria-label={`${video.title || "ভিডিও"} চালু করুন`}
-          >
-            <img
-              src={video.thumbnail_url}
-              alt={video.title || "ভিডিও থাম্বনেইল"}
-              loading="lazy"
-              className="size-full object-cover"
-            />
-            <span className="absolute inset-0 flex items-center justify-center bg-black/25">
-              <span className="flex size-14 items-center justify-center rounded-full bg-background/90 text-foreground">
-                <Play className="size-6" />
-              </span>
-            </span>
-          </button>
-        )}
+        {children}
       </div>
       {video.title && (
         <figcaption className="mt-2 line-clamp-2 text-center text-sm font-medium text-foreground">
@@ -194,6 +124,87 @@ function VideoCard({ video }: { video: ShowcaseVideo }) {
         </figcaption>
       )}
     </figure>
+  );
+}
+
+function NativeVideo({ src, video }: { src: string; video: ShowcaseVideo }) {
+  return (
+    <video
+      src={src}
+      poster={video.thumbnail_url || undefined}
+      title={video.title || "ভিডিও"}
+      className="absolute inset-0 size-full object-contain"
+      autoPlay
+      muted
+      loop
+      playsInline
+      controls
+      controlsList="nodownload noremoteplayback noplaybackrate"
+      disablePictureInPicture
+      preload="auto"
+    />
+  );
+}
+
+function VideoCard({ video }: { video: ShowcaseVideo }) {
+  const embed = buildVideoEmbed(video.video_url);
+  const resolve = useServerFn(resolveVideoStream);
+  const needsResolve = !!embed && !embed.streamUrl && embed.provider !== "youtube";
+
+  const { data } = useQuery({
+    queryKey: ["video-stream", video.video_url],
+    queryFn: () => resolve({ data: { url: resolveVideoUrl(video.video_url) } }),
+    enabled: needsResolve,
+    staleTime: 60 * 60 * 1000,
+    retry: false,
+  });
+
+  if (!embed) return null;
+
+  // Direct file — plays natively, no provider UI at all.
+  if (embed.streamUrl) {
+    return (
+      <Frame video={video}>
+        <NativeVideo src={embed.streamUrl} video={video} />
+      </Frame>
+    );
+  }
+
+  // Social link resolved to a direct stream: no profile header, no related videos.
+  if (data?.streamUrl) {
+    return (
+      <Frame video={video}>
+        <NativeVideo src={data.streamUrl} video={video} />
+      </Frame>
+    );
+  }
+
+  const isYoutube = embed.provider === "youtube";
+  const youtubeId = isYoutube ? embed.src.match(/\/embed\/([\w-]+)/)?.[1] : undefined;
+  const iframeSrc = isYoutube
+    ? withParams(embed.src, {
+        autoplay: "1",
+        mute: "1",
+        loop: "1",
+        controls: "0",
+        rel: "0",
+        modestbranding: "1",
+        playsinline: "1",
+        iv_load_policy: "3",
+        ...(youtubeId ? { playlist: youtubeId } : {}),
+      })
+    : withParams(embed.src, { autoplay: "1", mute: "1", loop: "1" });
+
+  return (
+    <Frame video={video}>
+      <iframe
+        src={iframeSrc}
+        title={video.title || "ভিডিও"}
+        loading="lazy"
+        allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture"
+        className="absolute inset-0 size-full border-0"
+      />
+    </Frame>
   );
 }
 
