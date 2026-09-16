@@ -68,9 +68,13 @@ function CheckoutPage() {
     setSubmitting(true);
     try {
       const { data: session } = await supabase.auth.getSession();
-      const { data: order, error } = await supabase
+      const orderId = crypto.randomUUID();
+      const orderNumber = `ORD-${new Date().toISOString().slice(2, 10).replace(/-/g, "")}-${Math.floor(Math.random() * 100000).toString().padStart(5, "0")}`;
+      const { error } = await supabase
         .from("orders")
         .insert({
+          id: orderId,
+          order_number: orderNumber,
           user_id: session.session?.user.id ?? null,
           customer_name: form.name,
           customer_phone: form.phone,
@@ -81,14 +85,12 @@ function CheckoutPage() {
           discount: 0,
           total,
           payment_method: "cod",
-        })
-        .select("id,order_number")
-        .single();
+        });
       if (error) throw error;
 
       const { error: itemsError } = await supabase.from("order_items").insert(
         cart.items.map((item) => ({
-          order_id: order.id,
+          order_id: orderId,
           product_id: item.productId,
           variant_id: item.variantId,
           product_name: item.name,
@@ -102,22 +104,23 @@ function CheckoutPage() {
       );
       if (itemsError) throw itemsError;
 
-      const eventId = `purchase_${order.id}`;
+      const eventId = `purchase_${orderId}`;
       if (await canTrackVisitor()) {
         await Promise.allSettled([
           trackPurchase({
             eventId,
             value: total,
-            orderNumber: order.order_number,
+            orderNumber,
             facebookEnabled: settings.facebook_pixel_enabled,
             ga4Enabled: settings.ga4_enabled,
           }),
-          reportFacebookPurchase({ data: { orderId: order.id, eventId, sourceUrl: window.location.href } }),
+          reportFacebookPurchase({ data: { orderId, eventId, sourceUrl: window.location.href } }),
         ]);
       }
       cart.clear();
-      navigate({ to: "/order-success", search: { order: order.order_number } });
-    } catch {
+      navigate({ to: "/order-success", search: { order: orderNumber } });
+    } catch (error) {
+      console.error("Order submission failed", error);
       toast.error("অর্ডার জমা দেওয়া যায়নি। আবার চেষ্টা করুন।");
     } finally {
       setSubmitting(false);
