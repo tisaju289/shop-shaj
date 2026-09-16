@@ -28,9 +28,12 @@ export function sectionTypography(
   kind: "heading" | "subheading",
 ): TypographyOverride {
   const prefix = kind === "heading" ? "heading" : "subheading";
+  const font = config?.[`${prefix}_font`];
+  const color = config?.[`${prefix}_color`];
+  const size = config?.[`${prefix}_size`];
   return {
-    font: typeof config?.[`${prefix}_font`] === "string" ? config[`${prefix}_font`] as string : undefined,
-    color: typeof config?.[`${prefix}_color`] === "string" ? config[`${prefix}_color`] as string : undefined,
-    size: typeof config?.[`${prefix}_size`] === "string" ? config[`${prefix}_size`] as string : undefined,
+    ...(typeof font === "string" ? { font } : {}),
+    ...(typeof color === "string" ? { color } : {}),
+    ...(typeof size === "string" ? { size } : {}),
   };
 }
