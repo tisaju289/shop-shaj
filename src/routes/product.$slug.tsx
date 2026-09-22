@@ -9,6 +9,8 @@ import { PriceDisplay } from "@/components/storefront/PriceDisplay";
 import { ProductCarousel } from "@/components/storefront/ProductCarousel";
 import { QuantitySelector } from "@/components/storefront/QuantitySelector";
 import { RatingStars } from "@/components/storefront/RatingStars";
+import { ReviewForm } from "@/components/storefront/ReviewForm";
+import { SizeChartDialog } from "@/components/storefront/SizeChart";
 import { SectionHeading, StoreLayout } from "@/components/storefront/StoreLayout";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
@@ -243,7 +245,10 @@ function ProductPage() {
 
             {product.sizes?.length > 0 && (
               <div className="mt-5">
-                <h3 className="mb-2 text-sm font-medium">সাইজ নির্বাচন করুন</h3>
+                <div className="mb-2 flex flex-wrap items-center justify-center gap-2 md:justify-start">
+                  <h3 className="text-sm font-medium">সাইজ নির্বাচন করুন</h3>
+                  <SizeChartDialog />
+                </div>
                 <div className="flex flex-wrap gap-2">
                   {product.sizes.map((s) => (
                     <button
@@ -364,7 +369,8 @@ function ProductPage() {
               <p className="text-sm text-muted-foreground">কোনো স্পেসিফিকেশন যোগ করা হয়নি।</p>
             )}
           </TabsContent>
-          <TabsContent value="reviews" className="pt-5">
+          <TabsContent value="reviews" className="space-y-5 pt-5">
+            <ReviewForm productId={product.id} />
             {reviews.length ? (
               <ul className="max-w-2xl space-y-5">
                 {reviews.map((r) => (
@@ -376,6 +382,14 @@ function ProductPage() {
                     <RatingStars rating={r.rating} className="mt-1.5" />
                     {r.comment && (
                       <p className="mt-2 text-sm text-muted-foreground">{r.comment}</p>
+                    )}
+                    {r.image_url && (
+                      <img
+                        src={r.image_url}
+                        alt=""
+                        loading="lazy"
+                        className="mt-3 max-h-56 rounded-md border border-border object-cover"
+                      />
                     )}
                   </li>
                 ))}

@@ -655,7 +655,9 @@ export type Database = {
           comment: string | null
           created_at: string
           id: string
+          image_url: string | null
           is_approved: boolean
+          is_featured: boolean
           product_id: string
           rating: number
           reviewer_name: string
@@ -665,7 +667,9 @@ export type Database = {
           comment?: string | null
           created_at?: string
           id?: string
+          image_url?: string | null
           is_approved?: boolean
+          is_featured?: boolean
           product_id: string
           rating?: number
           reviewer_name: string
@@ -675,7 +679,9 @@ export type Database = {
           comment?: string | null
           created_at?: string
           id?: string
+          image_url?: string | null
           is_approved?: boolean
+          is_featured?: boolean
           product_id?: string
           rating?: number
           reviewer_name?: string
