@@ -140,7 +140,7 @@ function HomePage() {
               <HomeReviewsSection
                 key={section.id}
                 title={section.title || "ক্রেতাদের রিভিউ"}
-                subtitle={section.subtitle}
+                subtitle={section.subtitle ?? null}
                 limit={section.product_limit || 8}
                 config={section.config}
               />
@@ -244,7 +244,7 @@ function HomeReviewsSection({
   config,
 }: {
   title: string;
-  subtitle?: string | null;
+  subtitle: string | null;
   limit: number;
   config?: Record<string, unknown> | null;
 }) {
