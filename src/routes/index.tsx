@@ -7,11 +7,13 @@ import { HeroFallback, HeroSlider } from "@/components/storefront/HeroSlider";
 import { EmptyState, ProductGridSkeleton } from "@/components/storefront/LoadingSkeleton";
 import { ProductCarousel, ProductMarquee } from "@/components/storefront/ProductCarousel";
 import { PromoBannerCarousel } from "@/components/storefront/PromoBanner";
+import { ReviewsShowcase } from "@/components/storefront/ReviewsShowcase";
 import { SectionHeading, StoreLayout } from "@/components/storefront/StoreLayout";
 import { VideoShowcase } from "@/components/storefront/VideoShowcase";
 import { Button } from "@/components/ui/button";
 import {
   categoriesQuery,
+  featuredReviewsQuery,
   flaggedProductsQuery,
   heroSlidesQuery,
   homepageSectionsQuery,
@@ -132,6 +134,17 @@ function HomePage() {
                 </div>
               </section>
             ) : null;
+
+          case "reviews":
+            return (
+              <HomeReviewsSection
+                key={section.id}
+                title={section.title || "ক্রেতাদের রিভিউ"}
+                subtitle={section.subtitle}
+                limit={section.product_limit || 8}
+                config={section.config}
+              />
+            );
 
           case "newsletter":
             return (
