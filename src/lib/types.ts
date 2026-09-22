@@ -68,6 +68,11 @@ export type StoreSettings = {
   whatsapp_float_enabled: boolean;
   whatsapp_float_message: string;
   whatsapp_float_position: "left" | "right";
+  size_chart_enabled: boolean;
+  size_chart_title: string;
+  size_chart_note: string;
+  size_chart_columns: string[];
+  size_chart_rows: string[][];
 };
 
 export const defaultSettings: StoreSettings = {
@@ -155,6 +160,16 @@ export const defaultSettings: StoreSettings = {
   whatsapp_float_enabled: true,
   whatsapp_float_message: "আসসালামু আলাইকুম! কীভাবে সাহায্য করতে পারি?",
   whatsapp_float_position: "right",
+  size_chart_enabled: true,
+  size_chart_title: "সাইজ চার্ট",
+  size_chart_note: "সব মাপ ইঞ্চিতে দেওয়া হয়েছে। ১ ইঞ্চি পর্যন্ত পার্থক্য হতে পারে।",
+  size_chart_columns: ["সাইজ", "বুক", "কাঁধ", "লম্বা"],
+  size_chart_rows: [
+    ["S", "34", "14", "38"],
+    ["M", "36", "15", "39"],
+    ["L", "38", "16", "40"],
+    ["XL", "40", "17", "41"],
+  ],
 };
 
 export type Category = {
@@ -331,9 +346,11 @@ export type Review = {
   reviewer_name: string;
   rating: number;
   comment: string | null;
+  image_url: string | null;
+  is_featured: boolean;
   is_approved: boolean;
   created_at: string;
-  products?: { name: string } | null;
+  products?: { name: string; slug?: string } | null;
 };
 
 export const ORDER_STATUSES: { value: string; label: string }[] = [
