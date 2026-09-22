@@ -5,7 +5,7 @@ export const MEDIA_BUCKET = "store-media";
 /** Ten years — media URLs are stored in the database as ready-to-render links. */
 const URL_TTL = 60 * 60 * 24 * 365 * 10;
 
-export type MediaFolder = "products" | "categories" | "hero" | "banners" | "store" | "videos";
+export type MediaFolder = "products" | "categories" | "hero" | "banners" | "store" | "videos" | "reviews";
 
 export async function uploadMedia(file: File, folder: MediaFolder): Promise<string> {
   const ext = file.name.split(".").pop()?.toLowerCase() ?? "jpg";
