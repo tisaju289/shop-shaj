@@ -288,3 +288,21 @@ export const saleProductsQuery = {
   },
   staleTime: 30_000,
 };
+
+export function featuredReviewsQuery(limit: number) {
+  return {
+    queryKey: ["reviews", "featured", limit],
+    queryFn: async (): Promise<Review[]> => {
+      const { data, error } = await supabase
+        .from("reviews")
+        .select("*, products(name,slug)")
+        .eq("is_approved", true)
+        .order("is_featured", { ascending: false })
+        .order("created_at", { ascending: false })
+        .limit(limit);
+      if (error) throw error;
+      return (data ?? []) as unknown as Review[];
+    },
+    staleTime: 60_000,
+  };
+}
