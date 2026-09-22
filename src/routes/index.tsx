@@ -236,3 +236,36 @@ function HomePage() {
   );
 }
 
+
+function HomeReviewsSection({
+  title,
+  subtitle,
+  limit,
+  config,
+}: {
+  title: string;
+  subtitle?: string | null;
+  limit: number;
+  config?: Record<string, unknown> | null;
+}) {
+  const { data: reviews = [], isLoading } = useQuery(featuredReviewsQuery(limit));
+  if (!isLoading && !reviews.length) return null;
+
+  return (
+    <section className="container-x section-py">
+      <div className="rounded-2xl border border-border bg-surface p-3 md:p-4">
+        <SectionHeading
+          title={title}
+          subtitle={subtitle}
+          titleStyle={sectionTypography(config, "heading")}
+          subtitleStyle={sectionTypography(config, "subheading")}
+        />
+        {isLoading ? (
+          <ProductGridSkeleton count={4} />
+        ) : (
+          <ReviewsShowcase reviews={reviews} />
+        )}
+      </div>
+    </section>
+  );
+}
